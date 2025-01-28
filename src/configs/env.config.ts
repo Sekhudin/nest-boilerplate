@@ -1,7 +1,11 @@
-import { env, NodeEnv } from "./constant";
+import * as dotEnv from "dotenv";
+import { env, NODE_ENV, RootDir, StaticDir, isMatch, isProduction, EnvPath } from "./constant";
+dotEnv.config({ path: EnvPath });
 
 /** Mode and Application */
-export const APP_MODE = NodeEnv;
+export const APP_MODE = NODE_ENV;
+export const APP_ROOT_DIR = RootDir;
+export const APP_STATIC_DIR = StaticDir;
 export const APP_NAME = env(process.env.APP_NAME, "app");
 export const APP_PORT = env(process.env.APP_PORT, "5000");
 export const APP_VERSION = env(process.env.APP_VERSION, "1.0");
@@ -15,6 +19,7 @@ export const DB_NAME = env(process.env.DB_NAME);
 export const DB_SCHEMA = env(process.env.DB_SCHEMA);
 export const DB_USERNAME = env(process.env.DB_USERNAME);
 export const DB_PASSWORD = env(process.env.DB_PASSWORD);
+export const DB_MIGRATION_TABLE = env(process.env.DB_MIGRATION_TABLE, "migrations");
 
 /** JSON Web Token */
 export const JWT_ROLE_KEY = env(process.env.JWT_ROLE_KEY, "roles");
@@ -41,3 +46,6 @@ export const LOG_MAX_FILES = env(process.env.LOG_MAX_FILES, "10");
 export const THROTTLER_ACTIVE = env(process.env.THROTTLER_ACTIVE, "true");
 export const THROTTLER_TTL = env(process.env.THROTTLER_TTL, "1");
 export const THROTTLER_LIMIT = env(process.env.THROTTLER_LIMIT, "100");
+
+/** Utility */
+export { isMatch, isProduction };

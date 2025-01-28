@@ -11,7 +11,7 @@ export const loggerOptions: winston.LoggerOptions = {
     }),
     new winston.transports.File({
       level: Env.LOG_LEVEL,
-      dirname: path.join(RootDir, "..", Env.LOG_DIR),
+      dirname: path.join(RootDir, Env.LOG_DIR),
       filename: `${new Date().toISOString().split("T")[0]}_error.log`,
       maxsize: Number(Env.LOG_MAX_SIZE) * 1024 * 1024,
       maxFiles: Number(Env.LOG_MAX_FILES),
