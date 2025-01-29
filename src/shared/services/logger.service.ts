@@ -1,7 +1,7 @@
 import * as winston from "winston";
 import { Request } from "express";
 import { ConsoleLogger, Injectable } from "@nestjs/common";
-import { APP_MODE, APP_NAME } from "src/configs/env.config";
+import * as env from "src/configs/env.config";
 import { loggerOptions } from "src/configs/logger.config";
 
 @Injectable()
@@ -22,7 +22,7 @@ export class LoggerService {
   }
 
   appListen(url: string) {
-    console.log(`[${APP_MODE}] - ${APP_NAME} run on ${url}`);
+    console.log(`[${env.APP_MODE}] - ${env.APP_NAME} run on ${url}`);
   }
 
   log(message: string) {
