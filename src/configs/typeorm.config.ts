@@ -3,9 +3,9 @@ import * as env from "./env.config";
 
 const options: Pick<DataSourceOptions, "entities" | "migrations"> = {
   entities: env.isProduction()
-    ? ["../modules/user/entities/*.entity.js"]
-    : ["../modules/user/entities/*.entity.ts"],
-  migrations: env.isProduction() ? ["../../migrations/*js"] : ["../../migrations/*.ts"],
+    ? ["dist/src/modules/**/entities/*.entity.js"]
+    : ["src/modules/**/entities/*.entity.ts"],
+  migrations: env.isProduction() ? ["dist/migrations/*.js"] : ["migrations/*.ts"],
 };
 
 const dataSourceOptions: DataSourceOptions = {

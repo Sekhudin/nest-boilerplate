@@ -1,0 +1,2 @@
+#FOR TYPEORM CLI CAN REACT TYPESCRIPT PATH ALIAS.
+export NODE_OPTIONS="-r tsconfig-paths/register"

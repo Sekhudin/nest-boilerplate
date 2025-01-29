@@ -1,11 +1,9 @@
 import * as dotEnv from "dotenv";
-import { env, NODE_ENV, RootDir, StaticDir, isMatch, isProduction, EnvPath } from "./constant";
+import { env, NODE_ENV, EnvPath, isMatch, isProduction, pathDir } from "./constant";
 dotEnv.config({ path: EnvPath });
 
 /** Mode and Application */
 export const APP_MODE = NODE_ENV;
-export const APP_ROOT_DIR = RootDir;
-export const APP_STATIC_DIR = StaticDir;
 export const APP_NAME = env(process.env.APP_NAME, "app");
 export const APP_PORT = env(process.env.APP_PORT, "5000");
 export const APP_VERSION = env(process.env.APP_VERSION, "1.0");
@@ -48,4 +46,4 @@ export const THROTTLER_TTL = env(process.env.THROTTLER_TTL, "1");
 export const THROTTLER_LIMIT = env(process.env.THROTTLER_LIMIT, "100");
 
 /** Utility */
-export { isMatch, isProduction };
+export { isMatch, isProduction, pathDir };
