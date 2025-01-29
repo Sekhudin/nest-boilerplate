@@ -1,5 +1,5 @@
 import * as dotEnv from "dotenv";
-import { env, NODE_ENV, EnvPath, isMatch, isProduction, pathDir } from "./constant";
+import { env, NODE_ENV, EnvPath, isMatch, isProduction, pathDir } from "./base.config";
 dotEnv.config({ path: EnvPath });
 
 /** Mode and Application */

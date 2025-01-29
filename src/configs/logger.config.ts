@@ -1,6 +1,6 @@
 import * as winston from "winston";
 import * as path from "path";
-import { RootDir } from "./constant";
+import { RootDir } from "./base.config";
 import * as Env from "./env.config";
 
 export const loggerOptions: winston.LoggerOptions = {
