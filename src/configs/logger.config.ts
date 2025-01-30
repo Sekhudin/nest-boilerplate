@@ -1,6 +1,4 @@
 import * as winston from "winston";
-import * as path from "path";
-import { RootDir } from "./base.config";
 import * as env from "./env.config";
 
 export const loggerOptions: winston.LoggerOptions = {
@@ -11,7 +9,7 @@ export const loggerOptions: winston.LoggerOptions = {
     }),
     new winston.transports.File({
       level: env.LOG_LEVEL,
-      dirname: path.join(RootDir, env.LOG_DIR),
+      dirname: env.pathDir(env.LOG_DIR),
       filename: `${new Date().toISOString().split("T")[0]}_error.log`,
       maxsize: Number(env.LOG_MAX_SIZE) * 1024 * 1024,
       maxFiles: Number(env.LOG_MAX_FILES),

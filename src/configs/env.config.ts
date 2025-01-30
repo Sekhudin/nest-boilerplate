@@ -1,5 +1,5 @@
 import * as dotEnv from "dotenv";
-import { env, NODE_ENV, EnvPath, isMatch, isProduction, pathDir } from "./base.config";
+import { env, NODE_ENV, EnvPath, pathDir, pathJoin, split, isMatch, isProduction } from "./base.config";
 dotEnv.config({ path: EnvPath });
 
 /** Mode and Application */
@@ -8,6 +8,9 @@ export const APP_NAME = env(process.env.APP_NAME, "app");
 export const APP_PORT = env(process.env.APP_PORT, "5000");
 export const APP_VERSION = env(process.env.APP_VERSION, "1.0");
 export const APP_UPLOAD_DIR = env(process.env.APP_UPLOAD_DIR, "uploads");
+
+/** API */
+export const API_DOCS_URL = env(process.env.API_DOCS_URL, "docs");
 
 /** Database */
 export const DB_TYPE = env(process.env.DB_TYPE);
@@ -34,6 +37,11 @@ export const JWT_ACCESS_EXPIRATION = env(process.env.JWT_ACCESS_EXPIRATION, "1d"
 export const ARGON_SECRET = env(process.env.ARGON_KEY);
 export const ARGON_SALT = env(process.env.ARGON_SALT);
 
+/** Cors */
+export const ALLOWED_ORIGINS = env(process.env.ALLOWED_ORIGINS);
+export const ALLOWED_METHODS = env(process.env.ALLOWED_METHODS);
+export const ALLOWED_HEADERS = env(process.env.ALLOWED_HEADERS);
+
 /** Logging */
 export const LOG_DIR = env(process.env.LOG_DIR, "logs");
 export const LOG_LEVEL = env(process.env.LOG_LEVEL, "error");
@@ -46,4 +54,4 @@ export const THROTTLER_TTL = env(process.env.THROTTLER_TTL, "1");
 export const THROTTLER_LIMIT = env(process.env.THROTTLER_LIMIT, "100");
 
 /** Utility */
-export { isMatch, isProduction, pathDir };
+export { pathDir, pathJoin, split, isMatch, isProduction };
