@@ -32,6 +32,7 @@ export const JWT_REFRESH_EXPIRATION = env(process.env.JWT_REFRESH_EXPIRATION, "7
 export const JWT_ACCESS_NAME = env(process.env.JWT_ACCESS_NAME, "access");
 export const JWT_ACCESS_SECRET = env(process.env.JWT_ACCESS_SECRET);
 export const JWT_ACCESS_EXPIRATION = env(process.env.JWT_ACCESS_EXPIRATION, "1d");
+export const JWT_REFRESH_COOKIE_SECURE = env(process.env.JWT_REFRESH_COOKIE_SECURE, "true");
 
 /** Hashing */
 export const ARGON_SECRET = env(process.env.ARGON_KEY);
