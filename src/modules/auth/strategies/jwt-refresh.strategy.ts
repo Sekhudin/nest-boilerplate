@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, JwtFromRequestFunction } from "passport-jwt";
 import { jwtRefreshConfig } from "src/configs/jwt.config";
-import type { JwtPayload } from "src/types/jwt.type";
+import type { JwtAuthPayload } from "src/types/global.type";
 
 @Injectable()
 export class JWTRefreshStrategy extends PassportStrategy(Strategy, jwtRefreshConfig.name) {
@@ -15,7 +15,7 @@ export class JWTRefreshStrategy extends PassportStrategy(Strategy, jwtRefreshCon
     });
   }
 
-  async validate(payload: JwtPayload) {
+  async validate(payload: JwtAuthPayload) {
     return payload;
   }
 }

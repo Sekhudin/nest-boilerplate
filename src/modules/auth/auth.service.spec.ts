@@ -1,18 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { JwtModule } from "@nestjs/jwt";
+import { Imports, Providers } from "src/shared/testing/common";
+import { UserModule } from "src/modules/users/user.module";
+import { JWTService } from "src/shared/services/jwt.service";
+import { JWTAccessStrategy } from "./strategies/jwt-access.strategy";
+import { JWTRefreshStrategy } from "./strategies/jwt-refresh.strategy";
+import { AuthService } from "./auth.service";
 
-describe('AuthService', () => {
+describe("AuthService", () => {
   let service: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      imports: Imports(UserModule, JwtModule.register({ global: true })),
+      providers: Providers(AuthService, JWTService, JWTAccessStrategy, JWTRefreshStrategy),
     }).compile();
 
     service = module.get<AuthService>(AuthService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 });
