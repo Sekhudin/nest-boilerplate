@@ -16,6 +16,7 @@ export const NODE_ENV = env(process.env.NODE_ENV, "development").toLowerCase();
 export const EnvPath = "env/".concat(".env.", NODE_ENV);
 
 export const isProduction = (): boolean => isMatch(NODE_ENV, "production");
+export const isTest = (): boolean => isMatch(NODE_ENV, "test");
 export const pathDir = (...paths: string[]) => path.join(RootDir, ...paths);
 export const pathJoin = (...paths: string[]) => path.join(...paths);
 export const split = (environment?: string) => {

@@ -1,5 +1,5 @@
 import * as env from "./env.config";
-import type { JwtConfig } from "src/types/jwt.type";
+import type { JwtConfig } from "src/types/global.type";
 
 export const jwtAccessConfig: JwtConfig<"secret"> = {
   name: env.JWT_ACCESS_NAME,
@@ -7,6 +7,9 @@ export const jwtAccessConfig: JwtConfig<"secret"> = {
   signOptions: {
     secret: env.JWT_ACCESS_SECRET,
     expiresIn: env.JWT_ACCESS_EXPIRATION,
+  },
+  verifyOptions: {
+    secret: env.JWT_ACCESS_SECRET,
   },
 };
 
@@ -17,5 +20,8 @@ export const jwtRefreshConfig: JwtConfig<"secret" | "cookieName"> = {
   signOptions: {
     secret: env.JWT_REFRESH_SECRET,
     expiresIn: env.JWT_REFRESH_EXPIRATION,
+  },
+  verifyOptions: {
+    secret: env.JWT_REFRESH_SECRET,
   },
 };

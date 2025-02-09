@@ -1,4 +1,4 @@
-import type { CookieConfig } from "src/types/cookie.type";
+import type { CookieConfig } from "src/types/global.type";
 import * as env from "./env.config";
 
 const getMaxAgeInDay = (day: number) => {

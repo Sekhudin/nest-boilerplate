@@ -1,5 +1,5 @@
 import * as dotEnv from "dotenv";
-import { env, NODE_ENV, EnvPath, pathDir, pathJoin, split, isMatch, isProduction } from "./base.config";
+import { env, NODE_ENV, EnvPath, pathDir, pathJoin, split, isMatch, isProduction, isTest } from "./base.config";
 dotEnv.config({ path: EnvPath });
 
 /** Mode and Application */
@@ -55,4 +55,4 @@ export const THROTTLER_TTL = env(process.env.THROTTLER_TTL, "1");
 export const THROTTLER_LIMIT = env(process.env.THROTTLER_LIMIT, "100");
 
 /** Utility */
-export { pathDir, pathJoin, split, isMatch, isProduction };
+export { pathDir, pathJoin, split, isMatch, isProduction, isTest };
