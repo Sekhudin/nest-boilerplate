@@ -4,30 +4,30 @@ import { CookieService } from "./cookie.service";
 import { jwtRefreshCookieConfig } from "src/configs/cookie.config";
 
 describe("CookieService", () => {
-  let cookieService: CookieService;
+  let service: CookieService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [CookieService],
     }).compile();
 
-    cookieService = module.get<CookieService>(CookieService);
+    service = module.get<CookieService>(CookieService);
   });
 
   it("should be defined", () => {
-    expect(cookieService).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe("getCookieRefreshToken", () => {
     it("should return refresh token from cookies", () => {
       const mockRequest = { cookies: { [jwtRefreshCookieConfig.name]: "test-token" } } as Request;
-      const token = cookieService.getCookieRefreshToke(mockRequest);
+      const token = service.getCookieRefreshToke(mockRequest);
       expect(token).toBe("test-token");
     });
 
     it("should return undefined if refresh token is not set", () => {
       const mockRequest = { cookies: {} } as Request;
-      const token = cookieService.getCookieRefreshToke(mockRequest);
+      const token = service.getCookieRefreshToke(mockRequest);
       expect(token).toBeUndefined();
     });
   });
@@ -38,7 +38,7 @@ describe("CookieService", () => {
         cookie: jest.fn(),
       } as unknown as Response;
 
-      cookieService.setCookieRefreshToken(mockResponse, "test-token");
+      service.setCookieRefreshToken(mockResponse, "test-token");
 
       expect(mockResponse.cookie).toHaveBeenCalledWith(
         jwtRefreshCookieConfig.name,
@@ -54,7 +54,7 @@ describe("CookieService", () => {
         clearCookie: jest.fn(),
       } as unknown as Response;
 
-      cookieService.clearCookieRefreshToken(mockResponse);
+      service.clearCookieRefreshToken(mockResponse);
 
       expect(mockResponse.clearCookie).toHaveBeenCalledWith(jwtRefreshCookieConfig.name);
     });
