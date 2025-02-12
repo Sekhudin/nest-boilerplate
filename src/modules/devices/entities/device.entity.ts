@@ -17,6 +17,7 @@ export class Device {
   @Column()
   name: string;
 
+  // mobile | tablet | desktop
   @Column()
   type: string;
 

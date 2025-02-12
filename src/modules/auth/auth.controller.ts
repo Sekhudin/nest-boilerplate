@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Req } from "@nestjs/common";
+import { Request } from "express";
+import { Controller, Post, Body, Req, Get, Ip } from "@nestjs/common";
+import { Profiler, ProfilerValue } from "src/shared/decorators/params/common";
 import { AuthService } from "./auth.service";
 import { SignUpBody } from "./dto/bodies/sign-up.body";
 import { SignInBody } from "./dto/bodies/sign-in-body";
-import { Request } from "express";
 
 @Controller()
 export class AuthController {
@@ -13,8 +14,9 @@ export class AuthController {
     return await this.authService.signUp(signUpBody);
   }
 
-  @Post("/signin")
-  async signIn(@Body() signInBody: SignInBody) {
+  @Get("/signin")
+  async signIn(@Body() signInBody: SignInBody, @Profiler() profiler: ProfilerValue) {
+    console.log("profile", profiler);
     return await this.authService.signUp(signInBody);
   }
 }
