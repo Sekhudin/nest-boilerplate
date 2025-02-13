@@ -46,10 +46,7 @@ export const getUserAgent = (request: UARequest): string => {
 
 export const getIP = (req: UARequest): string => {
   const ip =
-    req.headers?.["x-forwarded-for"]?.split(",")[0].trim() ||
-    req.ip ||
-    req.socket?.remoteAddress ||
-    "unknown";
+    req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress || req.ip || "unknown";
   return convertIP(ip);
 };
 
@@ -91,6 +88,10 @@ export const getBrowser = (agent: string): Browser => {
     .with(P.when(matchWith(/firefox\/(\d+)/)), (s) => ({
       name: BrowserName.Firefox,
       version: version(s, /firefox\/(\d+)/),
+    }))
+    .with(P.when(matchWith(/mozilla\/(\d+)/)), (s) => ({
+      name: BrowserName.Firefox,
+      version: version(s, /mozilla\/(\d+)/),
     }))
     .with(P.when(matchWith(/safari\/(\d+)/)), (s) => ({
       name: BrowserName.Safari,
