@@ -4,6 +4,8 @@ import { databaseConfig } from "src/configs/database.config";
 import { User } from "src/modules/users/entities/user.entity";
 import { Device } from "src/modules/devices/entities/device.entity";
 import { AuthProvider } from "src/modules/auth-providers/entities/auth-provider.entity";
+export * from "./mocks";
+export * from "./utils";
 
 export const Imports = (...modules: ModuleMetadata["imports"]): ModuleMetadata["imports"] => {
   return [
