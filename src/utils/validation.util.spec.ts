@@ -41,6 +41,7 @@ describe("validationUtil", () => {
     });
 
     it("should be throw validation error", async () => {
+      console.log(personSchema["~standard"].validate({ name: "john", age: 0 }));
       expect(() => numberSchema["~standard"].validate("1")).toThrow(z.ZodError);
       expect(() => personSchema["~standard"].validate({ name: "", age: 10 })).toThrow(z.ZodError);
       expect(() => personSchema["~standard"].validate({ name: "john", age: 0 })).toThrow(z.ZodError);

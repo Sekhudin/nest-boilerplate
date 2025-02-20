@@ -11,3 +11,10 @@ export const createSchema = <T extends z.ZodType<any, any, any>>(
     validate: (value) => schema.parse(value),
   },
 });
+
+export const getErrorMessage = (error: any): string => {
+  if (error instanceof z.ZodError) {
+    return error.issues[0]?.message || "validation failed";
+  }
+  return "validation failed";
+};
