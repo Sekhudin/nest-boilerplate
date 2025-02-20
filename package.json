@@ -37,6 +37,7 @@
     "@nestjs/platform-express": "^11.0.6",
     "@nestjs/swagger": "^11.0.3",
     "@nestjs/typeorm": "^11.0.0",
+    "@standard-schema/spec": "^1.0.0",
     "axios": "^1.7.9",
     "class-transformer": "^0.5.1",
     "cookie-parser": "^1.4.7",
