@@ -1,4 +1,5 @@
-import { getDecoratorParamsFactory, mockRequest } from "src/shared/testing/common";
+import { mockRequest } from "src/shared/testing/mocks";
+import { getDecoratorParamsFactory } from "src/shared/testing/common";
 import { BrowserName, OSName, DeviceType } from "src/utils/user-agent/user-agent.helper";
 import { Profiler, ProfilerValue } from "./profiler.decorator";
 

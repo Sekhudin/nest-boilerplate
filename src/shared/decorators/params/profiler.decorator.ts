@@ -1,6 +1,6 @@
-import { Request } from "express";
+import type { Request } from "express";
 import { createParamDecorator } from "@nestjs/common";
-import { UAParser, UAParserResult } from "src/utils/user-agent";
+import { UAParser, UAParserResult } from "src/utils/user-agent.util";
 
 export type ProfilerValue = UAParserResult;
 export const Profiler = createParamDecorator<never, ProfilerValue>((_, ctx) => {
