@@ -1,7 +1,9 @@
 import z from "zod";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
+export * as z from "zod";
 export * from "./base.util";
+
 export const createSchema = <T extends z.ZodType<any, any, any>>(
   schema: T,
 ): StandardSchemaV1<z.infer<typeof schema>> => ({

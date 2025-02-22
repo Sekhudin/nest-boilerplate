@@ -41,10 +41,21 @@ describe("validationUtil", () => {
     });
 
     it("should be throw validation error", async () => {
-      console.log(personSchema["~standard"].validate({ name: "john", age: 0 }));
       expect(() => numberSchema["~standard"].validate("1")).toThrow(z.ZodError);
       expect(() => personSchema["~standard"].validate({ name: "", age: 10 })).toThrow(z.ZodError);
       expect(() => personSchema["~standard"].validate({ name: "john", age: 0 })).toThrow(z.ZodError);
+    });
+  });
+
+  describe("getErrorMessage", () => {
+    it("should return error message", () => {
+      const error = new validation.z.ZodError([]);
+      error.issues = [{ message: "can't be empty" } as validation.z.ZodIssue];
+      expect(validation.getErrorMessage(error)).toBe("can't be empty");
+    });
+
+    it("should return default error message", () => {
+      expect(validation.getErrorMessage({})).toBe("validation failed");
     });
   });
 });
