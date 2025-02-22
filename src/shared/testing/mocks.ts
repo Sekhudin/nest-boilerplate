@@ -1,4 +1,6 @@
-import { ExecutionContext } from "@nestjs/common";
+import z from "zod";
+import * as validation from "src/utils/validation.util";
+import type { ExecutionContext } from "@nestjs/common";
 
 export const mockRequest: ExecutionContext = {
   switchToHttp: jest.fn(() => ({
@@ -14,3 +16,11 @@ export const mockRequest: ExecutionContext = {
     })),
   })),
 } as unknown as ExecutionContext;
+
+export const mockNumberSchema = validation.createSchema(z.number());
+export const mockPersonSchema = validation.createSchema(
+  z.object({
+    name: z.string().min(1).toLowerCase(),
+    age: z.number().min(1),
+  }),
+);
