@@ -1,32 +1,31 @@
-import z from "zod";
-import { createSchema } from "src/utils/validation.util";
+import { BadRequestException } from "@nestjs/common";
+import { mockNumberSchema, mockPersonSchema } from "src/shared/testing/mocks";
 import { SchemaValidation } from "./schema-validation.pipe";
-import { StandardSchemaV1 } from "@standard-schema/spec";
 
 describe("SchemaValidation class", () => {
-  type Person = {
-    name?: string;
-    age?: number;
+  let person: object;
+  const resultPerson = {
+    age: 25,
+    name: "john doe",
   };
-
-  let schema: StandardSchemaV1<Person>;
-  let common: SchemaValidation;
-  let params: SchemaValidation;
-  let query: SchemaValidation;
-  let body: SchemaValidation;
+  const paramValidation = new SchemaValidation(mockNumberSchema, "param");
+  const bodyValidation = new SchemaValidation(mockPersonSchema, "body");
 
   beforeEach(() => {
-    schema = createSchema(
-      z.object({
-        name: z.string().min(1),
-        age: z.number().min(1),
-      }),
-    );
-
-    // common = new SchemaValidation(schema, "")
+    person = {
+      age: 25,
+      name: "John Doe",
+    };
   });
 
-  it("validation valid", () => {});
+  it("validation valid", () => {
+    expect(paramValidation.transform(1, { type: "param" })).toBe(1);
+    expect(bodyValidation.transform(person, { type: "body" })).toStrictEqual(resultPerson);
+    expect(bodyValidation.transform(person, { type: "param" })).toStrictEqual(person);
+  });
 
-  it("validation invalid - should throw error", () => {});
+  it("validation invalid - should throw error", () => {
+    expect(() => paramValidation.transform("1", { type: "param" })).toThrow(BadRequestException);
+    expect(() => bodyValidation.transform({}, { type: "body" })).toThrow(BadRequestException);
+  });
 });
