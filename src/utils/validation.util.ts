@@ -3,7 +3,9 @@ import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 export * as z from "zod";
 export * from "./base.util";
+export type * from "src/types/validation.type";
 
+export const requiredString = z.string().min(1, "can't be empty!").trim();
 export const createSchema = <T extends z.ZodType<any, any, any>>(
   schema: T,
 ): StandardSchemaV1<z.infer<typeof schema>> => ({

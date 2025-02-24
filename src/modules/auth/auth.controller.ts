@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { Controller, Post, Body, Req, Get, Ip } from "@nestjs/common";
+import { Controller, Post, Body, Req, Get } from "@nestjs/common";
 import { Profiler, ProfilerValue } from "src/shared/decorators/params/common";
 import { AuthService } from "./auth.service";
 import { SignUpBody } from "./dto/bodies/sign-up.body";
