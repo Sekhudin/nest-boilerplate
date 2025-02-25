@@ -5,12 +5,12 @@ import * as validation from "src/utils/validation.util";
 export class SchemaValidation implements PipeTransform {
   constructor(
     private schema: StandardSchemaV1,
-    private paramType?: Paramtype,
+    private paramtype?: Paramtype,
   ) {}
 
   transform(value: any, metadata: ArgumentMetadata) {
     try {
-      if (validation.isMatch(this.paramType, metadata.type)) {
+      if (validation.isMatch(this.paramtype, metadata.type)) {
         return this.schema["~standard"].validate(value);
       }
       return value;
