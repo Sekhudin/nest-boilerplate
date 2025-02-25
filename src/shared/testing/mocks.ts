@@ -13,6 +13,15 @@ export const mockRequest: ExecutionContext = {
       socket: {
         remoteAddress: "192.168.1.100",
       },
+      param: "1",
+      query: {
+        page: "1",
+        total: "20",
+      },
+      body: {
+        name: "John Doe",
+        age: 25,
+      },
     })),
   })),
 } as unknown as ExecutionContext;

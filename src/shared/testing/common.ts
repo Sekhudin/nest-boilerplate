@@ -22,19 +22,12 @@ export const Providers = (...providers: ModuleMetadata["providers"]): ModuleMeta
 export function getDecoratorParamsFactory<T>(
   request: MockRequest,
   Decorator: ParamsDecorator,
-  property?: string,
+  params: any[] = [],
 ) {
-  class TestDecorator {
-    public test(@Decorator() value: T) {}
+  class TestParamsDecorator {
+    public test(@Decorator(...params) value: T) {}
   }
 
-  const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, TestDecorator, "test");
+  const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, TestParamsDecorator, "test");
   return args[Object.keys(args)[0]].factory("test", request) as T;
 }
-
-// export function getDecoratorFactory<T>(request: MockRequest, Decorator: ParamsDecorator, property?: any) {
-//   class TestDecorator {
-//     @Decorator(property)
-//     public test() {}
-//   }
-// }
