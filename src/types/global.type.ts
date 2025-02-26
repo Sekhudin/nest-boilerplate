@@ -5,7 +5,10 @@ import type { JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 export type Docs<T extends string> = Record<T, ApiOperationOptions>;
 export type Nullable<T extends unknown> = T | null;
 
+export type UserRole = "user" | "developer" | "root";
+
 type JwtPayloadMeta = Record<"iat" | "exp", string>;
+export type JwtRole = UserRole;
 export type JwtAuthParams = Record<"id" | "role", string>;
 export type JwtAuthPayload = JwtAuthParams & JwtPayloadMeta;
 export type JwtParams = Record<"id", string>;
