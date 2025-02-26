@@ -1,12 +1,21 @@
-import { createUserSchema } from "./create-user.dto";
-import { z, createSchema, requiredString, Dto } from "src/utils/validation.util";
+import { ApiProperty } from "@nestjs/swagger";
+import { z, zz, createSchema, Dto } from "src/utils/validation.util";
 
 export const updateUserSchema = createSchema(
   z.object({
-    email: requiredString.toLowerCase(),
-    username: requiredString,
-    password: requiredString,
+    email: zz.email(),
+    username: zz.username(),
+    password: zz.password(),
   }),
 );
 
-export type UpdateUserDto = Dto<typeof updateUserSchema>;
+export class UpdateUserDto implements Dto<typeof updateUserSchema> {
+  @ApiProperty({ required: false })
+  username: string;
+
+  @ApiProperty({ required: false })
+  email: string;
+
+  @ApiProperty({ required: false })
+  password: string;
+}
