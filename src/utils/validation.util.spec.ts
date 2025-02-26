@@ -15,8 +15,8 @@ describe("validationUtil", () => {
     numberSchema = validation.createSchema(z.number());
     personSchema = validation.createSchema(
       z.object({
-        name: z.string().min(1),
-        age: z.number().min(1),
+        name: z.string().min(1, "can't be empty"),
+        age: z.number().min(1, "can't be empty"),
       }),
     );
   });
@@ -51,11 +51,11 @@ describe("validationUtil", () => {
     it("should return error message", () => {
       const error = new validation.z.ZodError([]);
       error.issues = [{ message: "can't be empty" } as validation.z.ZodIssue];
-      expect(validation.getErrorMessage(error)).toBe("can't be empty");
+      expect(validation.getErrorMessage(error).message).toBe("can't be empty");
     });
 
     it("should return default error message", () => {
-      expect(validation.getErrorMessage({})).toBe("validation failed");
+      expect(validation.getErrorMessage({}).message).toBe("validation failed");
     });
   });
 });
