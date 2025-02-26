@@ -1,4 +1,5 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { PipeTransform } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
 import { ModuleMetadata } from "@nestjs/common/interfaces/modules/module-metadata.interface";
 import { databaseConfig } from "src/configs/database.config";
@@ -19,6 +20,7 @@ export const Providers = (...providers: ModuleMetadata["providers"]): ModuleMeta
   return [...providers];
 };
 
+export const Pipes = (...pipes: PipeTransform[]) => pipes.reverse();
 export function getDecoratorParamsFactory<T>(
   request: MockRequest,
   Decorator: ParamsDecorator,

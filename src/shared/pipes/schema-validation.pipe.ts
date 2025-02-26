@@ -15,7 +15,8 @@ export class SchemaValidation implements PipeTransform {
       }
       return value;
     } catch (error) {
-      throw new BadRequestException(validation.getErrorMessage(error));
+      const { message } = validation.getErrorMessage(error);
+      throw new BadRequestException(message);
     }
   }
 }

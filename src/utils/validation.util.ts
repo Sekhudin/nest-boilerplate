@@ -1,11 +1,11 @@
 import z from "zod";
-import type { StandardSchemaV1 } from "@standard-schema/spec";
+import type { StandardSchemaV1, ErrorMessage } from "src/types/validation.type";
 
 export * as z from "zod";
 export * from "./base.util";
+export * as zz from "./zod-schema/custom-schema.util";
 export type * from "src/types/validation.type";
 
-export const requiredString = z.string().min(1, "can't be empty!").trim();
 export const createSchema = <T extends z.ZodType<any, any, any>>(
   schema: T,
 ): StandardSchemaV1<z.infer<typeof schema>> => ({
@@ -16,9 +16,13 @@ export const createSchema = <T extends z.ZodType<any, any, any>>(
   },
 });
 
-export const getErrorMessage = (error: any): string => {
+export const getErrorMessage = (error: any): ErrorMessage => {
+  const defaultMessage = "validation failed";
   if (error instanceof z.ZodError) {
-    return error.issues[0]?.message || "validation failed";
+    const message = error.issues[0]?.message.toLowerCase() || defaultMessage;
+    const errors = error.errors.map(({ path, message }) => ({ path, message }));
+    return { message, errors };
   }
-  return "validation failed";
+
+  return { message: defaultMessage, errors: null };
 };

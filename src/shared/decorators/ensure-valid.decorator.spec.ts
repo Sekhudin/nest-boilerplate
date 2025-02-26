@@ -1,4 +1,5 @@
 import { PIPES_METADATA } from "@nestjs/common/constants";
+import { Pipes } from "src/shared/testing/common";
 import { z, createSchema, requiredString } from "src/utils/validation.util";
 import { SchemaValidation } from "src/shared/pipes/schema-validation.pipe";
 import { EnsureValid } from "./ensure-valid.decorator";
@@ -12,12 +13,12 @@ describe("ensure-valid decorator", () => {
   );
 
   it("should return expected pipes", () => {
-    const pipes = [
-      new SchemaValidation(personSchema, "body"),
-      new SchemaValidation(personSchema, "query"),
-      new SchemaValidation(personSchema, "param"),
+    const pipes = Pipes(
       new SchemaValidation(personSchema),
-    ];
+      new SchemaValidation(personSchema, "param"),
+      new SchemaValidation(personSchema, "query"),
+      new SchemaValidation(personSchema, "body"),
+    );
     class TestDecorator {
       @EnsureValid(personSchema)
       @EnsureValid(personSchema, "param")

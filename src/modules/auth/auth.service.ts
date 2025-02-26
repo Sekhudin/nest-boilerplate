@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { JWTService } from "src/shared/services/jwt.service";
 import { UserService } from "src/modules/users/user.service";
-import { SignUpBody } from "./dto/bodies/sign-up.body";
-import { SignInBody } from "./dto/bodies/sign-in-body";
+import { SignInDto } from "./dto/body/sign-in.body";
+import { CreateUserDto } from "./dto/body/sign-up-body";
 
 @Injectable()
 export class AuthService {
@@ -11,9 +11,9 @@ export class AuthService {
     private readonly UserService: UserService,
   ) {}
 
-  async signUp(signUpBody: SignUpBody) {
+  async signUp(signUpBody: CreateUserDto) {
     return { message: "hehe" };
   }
 
-  async signIn(signInBody: SignInBody) {}
+  async signIn(signInDto: SignInDto) {}
 }
