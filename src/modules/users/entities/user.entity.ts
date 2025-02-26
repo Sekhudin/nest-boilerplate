@@ -9,9 +9,9 @@ import {
 import { Exclude } from "class-transformer";
 import { Device } from "src/modules/devices/entities/device.entity";
 import { AuthProvider } from "src/modules/auth-providers/entities/auth-provider.entity";
-import { TableName } from "src/configs/database.config";
+import { tableName } from "src/configs/database.config";
 
-@Entity({ name: TableName.user })
+@Entity({ name: tableName.user })
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
