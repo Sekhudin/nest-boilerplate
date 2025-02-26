@@ -7,9 +7,9 @@ import {
   ManyToOne,
 } from "typeorm";
 import { User } from "src/modules/users/entities/user.entity";
-import { TableName } from "src/configs/database.config";
+import { tableName } from "src/configs/database.config";
 
-@Entity({ name: TableName.authProvider })
+@Entity({ name: tableName.authProvider })
 export class AuthProvider {
   @PrimaryGeneratedColumn("uuid")
   id: string;
