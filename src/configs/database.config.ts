@@ -1,4 +1,5 @@
 import type { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import type { UserRole } from "src/types/global.type";
 import * as env from "./env.config";
 
 export const databaseConfig: TypeOrmModuleOptions = {
@@ -13,13 +14,14 @@ export const databaseConfig: TypeOrmModuleOptions = {
   autoLoadEntities: true,
 };
 
-export enum TableName {
-  user = "User",
-  device = "Device",
-  authProvider = "AuthProvider",
-}
+export const tableName = {
+  user: "User",
+  device: "Device",
+  authProvider: "AuthProvider",
+};
 
-export enum UserRole {
-  user = "user",
-  root = "root",
+export const userRole: Record<UserRole, UserRole> = {
+  root: "root",
+  user: "user",
+  developer: "developer"
 }

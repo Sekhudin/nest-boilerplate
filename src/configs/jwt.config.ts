@@ -1,6 +1,8 @@
 import * as env from "./env.config";
-import type { JwtConfig } from "src/types/global.type";
+import type { JwtConfig, JwtRole } from "src/types/global.type";
 
+export const jwtRoleKey = env.JWT_ROLE_KEY;
+export const jwtRoles: JwtRole[] = ["root", "user", "developer"];
 export const jwtAccessConfig: JwtConfig<"secret"> = {
   name: env.JWT_ACCESS_NAME,
   secret: env.JWT_ACCESS_SECRET,
