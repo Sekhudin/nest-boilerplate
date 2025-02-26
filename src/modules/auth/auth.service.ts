@@ -15,5 +15,9 @@ export class AuthService {
     return { message: "hehe" };
   }
 
-  async signIn(signInDto: SignInDto) {}
+  async signIn(signInDto: SignInDto) {
+    return "signin";
+  }
+
+  async signOut(id: string) {}
 }

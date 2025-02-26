@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get } from "@nestjs/common";
-import { Profiler, ProfilerValue } from "src/shared/decorators/params/common";
-import { EnsureValid } from "src/shared/decorators/common";
+import { Profiler, ProfilerValue, User, UserValue } from "src/shared/decorators/params/common";
+import { AuthToken, EnsureValid } from "src/shared/decorators/common";
 import { signInSchema, SignInDto } from "./dto/body/sign-in.body";
 import { createUserSchema, CreateUserDto } from "./dto/body/sign-up-body";
 import { AuthService } from "./auth.service";
@@ -18,7 +18,12 @@ export class AuthController {
   @Get("/signin")
   @EnsureValid(signInSchema, "body")
   async signIn(@Body() signInDto: SignInDto, @Profiler() profiler: ProfilerValue) {
-    console.log("profile", profiler);
     return await this.authService.signIn(signInDto);
+  }
+
+  @Get("/signout")
+  @AuthToken()
+  async signOut() {
+    return await this.authService.signOut("");
   }
 }
