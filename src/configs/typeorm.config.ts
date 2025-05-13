@@ -2,11 +2,8 @@ import { DataSource, DataSourceOptions } from "typeorm";
 import * as env from "./env.config";
 
 const options: Pick<DataSourceOptions, "entities" | "migrations"> = {
-  entities:
-    env.isProduction() || env.isTest()
-      ? ["dist/src/modules/**/entities/*.entity.js"]
-      : ["src/modules/**/entities/*.entity.ts"],
-  migrations: env.isProduction() || env.isTest() ? ["dist/migrations/*.js"] : ["migrations/*.ts"],
+  entities: ["src/modules/**/entities/*.entity.ts"],
+  migrations: [env.isProduction() ? "migrations/prod/*.ts" : "migrations/dev/*.ts"],
 };
 
 const dataSourceOptions: DataSourceOptions = {

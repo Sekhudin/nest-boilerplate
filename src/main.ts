@@ -14,6 +14,11 @@ async function bootstrap() {
   app.use(cookieParser());
   swaggerSetup(app);
   await app.listen(Number(env.APP_PORT));
+  logger.verbose("HELLO VERBOSE");
+  logger.debug("HELLO DEBUG");
+  logger.info("HELLO INFO");
+  logger.warn("HELLO WARN");
+  logger.error("HELLO ERROR");
   logger.appListen(await app.getUrl());
 }
 bootstrap();

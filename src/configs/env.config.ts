@@ -1,5 +1,15 @@
 import * as dotEnv from "dotenv";
-import { env, NODE_ENV, EnvPath, pathDir, pathJoin, split, isMatch, isProduction, isTest } from "./base.config";
+import {
+  env,
+  NODE_ENV,
+  EnvPath,
+  pathDir,
+  pathJoin,
+  split,
+  isMatch,
+  isProduction,
+  isTest,
+} from "./base.config";
 dotEnv.config({ path: EnvPath });
 
 /** Mode and Application */
@@ -45,7 +55,7 @@ export const ALLOWED_HEADERS = env(process.env.ALLOWED_HEADERS);
 
 /** Logging */
 export const LOG_DIR = env(process.env.LOG_DIR, "logs");
-export const LOG_LEVEL = env(process.env.LOG_LEVEL, "error");
+export const LOG_LEVEL = env(process.env.LOG_LEVEL, "info");
 export const LOG_MAX_SIZE = env(process.env.LOG_MAX_SIZE, "2");
 export const LOG_MAX_FILES = env(process.env.LOG_MAX_FILES, "10");
 
