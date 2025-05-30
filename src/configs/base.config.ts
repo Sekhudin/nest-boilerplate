@@ -1,25 +1,30 @@
-import * as path from "path";
-import { match } from "ts-pattern";
+import { INestApplication } from "@nestjs/common";
+import * as dotEnv from "dotenv";
+import { isMatch } from "src/utils/base";
+import { environment, Environment, envpath } from "./util/environment";
 
-export const env = (environment: string | undefined, defaultValue?: string) => {
-  return environment?.trim() || defaultValue?.trim() || "";
-};
+const instances = new WeakMap<Function, unknown>();
+dotEnv.config({ path: envpath });
 
-export const isMatch = (value: any, expectedValue: any): boolean => {
-  return match(value)
-    .with(expectedValue, () => true)
-    .otherwise(() => false);
-};
+export abstract class BaseConfig {
+  protected readonly env: Environment;
 
-const RootDir = path.join(__dirname, "..", "..", "..");
-export const NODE_ENV = env(process.env.NODE_ENV, "development").toLowerCase();
-export const EnvPath = "env/".concat(".env.", NODE_ENV);
+  protected constructor() {
+    this.env = environment(process.env);
+  }
 
-export const isProduction = (): boolean => isMatch(NODE_ENV, "production");
-export const isTest = (): boolean => isMatch(NODE_ENV, "test");
-export const pathDir = (...paths: string[]) => path.join(RootDir, ...paths);
-export const pathJoin = (...paths: string[]) => path.join(...paths);
-export const split = (environment?: string) => {
-  if (!environment) return [];
-  return environment.split(",").map((value) => value.trim());
-};
+  get isProduction(): boolean {
+    return isMatch(this.env.APP_ENV, "production");
+  }
+
+  setup(app: INestApplication): void {
+    throw new Error(`[${this.constructor.name}] does not implement setup(app).`);
+  }
+
+  static getInstance<T extends BaseConfig>(this: new () => T): T {
+    if (!instances.has(this)) {
+      instances.set(this, new this());
+    }
+    return instances.get(this) as T;
+  }
+}
