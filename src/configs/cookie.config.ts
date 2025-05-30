@@ -1,16 +1,15 @@
-import type { CookieConfig } from "src/types/global.type";
-import * as env from "./env.config";
+import { INestApplication } from "@nestjs/common";
+import * as cookieParser from "cookie-parser";
+import { BaseConfig } from "./base.config";
 
-const getMaxAgeInDay = (day: number) => {
-  return day * 24 * 60 * 60 * 1000;
-};
+class CookieConfig extends BaseConfig {
+  constructor() {
+    super();
+  }
 
-export const jwtRefreshCookieConfig: CookieConfig<"name"> = {
-  name: env.JWT_REFRESH_COOKIE,
-  options: {
-    httpOnly: true,
-    secure: env.isMatch(env.JWT_REFRESH_COOKIE_SECURE, "true"),
-    sameSite: "strict",
-    maxAge: getMaxAgeInDay(6),
-  },
-};
+  setup(app: INestApplication): void {
+    app.use(cookieParser());
+  }
+}
+
+export const cookieConfig = CookieConfig.getInstance();
