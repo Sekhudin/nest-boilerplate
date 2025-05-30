@@ -1,5 +1,5 @@
 import { match, P } from "ts-pattern";
-import type { Os, Browser, UARequest } from "./user-agent.type";
+import type { Browser, Os, UARequest } from "./types";
 
 export enum OSName {
   Windows = "windows",

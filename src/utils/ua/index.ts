@@ -1,7 +1,6 @@
-import * as UserAgent from "./user-agent/user-agent.helper";
-import type { UARequest, Os, Browser, UAParserResult } from "./user-agent/user-agent.type";
+import * as UserAgent from "./helper";
+import type { Browser, Os, UAParserResult, UARequest } from "./types";
 
-export * from "./base.util";
 export class UAParser implements UAParserResult {
   userAgent: string;
   ip: string;
