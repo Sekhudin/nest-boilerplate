@@ -2,5 +2,28 @@
   "singleQuote": false,
   "trailingComma": "all",
   "printWidth": 110,
-  "semi": true
+  "semi": true,
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+  "importOrder": [
+    "^node:",
+    "^fs$",
+    "^path$",
+    "<BUILTIN_MODULES>",
+    "^express$",
+    "^@nestjs/(.*)$",
+    "^zod$",
+    "^ts-pattern$",
+    "<THIRD_PARTY_MODULES>",
+    "^src/controller$",
+    "^src/service$",
+    "^src/repository$",
+    "^src/dto$",
+    "^src/entity$",
+    "^src/(?!controller|service|repository|dto|entity|util).*",
+    "^src/util$",
+    "^src/config$",
+    "^[.]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }
