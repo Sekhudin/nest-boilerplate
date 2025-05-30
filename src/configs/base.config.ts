@@ -1,6 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import * as dotEnv from "dotenv";
-import { isMatch } from "src/utils/base";
+import { isMatch } from "src/utils";
 import { environment, Environment, envpath } from "./util/environment";
 
 const instances = new WeakMap<Function, unknown>();
