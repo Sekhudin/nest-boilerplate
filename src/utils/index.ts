@@ -8,3 +8,11 @@ export const isMatch = (value: unknown, expected: UnknownPattern) => {
 export const isNotMatch = (value: unknown, expected: UnknownPattern) => {
   return !isMatch(value, expected);
 };
+
+export const isMatchRegex = (pattern: RegExp, value: string) => {
+  return pattern.test(value);
+};
+
+export const isNotMatchRegex = (pattern: RegExp, value: string) => {
+  return !isMatchRegex(pattern, value);
+};
