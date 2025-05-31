@@ -9,16 +9,23 @@ class JwtAccessConfig extends BaseConfig {
     return "JWT_ACCESS_TOKEN";
   }
 
-  get secret() {
-    return this.env.APP_NAME;
-  }
-
   get signOptions() {
-    return {};
+    return {
+      algorithm: this.env.JWT_ALGORITHM,
+      secret: this.env.JWT_ACCESS_SECRET,
+      expiresIn: this.env.JWT_ACCESS_EXPIRES_IN,
+      issuer: this.env.JWT_ISSUER,
+      audience: this.env.JWT_AUDIENCE,
+    };
   }
 
   get verifyOptions() {
-    return {};
+    return {
+      algorithms: [this.env.JWT_ALGORITHM],
+      secret: this.env.JWT_ACCESS_SECRET,
+      issuer: this.env.JWT_ISSUER,
+      audience: this.env.JWT_AUDIENCE,
+    };
   }
 }
 

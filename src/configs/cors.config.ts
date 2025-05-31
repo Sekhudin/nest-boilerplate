@@ -8,7 +8,12 @@ class CorsConfig extends BaseConfig {
   }
 
   get options(): CorsOptions {
-    return {};
+    return {
+      origin: this.env.CORS_ORIGIN,
+      allowedHeaders: this.env.CORS_HEADERS,
+      methods: this.env.CORS_METHODS,
+      credentials: this.env.CORS_CREDENTIALS,
+    };
   }
 
   setup(app: INestApplication): void {

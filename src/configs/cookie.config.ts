@@ -1,5 +1,5 @@
 import { INestApplication } from "@nestjs/common";
-import * as cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";
 import { BaseConfig } from "./base.config";
 
 class CookieConfig extends BaseConfig {

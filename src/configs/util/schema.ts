@@ -1,6 +1,9 @@
 import z from "zod";
+import ms from "ms";
 
 const BOOLEANS = ["true", "false"] as const;
+
+const SAME_SITES = ["strict", "lax", "none"] as const;
 
 const MODES = ["development", "production", "test"] as const;
 
@@ -60,6 +63,10 @@ export const expirein = () => z.enum(EXPIRES_IN);
 export const boolean = () => z.enum(BOOLEANS).transform((value) => value === "true");
 
 export const number = () => z.string().transform(Number);
+
+export const milliseconds = () => z.string().transform(ms);
+
+export const samesite = () => z.enum(SAME_SITES);
 
 export const secret = (field: string, min: number) => {
   return z.string().trim().min(min, `${field} must be at least ${min} characters long`);
