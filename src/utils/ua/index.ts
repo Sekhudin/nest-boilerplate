@@ -1,26 +1,22 @@
-import * as UserAgent from "./helper";
-import type { Browser, Os, UAParserResult, UARequest } from "./types";
+import type { Request } from "express";
+import { detectBrowser, detectDeviceType, detectIP, detectOS } from "./helper";
 
-export class UAParser implements UAParserResult {
-  userAgent: string;
-  ip: string;
-  type: string;
-  os: Os;
-  browser: Browser;
+export class UserAgent {
+  public readonly userAgent: string;
+  public readonly browser: ReturnType<typeof detectBrowser>;
+  public readonly device: string;
+  public readonly ip: string;
+  public readonly os: ReturnType<typeof detectOS>;
 
-  constructor(req: UARequest) {
-    const userAgent = UserAgent.getUserAgent(req);
-    this.userAgent = userAgent;
-    this.ip = UserAgent.getIP(req);
-    this.type = UserAgent.getType(userAgent);
-    this.os = UserAgent.getOS(userAgent);
-    this.browser = UserAgent.getBrowser(userAgent);
+  constructor(req: Request) {
+    this.userAgent = req.headers["user-agent"] || "";
+    this.browser = detectBrowser(this.userAgent);
+    this.device = detectDeviceType(this.userAgent);
+    this.ip = detectIP(req);
+    this.os = detectOS(this.userAgent);
   }
 
-  public static parse(req: UARequest) {
-    return new UAParser(req);
+  static getInstance(req: Request) {
+    return new UserAgent(req);
   }
 }
-
-export { UserAgent };
-export type { UARequest, UAParserResult };

@@ -1,117 +1,126 @@
-import { match, P } from "ts-pattern";
-import type { Browser, Os, UARequest } from "./types";
+import type { Request } from "express";
+import { match } from "ts-pattern";
+import { isMatchRegex } from "src/utils";
 
-export enum OSName {
-  Windows = "windows",
-  MacOS = "macos",
-  Android = "android",
-  IOS = "ios",
-  Linux = "linux",
-  Unknown = "unknown",
-}
+export const DEVICE = {
+  tablet: {
+    name: "tablet",
+    pattern: /tablet|ipad/,
+  },
+  mobile: {
+    name: "mobile",
+    pattern: /mobile|iphone|android/,
+  },
+  desktop: {
+    name: "desktop",
+    pattern: /windows nt|mac os x|x11|linux/,
+  },
+} as const;
 
-export enum BrowserName {
-  Chrome = "chrome",
-  Firefox = "cirefox",
-  Safari = "safari",
-  Edge = "edge",
-  Opera = "opera",
-  IE = "internet ixplorer",
-  Unknown = "unknown",
-}
+export const OS = {
+  windows: {
+    name: "windows",
+    pattern: /windows nt (\d+\.\d+)/,
+  },
+  mac: {
+    name: "macos",
+    pattern: /mac os x (\d+[_\d]+)/,
+  },
+  android: {
+    name: "android",
+    pattern: /android (\d+([._]\d+)*)/,
+  },
+  ios: {
+    name: "ios",
+    pattern: /iphone os (\d+([._]\d+)*)/,
+  },
+  linux: {
+    name: "linux",
+    pattern: /linux/,
+  },
+} as const;
 
-export enum DeviceType {
-  Mobile = "mobile",
-  Tablet = "tablet",
-  Desktop = "desktop",
-}
+export const BROWSER = {
+  chrome: {
+    name: "chrome",
+    pattern: /chrome\/(\d+)/,
+  },
+  firefox: {
+    name: "firefox",
+    pattern: /firefox\/(\d+)/,
+  },
+  safari: {
+    name: "safari",
+    pattern: /safari\/(\d+)/,
+  },
+  edge: {
+    name: "edge",
+    pattern: /edg\/(\d+)/,
+  },
+  opera: {
+    name: "opera",
+    pattern: /opr\/(\d+)/,
+  },
+  ie: {
+    name: "internet explorer",
+    pattern: /msie (\d+)/,
+  },
+} as const;
 
-const matchWith = (pattern: RegExp) => {
-  return (value: string) => pattern.test(value);
+const whenMatch = (pattern: RegExp) => {
+  return (value: string) => isMatchRegex(pattern, value.toLowerCase().trim());
 };
 
-const version = (value: string, pattern: RegExp) => {
-  return value.match(pattern)?.[1].replace(/_/g, ".").trim() || "";
+const extractVersion = (pattern: RegExp, value: string) => {
+  const fallback = /version\/(\d+(?:[._]\d+)*)/i;
+  const tryMatch = (pattern: RegExp): string | null => {
+    const match = value.match(pattern);
+    if (!match) return null;
+
+    const version = match.slice(1).find(Boolean);
+    return version?.replace(/_/g, ".").trim() || null;
+  };
+  return tryMatch(pattern) || tryMatch(fallback) || "unknown";
 };
 
-const convertIP = (value: string) => {
+const extractFor = ({ name, pattern }: { name: string; pattern: RegExp }) => {
+  return (value: string) => ({ name, version: extractVersion(pattern, value.toLowerCase().trim()) });
+};
+
+export const detectIP = ({ ip, headers, socket }: Request) => {
+  const xForwardedFor = headers["x-forwarded-for"] as string | undefined;
+  const forwardedFor = xForwardedFor?.split(",")[0]?.trim();
+  const forwardedIP = headers.forwarded?.match(/for=(?<ip>[^\s;]+)/)?.groups?.ip;
+
+  const rawIP = forwardedFor || forwardedIP || socket.remoteAddress || ip;
+  if (rawIP === "::1") return "127.0.0.1";
+  return rawIP.replace(/^::ffff:/, "").trim();
+};
+
+export const detectDeviceType = (value: string) => {
   return match(value)
-    .with("::1", () => "127.0.0.1")
-    .otherwise((value) => value.trim());
+    .when(whenMatch(DEVICE.tablet.pattern), () => DEVICE.tablet.name)
+    .when(whenMatch(DEVICE.mobile.pattern), () => DEVICE.mobile.name)
+    .otherwise(() => DEVICE.desktop.name);
 };
 
-export const getUserAgent = (request: UARequest): string => {
-  return request.headers["user-agent"]?.trim() || "";
+export const detectOS = (value: string) => {
+  return match(value)
+    .when(whenMatch(OS.windows.pattern), extractFor(OS.windows))
+    .when(whenMatch(OS.mac.pattern), extractFor(OS.mac))
+    .when(whenMatch(OS.linux.pattern), extractFor(OS.linux))
+    .when(whenMatch(OS.android.pattern), extractFor(OS.android))
+    .when(whenMatch(OS.ios.pattern), extractFor(OS.ios))
+    .otherwise(() => ({ name: "unknown", version: "unknown" }));
 };
 
-export const getIP = (req: UARequest): string => {
-  const ip =
-    req.headers["x-forwarded-for"]?.split(",")[0].trim() || req.socket.remoteAddress || req.ip || "unknown";
-  return convertIP(ip);
-};
-
-export const getType = (agent: string): DeviceType => {
-  return match(agent.toLowerCase())
-    .with(P.when(matchWith(/mobile|android/)), () => DeviceType.Mobile)
-    .with(P.when(matchWith(/tablet|ipad/)), () => DeviceType.Tablet)
-    .otherwise(() => DeviceType.Desktop);
-};
-
-export const getOS = (agent: string): Os => {
-  return match(agent.toLowerCase())
-    .with(P.when(matchWith(/windows nt (\d+\.\d+)/)), (s) => ({
-      name: OSName.Windows,
-      version: version(s, /windows nt (\d+\.\d+)/),
-    }))
-    .with(P.when(matchWith(/mac os x (\d+[_\d]+)/)), (s) => ({
-      name: OSName.MacOS,
-      version: version(s, /mac os x (\d+[_\d]+)/),
-    }))
-    .with(P.when(matchWith(/android (\d+([._]\d+)*)/)), (s) => ({
-      name: OSName.Android,
-      version: version(s, /android (\d+([._]\d+)*)/),
-    }))
-    .with(P.when(matchWith(/iphone os (\d+([._]\d+)*)/)), (s) => ({
-      name: OSName.IOS,
-      version: version(s, /iphone os (\d+([._]\d+)*)/),
-    }))
-    .with(P.when(matchWith(/linux/)), () => ({ name: OSName.Linux, version: "" }))
-    .otherwise(() => ({ name: OSName.Unknown, version: "" }));
-};
-
-export const getBrowser = (agent: string): Browser => {
-  return match(agent.toLowerCase())
-    .with(P.when(matchWith(/chrome\/(\d+)/)), (s) => ({
-      name: BrowserName.Chrome,
-      version: version(s, /chrome\/(\d+)/),
-    }))
-    .with(P.when(matchWith(/firefox\/(\d+)/)), (s) => ({
-      name: BrowserName.Firefox,
-      version: version(s, /firefox\/(\d+)/),
-    }))
-    .with(P.when(matchWith(/mozilla\/(\d+)/)), (s) => ({
-      name: BrowserName.Firefox,
-      version: version(s, /mozilla\/(\d+)/),
-    }))
-    .with(P.when(matchWith(/safari\/(\d+)/)), (s) => ({
-      name: BrowserName.Safari,
-      version: version(s, /version\/(\d+)/),
-    }))
-    .with(P.when(matchWith(/edg\/(\d+)/)), (s) => ({
-      name: BrowserName.Edge,
-      version: version(s, /edg\/(\d+)/),
-    }))
-    .with(P.when(matchWith(/opr\/(\d+)/)), (s) => ({
-      name: BrowserName.Opera,
-      version: version(s, /opr\/(\d+)/),
-    }))
-    .with(P.when(matchWith(/msie (\d+)/)), (s) => ({
-      name: BrowserName.IE,
-      version: version(s, /msie (\d+)/),
-    }))
-    .with(P.when(matchWith(/trident.*rv:(\d+)/)), (s) => ({
-      name: BrowserName.IE,
-      version: version(s, /trident.*rv:(\d+)/),
-    }))
-    .otherwise(() => ({ name: BrowserName.Unknown, version: "" }));
+export const detectBrowser = (value: string) => {
+  return match(value)
+    .when(whenMatch(BROWSER.chrome.pattern), extractFor(BROWSER.chrome))
+    .when(whenMatch(BROWSER.firefox.pattern), extractFor(BROWSER.firefox))
+    .when(whenMatch(BROWSER.safari.pattern), extractFor(BROWSER.safari))
+    .when(whenMatch(BROWSER.edge.pattern), extractFor(BROWSER.edge))
+    .when(whenMatch(BROWSER.opera.pattern), extractFor(BROWSER.opera))
+    .when(whenMatch(BROWSER.ie.pattern), extractFor(BROWSER.ie))
+    .otherwise(() => ({ name: "unknown", version: "unknown" }));
 };
