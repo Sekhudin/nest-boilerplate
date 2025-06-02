@@ -5,6 +5,8 @@ const BOOLEANS = ["true", "false"] as const;
 
 const SAME_SITES = ["strict", "lax", "none"] as const;
 
+const PRIORITIES = ["low", "medium", "high"] as const;
+
 const MODES = ["development", "production", "test"] as const;
 
 const DATABASES = ["postgres", "mysql", "mariadb", "sqlite"] as const;
@@ -60,11 +62,13 @@ export const encryptalgo = () => z.enum(ENCRYPT_ALGORITHMS);
 
 export const expirein = () => z.enum(EXPIRES_IN);
 
+export const priority = () => z.enum(PRIORITIES);
+
 export const boolean = () => z.enum(BOOLEANS).transform((value) => value === "true");
 
 export const number = () => z.string().transform(Number);
 
-export const milliseconds = () => z.string().transform(ms);
+export const milliseconds = () => z.string().transform((value) => ms(value as ms.StringValue));
 
 export const samesite = () => z.enum(SAME_SITES);
 

@@ -92,7 +92,7 @@ export const detectIP = ({ ip, headers, socket }: Request) => {
   const forwardedFor = xForwardedFor?.split(",")[0]?.trim();
   const forwardedIP = headers.forwarded?.match(/for=(?<ip>[^\s;]+)/)?.groups?.ip;
 
-  const rawIP = forwardedFor || forwardedIP || socket.remoteAddress || ip;
+  const rawIP = forwardedFor || forwardedIP || socket.remoteAddress || ip || "unknown";
   if (rawIP === "::1") return "127.0.0.1";
   return rawIP.replace(/^::ffff:/, "").trim();
 };

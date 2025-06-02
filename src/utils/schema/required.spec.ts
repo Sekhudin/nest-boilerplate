@@ -10,7 +10,9 @@ describe("Reusable zod schemas", () => {
   it("should return custom error for empty string", () => {
     const result = string("username").safeParse("   ");
     expect(result.success).toBe(false);
-    expect(result.error.issues[0].message).toBe("username can't be empty");
+    if (result.error) {
+      expect(result.error.issues[0].message).toBe("username can't be empty");
+    }
   });
 
   it("should validate and normalize email", () => {
