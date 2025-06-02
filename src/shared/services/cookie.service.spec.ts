@@ -1,62 +1,44 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import type { Request, Response } from "express";
+import { Request, Response } from "express";
+import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
+import { RequestWithRes } from "src/types/global";
 import { CookieService } from "./cookie.service";
-import { jwtRefreshCookieConfig } from "src/configs/cookie.config";
 
 describe("CookieService", () => {
   let service: CookieService;
+  let mockRequest: Partial<Request>;
+  let mockResponse: Partial<Response>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [CookieService],
-    }).compile();
+  beforeEach(() => {
+    mockResponse = {
+      cookie: jest.fn(),
+      clearCookie: jest.fn(),
+    };
 
-    service = module.get<CookieService>(CookieService);
+    mockRequest = {
+      cookies: {
+        [jwtRefreshConfig.cookieName]: "sample-token",
+      },
+      res: mockResponse as Response,
+    };
+
+    service = new CookieService(mockRequest as RequestWithRes);
   });
 
-  it("should be defined", () => {
-    expect(service).toBeDefined();
+  it("should get cookie value", () => {
+    expect(service.getRefreshToken()).toBe("sample-token");
   });
 
-  describe("getCookieRefreshToken", () => {
-    it("should return refresh token from cookies", () => {
-      const mockRequest = { cookies: { [jwtRefreshCookieConfig.name]: "test-token" } } as Request;
-      const token = service.getCookieRefreshToke(mockRequest);
-      expect(token).toBe("test-token");
-    });
-
-    it("should return undefined if refresh token is not set", () => {
-      const mockRequest = { cookies: {} } as Request;
-      const token = service.getCookieRefreshToke(mockRequest);
-      expect(token).toBeUndefined();
-    });
+  it("should set refresh token cookie", () => {
+    service.setRefreshToken("new-token");
+    expect(mockResponse.cookie).toHaveBeenCalledWith(
+      jwtRefreshConfig.cookieName,
+      "new-token",
+      jwtRefreshConfig.cookieOptions,
+    );
   });
 
-  describe("setCookieRefreshToken", () => {
-    it("should set the refresh token in cookies", () => {
-      const mockResponse = {
-        cookie: jest.fn(),
-      } as unknown as Response;
-
-      service.setCookieRefreshToken(mockResponse, "test-token");
-
-      expect(mockResponse.cookie).toHaveBeenCalledWith(
-        jwtRefreshCookieConfig.name,
-        "test-token",
-        jwtRefreshCookieConfig.options,
-      );
-    });
-  });
-
-  describe("clearCookieRefreshToken", () => {
-    it("should clear the refresh token from cookies", () => {
-      const mockResponse = {
-        clearCookie: jest.fn(),
-      } as unknown as Response;
-
-      service.clearCookieRefreshToken(mockResponse);
-
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith(jwtRefreshCookieConfig.name);
-    });
+  it("should clear refresh token cookie", () => {
+    service.clearRefreshToken();
+    expect(mockResponse.clearCookie).toHaveBeenCalledWith(jwtRefreshConfig.cookieName, undefined);
   });
 });
