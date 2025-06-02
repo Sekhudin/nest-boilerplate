@@ -1,9 +1,13 @@
 import { BadRequestException } from "@nestjs/common";
 import z from "zod";
 import { StandardSchemaV1 } from "@standard-schema/spec";
+import type { Dto, SchemaErrorFactory } from "src/types/global";
 import * as zr from "./required";
 
-export const schema = <T extends z.ZodType<any, any, any>>(schema: T): StandardSchemaV1<z.infer<T>> => ({
+export const schema = <T extends z.ZodType<any, any, any>>(
+  schema: T,
+  errorFactory?: SchemaErrorFactory,
+): StandardSchemaV1<z.infer<T>> => ({
   "~standard": {
     version: 1,
     vendor: "zod",
@@ -12,6 +16,7 @@ export const schema = <T extends z.ZodType<any, any, any>>(schema: T): StandardS
       if (!result.success) {
         const issue = result.error.issues[0];
         const path = issue.path.length ? issue.path.join(".") : "root";
+        if (errorFactory) throw errorFactory();
         throw new BadRequestException(`${path}: ${issue.message}`);
       }
 
@@ -20,4 +25,9 @@ export const schema = <T extends z.ZodType<any, any, any>>(schema: T): StandardS
   },
 });
 
+export const validate = (schema: StandardSchemaV1, value: unknown) => {
+  return schema["~standard"].validate(value);
+};
+
 export { z, zr };
+export type { Dto };

@@ -1,5 +1,5 @@
 import { BadRequestException } from "@nestjs/common";
-import { schema, z } from "./index";
+import { schema, validate, z } from "./index";
 
 describe("schema helper", () => {
   const testSchema = z.object({
@@ -15,12 +15,23 @@ describe("schema helper", () => {
     expect(result).toEqual(validData);
   });
 
+  it("should strip unknown fields and return only defined ones", () => {
+    const validData = {
+      email: "test@example.com",
+      age: 20,
+      name: "test",
+    };
+
+    const result = wrappedSchema["~standard"].validate(validData);
+    expect(result).toEqual({ email: "test@example.com", age: 20 });
+  });
+
   it("should throw BadRequestException with correct message on validation failure", () => {
     const invalidData = { email: "invalid-email", age: 15 };
     try {
       wrappedSchema["~standard"].validate(invalidData);
       fail("Expected BadRequestException was not thrown");
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
       expect(err.message).toMatch(/email: Invalid email/);
     }
@@ -40,9 +51,20 @@ describe("schema helper", () => {
     try {
       wrappedNested["~standard"].validate(invalidNestedData);
       fail("Expected BadRequestException was not thrown");
-    } catch (err) {
+    } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
       expect(err.message).toMatch(/^user\.username: /);
     }
+  });
+
+  it("validate() should return parsed data", () => {
+    const data = { email: "user@test.com", age: 30 };
+    const result = validate(wrappedSchema, data);
+    expect(result).toEqual(data);
+  });
+
+  it("validate() should throw BadRequestException on invalid data", () => {
+    const data = { email: "bad", age: 10 };
+    expect(() => validate(wrappedSchema, data)).toThrow(BadRequestException);
   });
 });
