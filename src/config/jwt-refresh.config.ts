@@ -37,10 +37,12 @@ class JwtRefreshConfig extends BaseConfig {
   get cookieOptions(): CookieOptions {
     return {
       domain: this.env.COOKIE_DOMAIN,
-      maxAge: this.env.COOKIE_MAX_AGE,
       secure: this.env.COOKIE_SECURE,
-      sameSite: this.env.COOKIE_SAME_SITE,
       httpOnly: true,
+      sameSite: this.env.COOKIE_SAME_SITE,
+      maxAge: this.env.COOKIE_MAX_AGE,
+      path: "/",
+      priority: "high",
     };
   }
 }

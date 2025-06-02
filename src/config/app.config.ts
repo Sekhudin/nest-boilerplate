@@ -12,7 +12,6 @@ class AppConfig extends BaseConfig {
   }
 
   get runningMessage() {
-    console.log(this.env);
     return `[${this.env.APP_ENV}] running on port ${this.env.APP_PORT}`;
   }
 
@@ -24,6 +23,7 @@ class AppConfig extends BaseConfig {
   setup(app: INestApplication): void {
     app.enableShutdownHooks();
     app.use(this.injectResponseObject);
+    app.setGlobalPrefix("api");
   }
 }
 
