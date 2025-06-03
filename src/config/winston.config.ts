@@ -1,5 +1,5 @@
 import path from "path";
-import { format, Logform, LoggerOptions, transports } from "winston";
+import { format, LoggerOptions, transports } from "winston";
 import { consoleFormat } from "winston-console-format";
 import DailyRotateFile from "winston-daily-rotate-file";
 import { BaseConfig } from "./base.config";
