@@ -1,4 +1,5 @@
 import z from "zod";
+import b from "bytes";
 import ms from "ms";
 
 const BOOLEANS = ["true", "false"] as const;
@@ -69,6 +70,8 @@ export const boolean = () => z.enum(BOOLEANS).transform((value) => value === "tr
 export const number = () => z.string().transform(Number);
 
 export const milliseconds = () => z.string().transform((value) => ms(value as ms.StringValue));
+
+export const bytes = () => z.string().transform((value) => b.parse(value) ?? 1024);
 
 export const samesite = () => z.enum(SAME_SITES);
 

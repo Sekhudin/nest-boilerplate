@@ -46,7 +46,7 @@ const environmentSchema = z.object({
   LOG_LEVEL: zr.loglevel(),
   LOG_DIR: zr.path(),
   LOG_FORMAT: zr.logformat(),
-  LOG_MAX_SIZE: zr.number(),
+  LOG_MAX_SIZE: zr.bytes(),
   LOG_MAX_FILES: zr.number(),
   THROTTLER_TTL: zr.number(),
   THROTTLER_LIMIT: zr.number(),
