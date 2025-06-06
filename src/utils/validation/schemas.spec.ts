@@ -1,4 +1,4 @@
-import { email, string, username } from "./required";
+import { email, string, username } from "./schemas";
 
 describe("Reusable zod schemas", () => {
   it("should validate non-empty string", () => {

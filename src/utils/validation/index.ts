@@ -2,7 +2,7 @@ import { BadRequestException } from "@nestjs/common";
 import z from "zod";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import type { Dto, SchemaErrorFactory } from "src/types/global";
-import * as zr from "./required";
+import * as zr from "./schemas";
 
 export const schema = <T extends z.ZodType<any, any, any>>(
   schema: T,
@@ -25,7 +25,7 @@ export const schema = <T extends z.ZodType<any, any, any>>(
   },
 });
 
-export const validate = (schema: StandardSchemaV1, value: unknown) => {
+export const validate = <T>(schema: StandardSchemaV1<T>, value: unknown) => {
   return schema["~standard"].validate(value);
 };
 
