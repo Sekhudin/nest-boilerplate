@@ -1,5 +1,4 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { Role } from "src/types/global";
 import { BaseConfig } from "./base.config";
 
 class DatabaseConfig extends BaseConfig {
@@ -21,13 +20,6 @@ class DatabaseConfig extends BaseConfig {
       logging: this.env.FEATURE_DB_LOGGING_ENABLED,
       ssl: this.env.DB_SSL,
       poolSize: this.env.DB_POOL_SIZE,
-    };
-  }
-
-  get role(): Record<Role, Role> {
-    return {
-      admin: "admin",
-      user: "user",
     };
   }
 

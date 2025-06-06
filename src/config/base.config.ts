@@ -13,6 +13,13 @@ export abstract class BaseConfig {
     this.env = environment(process.env);
   }
 
+  get role() {
+    return {
+      user: "user",
+      admin: "admin",
+    };
+  }
+
   get isProduction(): boolean {
     return isMatch(this.env.APP_ENV, "production");
   }
