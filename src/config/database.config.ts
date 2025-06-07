@@ -28,7 +28,7 @@ class DatabaseConfig extends BaseConfig {
       user: "User",
       device: "Device",
       authProvider: "AuthProvider",
-    };
+    } as const;
   }
 }
 

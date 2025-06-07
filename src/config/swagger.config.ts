@@ -10,17 +10,17 @@ class SwaggerConfig extends BaseConfig {
     this._config = new DocumentBuilder();
   }
 
-  get docsTitle() {
+  get title() {
     return this.env.APP_NAME.concat(" - API Documentation");
   }
 
-  get docsVersion() {
-    return "1";
+  get version() {
+    return "1" as const;
   }
 
   setup(app: INestApplication) {
-    this._config.setTitle(this.docsTitle);
-    this._config.setVersion(this.docsVersion);
+    this._config.setTitle(this.title);
+    this._config.setVersion(this.version);
     this._config.setDescription(`This API offers [brief purpose] with versioning for compatibility.`);
     this._config.addBearerAuth();
     const document = SwaggerModule.createDocument(app, this._config.build());
