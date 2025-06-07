@@ -16,9 +16,11 @@ class SerializerConfig extends BaseConfig {
 
   get options(): ClassSerializerInterceptorOptions {
     return {
-      strategy: "exposeAll",
+      strategy: "excludeAll",
       excludePrefixes: ["_"],
       enableCircularCheck: false,
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
     };
   }
 }

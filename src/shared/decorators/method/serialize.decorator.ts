@@ -4,6 +4,6 @@ import { serializerConfig } from "src/config/serializer.config";
 export const Serialize = (dto: Type<unknown>, options?: ClassSerializerContextOptions) => {
   return applyDecorators(
     SetMetadata(serializerConfig.META_KEY, dto),
-    SetMetadata(serializerConfig.META_OPTIONS_KEY, options ?? {}),
+    SetMetadata(serializerConfig.META_OPTIONS_KEY, { type: dto, ...options }),
   );
 };
