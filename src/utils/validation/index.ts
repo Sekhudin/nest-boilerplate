@@ -1,12 +1,12 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, HttpException } from "@nestjs/common";
 import z from "zod";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import type { Dto, SchemaErrorFactory } from "src/types/global";
+import type { Dto } from "src/types/global";
 import * as zr from "./schemas";
 
 export const schema = <T extends z.ZodType<any, any, any>>(
   schema: T,
-  errorFactory?: SchemaErrorFactory,
+  fallback?: HttpException,
 ): StandardSchemaV1<z.infer<T>> => ({
   "~standard": {
     version: 1,
@@ -16,11 +16,11 @@ export const schema = <T extends z.ZodType<any, any, any>>(
       if (!result.success) {
         const issue = result.error.issues[0];
         const path = issue.path.length ? issue.path.join(".") : "root";
-        if (errorFactory) throw errorFactory();
+        if (fallback) throw fallback;
         throw new BadRequestException(`${path}: ${issue.message}`);
       }
 
-      return result.data;
+      return result.data as z.infer<T>;
     },
   },
 });

@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import { schema, validate, z } from "./index";
 
 describe("schema helper", () => {
@@ -55,6 +55,22 @@ describe("schema helper", () => {
       expect(err).toBeInstanceOf(BadRequestException);
       expect(err.message).toMatch(/^user\.username: /);
     }
+  });
+
+  it("should throw fallback InternalServerErrorException if provided", () => {
+    const fallback = new InternalServerErrorException("Internal fallback");
+    const wrappedWithFallback = schema(testSchema, fallback);
+
+    expect(() => wrappedWithFallback["~standard"].validate({ email: "a", age: 12 })).toThrowError(fallback);
+  });
+
+  it("should throw fallback UnauthorizedException if provided", () => {
+    const fallback = new UnauthorizedException("Unauthorized fallback");
+    const wrappedWithFallback = schema(testSchema, fallback);
+
+    expect(() => wrappedWithFallback["~standard"].validate({ email: "invalid", age: 1 })).toThrowError(
+      fallback,
+    );
   });
 
   it("validate() should return parsed data", () => {
