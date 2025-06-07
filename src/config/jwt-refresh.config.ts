@@ -8,15 +8,8 @@ class JwtRefreshConfig extends BaseConfig {
     super();
   }
 
-  private get token() {
-    return (req: Request) => {
-      const refreshToken = req.cookies[this.cookieName];
-      return (refreshToken as string) ?? "";
-    };
-  }
-
   get name() {
-    return "JWT_REFRESH_TOKEN";
+    return "JWT_REFRESH_TOKEN" as const;
   }
 
   get signOptions(): JwtSignOptions {
@@ -50,7 +43,7 @@ class JwtRefreshConfig extends BaseConfig {
   }
 
   get cookieName() {
-    return "REFRESH_TOKEN";
+    return "REFRESH_TOKEN" as const;
   }
 
   get cookieOptions(): CookieOptions {
@@ -62,6 +55,13 @@ class JwtRefreshConfig extends BaseConfig {
       maxAge: this.env.COOKIE_MAX_AGE,
       path: "/",
       priority: "high",
+    };
+  }
+
+  private get token() {
+    return (req: Request) => {
+      const refreshToken = req.cookies[this.cookieName];
+      return (refreshToken as string) ?? "";
     };
   }
 }

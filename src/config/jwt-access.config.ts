@@ -7,12 +7,8 @@ class JwtAccessConfig extends BaseConfig {
     super();
   }
 
-  private get token() {
-    return ExtractJwt.fromAuthHeaderAsBearerToken();
-  }
-
   get name() {
-    return "JWT_ACCESS_TOKEN";
+    return "JWT_ACCESS_TOKEN" as const;
   }
 
   get signOptions(): JwtSignOptions {
@@ -43,6 +39,10 @@ class JwtAccessConfig extends BaseConfig {
       issuer: this.env.JWT_ISSUER,
       audience: this.env.JWT_AUDIENCE,
     };
+  }
+
+  private get token() {
+    return ExtractJwt.fromAuthHeaderAsBearerToken();
   }
 }
 
