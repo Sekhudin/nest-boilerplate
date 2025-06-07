@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-jwt";
-import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
+import { jwtAccessConfig } from "src/config/jwt-access.config";
 import { jwtClaimsDto } from "src/shared/dto/jwt.dto";
 import { validate } from "src/utils/validation";
 
 @Injectable()
-export class TokenRefreshStrategy extends PassportStrategy(Strategy, jwtRefreshConfig.name) {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, jwtAccessConfig.name) {
   constructor() {
-    super(jwtRefreshConfig.strategyOptions);
+    super(jwtAccessConfig.strategyOptions);
   }
 
-  async validate(payload: any) {
+  async validate(payload: unknown) {
     return validate(jwtClaimsDto, payload);
   }
 }

@@ -1,13 +1,13 @@
 import { UnauthorizedException } from "@nestjs/common";
 import { jwtClaimsDto } from "src/shared/dto/jwt.dto";
 import * as validationUtil from "src/utils/validation";
-import { TokenRefreshStrategy } from "./token-refresh.strategy";
+import { RefreshTokenStrategy } from "./refresh-token.strategy";
 
-describe("TokenRefreshStrategy", () => {
-  let strategy: TokenRefreshStrategy;
+describe("RefreshTokenStrategy", () => {
+  let strategy: RefreshTokenStrategy;
 
   beforeEach(() => {
-    strategy = new TokenRefreshStrategy();
+    strategy = new RefreshTokenStrategy();
   });
 
   afterEach(() => {

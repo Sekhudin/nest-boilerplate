@@ -1,13 +1,13 @@
 import { UnauthorizedException } from "@nestjs/common";
 import { jwtClaimsDto } from "src/shared/dto/jwt.dto";
 import * as validationUtil from "src/utils/validation";
-import { TokenAccessStrategy } from "./token-access.strategy";
+import { AccessTokenStrategy } from "./access-token.strategy";
 
-describe("TokenAccessStrategy", () => {
-  let strategy: TokenAccessStrategy;
+describe("AccessTokenStrategy", () => {
+  let strategy: AccessTokenStrategy;
 
   beforeEach(() => {
-    strategy = new TokenAccessStrategy();
+    strategy = new AccessTokenStrategy();
   });
 
   afterEach(() => {
