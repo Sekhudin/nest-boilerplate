@@ -16,7 +16,7 @@ export class UserAgent {
     this.os = detectOS(this.userAgent);
   }
 
-  static getInstance(req: Request) {
+  static parse(req: Request) {
     return new UserAgent(req);
   }
 }

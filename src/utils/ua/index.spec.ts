@@ -21,7 +21,7 @@ describe("UserAgent", () => {
     (helper.detectIP as jest.Mock).mockReturnValue("192.168.1.1");
     (helper.detectOS as jest.Mock).mockReturnValue({ name: "windows", version: "10" });
 
-    const ua = UserAgent.getInstance(mockReq);
+    const ua = UserAgent.parse(mockReq);
 
     expect(helper.detectBrowser).toHaveBeenCalledWith("some user agent");
     expect(helper.detectDeviceType).toHaveBeenCalledWith("some user agent");
@@ -47,7 +47,7 @@ describe("UserAgent", () => {
     (helper.detectIP as jest.Mock).mockReturnValue("127.0.0.1");
     (helper.detectOS as jest.Mock).mockReturnValue({ name: "unknown", version: "unknown" });
 
-    const ua = UserAgent.getInstance(mockReq);
+    const ua = UserAgent.parse(mockReq);
 
     expect(ua.userAgent).toBe("");
     expect(ua.browser.name).toBe("unknown");
