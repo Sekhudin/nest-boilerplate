@@ -20,7 +20,7 @@ export const schema = <T extends z.ZodType<any, any, any>>(
         throw new BadRequestException(`${path}: ${issue.message}`);
       }
 
-      return result.data as z.infer<T>;
+      return result.data;
     },
   },
 });
