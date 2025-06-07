@@ -1,4 +1,4 @@
-import z from "zod";
+import z from "zod/v4";
 import * as zr from "./schema";
 
 const environmentSchema = z.object({
@@ -63,5 +63,9 @@ export type Environment = Required<z.infer<typeof environmentSchema>>;
 
 export const envpath = ".env";
 export const environment = (value: unknown) => {
-  return environmentSchema.parse(value) as Environment;
+  const parsed = environmentSchema.safeParse(value);
+  if (!parsed.success) {
+    throw z.prettifyError(parsed.error);
+  }
+  return parsed.data;
 };

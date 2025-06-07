@@ -1,6 +1,5 @@
 import { InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
-import { z } from "zod";
-import { Dto, schema, zr } from "src/utils/validation";
+import { Dto, schema, zr, z } from "src/utils/validation";
 
 const payloadSchema = z.object({
   sub: zr.string(),

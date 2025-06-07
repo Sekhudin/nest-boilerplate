@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException } from "@nestjs/common";
-import z from "zod";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import type { Dto } from "src/types/global";
+import z from "zod/v4";
 import * as zr from "./schemas";
 
 export const schema = <T extends z.ZodType<any, any, any>>(

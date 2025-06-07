@@ -1,4 +1,4 @@
-import z from "zod";
+import z from "zod/v4";
 
 export const string = (field: string = "field") => z.string().trim().min(1, `${field} can't be empty`);
 export const email = () => z.string().toLowerCase().trim().email();
