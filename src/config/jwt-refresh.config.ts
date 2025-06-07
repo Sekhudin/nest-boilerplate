@@ -1,10 +1,18 @@
-import { CookieOptions } from "express";
+import { CookieOptions, Request } from "express";
 import { JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
+import { StrategyOptionsWithoutRequest } from "passport-jwt";
 import { BaseConfig } from "./base.config";
 
 class JwtRefreshConfig extends BaseConfig {
   constructor() {
     super();
+  }
+
+  private get token() {
+    return (req: Request) => {
+      const refreshToken = req.cookies[this.cookieName];
+      return (refreshToken as string) ?? "";
+    };
   }
 
   get name() {
@@ -25,6 +33,17 @@ class JwtRefreshConfig extends BaseConfig {
     return {
       algorithms: [this.env.JWT_ALGORITHM],
       secret: this.env.JWT_REFRESH_SECRET,
+      issuer: this.env.JWT_ISSUER,
+      audience: this.env.JWT_AUDIENCE,
+    };
+  }
+
+  get strategyOptions(): StrategyOptionsWithoutRequest {
+    return {
+      jwtFromRequest: this.token,
+      ignoreExpiration: false,
+      secretOrKey: this.env.JWT_REFRESH_SECRET,
+      algorithms: [this.env.JWT_ALGORITHM],
       issuer: this.env.JWT_ISSUER,
       audience: this.env.JWT_AUDIENCE,
     };

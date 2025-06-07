@@ -1,3 +1,5 @@
+import { JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
+import { ExtractJwt, StrategyOptionsWithoutRequest } from "passport-jwt";
 import { BaseConfig } from "./base.config";
 
 class JwtAccessConfig extends BaseConfig {
@@ -5,11 +7,15 @@ class JwtAccessConfig extends BaseConfig {
     super();
   }
 
+  private get token() {
+    return ExtractJwt.fromAuthHeaderAsBearerToken();
+  }
+
   get name() {
     return "JWT_ACCESS_TOKEN";
   }
 
-  get signOptions() {
+  get signOptions(): JwtSignOptions {
     return {
       algorithm: this.env.JWT_ALGORITHM,
       secret: this.env.JWT_ACCESS_SECRET,
@@ -19,10 +25,21 @@ class JwtAccessConfig extends BaseConfig {
     };
   }
 
-  get verifyOptions() {
+  get verifyOptions(): JwtVerifyOptions {
     return {
       algorithms: [this.env.JWT_ALGORITHM],
       secret: this.env.JWT_ACCESS_SECRET,
+      issuer: this.env.JWT_ISSUER,
+      audience: this.env.JWT_AUDIENCE,
+    };
+  }
+
+  get strategyOptions(): StrategyOptionsWithoutRequest {
+    return {
+      jwtFromRequest: this.token,
+      ignoreExpiration: false,
+      secretOrKey: this.env.JWT_ACCESS_SECRET,
+      algorithms: [this.env.JWT_ALGORITHM],
       issuer: this.env.JWT_ISSUER,
       audience: this.env.JWT_AUDIENCE,
     };
