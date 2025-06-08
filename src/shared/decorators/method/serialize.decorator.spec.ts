@@ -16,7 +16,7 @@ describe("Serialize Decorator", () => {
     const metadataOptions = Reflect.getMetadata(serializerConfig.META_OPTIONS_KEY, dummyController.handler);
 
     expect(metadataDto).toBe(DummyDto);
-    expect(metadataOptions).toEqual({});
+    expect(metadataOptions).toEqual({ type: DummyDto });
   });
 
   it("should set metadata with custom options", () => {
@@ -30,6 +30,6 @@ describe("Serialize Decorator", () => {
     const dummyController = new DummyController();
     const metadataOptions = Reflect.getMetadata(serializerConfig.META_OPTIONS_KEY, dummyController.handler);
 
-    expect(metadataOptions).toEqual(options);
+    expect(metadataOptions).toEqual({ type: DummyDto, ...options });
   });
 });

@@ -1,5 +1,5 @@
 import { UnauthorizedException } from "@nestjs/common";
-import { jwtClaimsDto } from "src/shared/dto/jwt.dto";
+import { claimsSchema } from "src/shared/dto/jwt.dto";
 import * as validationUtil from "src/utils/validation";
 import { AccessTokenStrategy } from "./access-token.strategy";
 
@@ -31,7 +31,7 @@ describe("AccessTokenStrategy", () => {
     jest.spyOn(validationUtil, "validate").mockReturnValue(validPayload as any);
     const result = await strategy.validate(validPayload);
     expect(result).toEqual(validPayload);
-    expect(validationUtil.validate).toHaveBeenCalledWith(jwtClaimsDto, validPayload);
+    expect(validationUtil.validate).toHaveBeenCalledWith(claimsSchema, validPayload);
   });
 
   it("should throw UnauthorizedException if payload is invalid", async () => {

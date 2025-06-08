@@ -1,5 +1,6 @@
 import { CallHandler, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { Expose } from "class-transformer";
 import { of } from "rxjs";
 import { serializerConfig } from "src/config/serializer.config";
 import { SerializerInterceptor } from "./serializer.interceptor";
@@ -10,13 +11,24 @@ describe("SerializerInterceptor", () => {
   let callHandler: CallHandler;
   let context: ExecutionContext;
 
+  class Person {
+    @Expose()
+    name!: string;
+
+    age?: number;
+  }
+
   beforeEach(() => {
     reflector = new Reflector();
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(undefined);
     interceptor = new SerializerInterceptor(reflector);
 
+    const person = new Person();
+    person.name = "john";
+    person.age = 27;
+
     callHandler = {
-      handle: jest.fn(() => of({ test: "data" })),
+      handle: jest.fn(() => of(person)),
     };
 
     context = {
@@ -30,7 +42,7 @@ describe("SerializerInterceptor", () => {
   });
 
   it("should call getContextOptions and merge with default options", (done) => {
-    const metadataOptions = { strategy: "excludeAll" };
+    const metadataOptions = { strategy: "excludeAll", excludeExtraneousValues: false };
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(metadataOptions);
 
     const spySerialize = jest.spyOn(interceptor, "serialize").mockImplementation((data, opts) => {
@@ -44,7 +56,7 @@ describe("SerializerInterceptor", () => {
         context.getClass(),
       ]);
       expect(spySerialize).toHaveBeenCalled();
-      expect(result).toEqual({ test: "data" });
+      expect(result).toEqual({ name: "john", age: 27 });
       done();
     });
   });
@@ -53,10 +65,12 @@ describe("SerializerInterceptor", () => {
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(undefined);
 
     const spySerialize = jest.spyOn(interceptor, "serialize");
-
+    const person = new Person();
+    person.name = "john";
+    person.age = 27;
     interceptor.intercept(context, callHandler).subscribe((result) => {
-      expect(spySerialize).toHaveBeenCalledWith({ test: "data" }, expect.objectContaining({}));
-      expect(result).toEqual({ test: "data" });
+      expect(spySerialize).toHaveBeenCalledWith(person, expect.objectContaining({}));
+      expect(result).toEqual({ name: "john" });
       done();
     });
   });
