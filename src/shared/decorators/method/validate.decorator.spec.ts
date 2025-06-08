@@ -9,14 +9,17 @@ jest.mock("@nestjs/common", () => ({
 
 describe("Validate decorator", () => {
   it("should apply ValidationPipe with correct schema and paramtype", () => {
-    const mockSchema = { foo: "bar" } as any;
+    const mockSchema = {
+      schema: { foo: "bar" },
+    } as any;
     const mockParamtype = "body";
 
     Validate(mockSchema, mockParamtype);
 
     expect(UsePipes).toHaveBeenCalledWith(expect.any(ValidationPipe));
     const pipeInstance = (UsePipes as jest.Mock).mock.calls[0][0];
-    expect(pipeInstance.schema).toBe(mockSchema);
+    console.log(pipeInstance, "HAHHA")
+    expect(pipeInstance.schema).toBe(mockSchema.schema);
     expect(pipeInstance.paramtype).toBe(mockParamtype);
   });
 });
