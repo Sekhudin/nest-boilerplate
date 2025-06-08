@@ -1,4 +1,5 @@
 import path from "path";
+import { JsonLogFormatter } from "src/shared/classes/JsonLogFormatter";
 import { format, LoggerOptions, transports } from "winston";
 import { consoleFormat } from "winston-console-format";
 import DailyRotateFile from "winston-daily-rotate-file";
@@ -7,6 +8,7 @@ import { BaseConfig } from "./base.config";
 class WinstonConfig extends BaseConfig {
   private readonly _transportConsole: transports.ConsoleTransportInstance;
   private readonly _transportFile: DailyRotateFile;
+  private readonly _transportHttp: DailyRotateFile;
 
   constructor() {
     super();
@@ -40,17 +42,27 @@ class WinstonConfig extends BaseConfig {
       maxFiles: this.env.LOG_MAX_FILES,
       format: this.format,
     });
+
+    this._transportHttp = new DailyRotateFile({
+      level: "http",
+      dirname: path.join(process.cwd(), this.env.LOG_DIR),
+      filename: `http-requests-%DATE%.log`,
+      datePattern: "YYYY-MM-DD",
+      zippedArchive: false,
+      maxSize: this.env.LOG_MAX_SIZE,
+      maxFiles: this.env.LOG_MAX_FILES,
+      format: this.format,
+    });
   }
 
   get options(): LoggerOptions {
     return {
       level: "silly",
-      transports: [this._transportConsole, this._transportFile],
+      transports: [this._transportConsole, this._transportFile, this._transportHttp],
       exitOnError: false,
       defaultMeta: { _app: this.env.APP_NAME, _version: this.env.APP_VERSION, _env: this.env.APP_ENV },
       format: format.combine(
         format.timestamp(),
-        format.ms(),
         format.splat(),
         format.errors({ stack: true }),
         format.json(),
@@ -62,8 +74,8 @@ class WinstonConfig extends BaseConfig {
     switch (this.env.LOG_FORMAT) {
       case "json":
         return format.combine(
-          format(({ level, message, ms, timestamp, _app, _version, _env, ...error }) => {
-            return { level, message, error, metadata: { _app, _version, _env, ms, timestamp } };
+          format((value) => {
+            return JsonLogFormatter.transform(value);
           })(),
           format.json(),
         );
