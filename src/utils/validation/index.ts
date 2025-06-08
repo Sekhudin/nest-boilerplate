@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException } from "@nestjs/common";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import type { Dto } from "src/types/global";
+import { StandarSchemaClass } from "src/types/global";
 import z from "zod/v4";
 import * as zr from "./schemas";
 
@@ -19,15 +19,18 @@ export const schema = <T extends z.ZodType<any, any, any>>(
         if (fallback) throw fallback;
         throw new BadRequestException(`${path}: ${issue.message}`);
       }
-
       return result.data;
     },
   },
 });
 
-export const validate = <T>(schema: StandardSchemaV1<T>, value: unknown) => {
-  return schema["~standard"].validate(value);
+export const Schema = <T extends StandardSchemaV1>(schema: T): StandarSchemaClass<T> => {
+  return class {
+    static readonly schema = schema["~standard"];
+    constructor(value: StandardSchemaV1.InferInput<T>) {
+      Object.assign(this, value);
+    }
+  };
 };
 
 export { z, zr };
-export type { Dto };

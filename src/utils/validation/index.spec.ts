@@ -1,5 +1,6 @@
 import { BadRequestException, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
-import { schema, validate, z } from "./index";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { Schema, schema, z } from "./index";
 
 describe("schema helper", () => {
   const testSchema = z.object({
@@ -8,6 +9,7 @@ describe("schema helper", () => {
   });
 
   const wrappedSchema = schema(testSchema);
+  const GeneratedClass = Schema(wrappedSchema);
 
   it("should validate successfully and return parsed data", () => {
     const validData = { email: "test@example.com", age: 20 };
@@ -73,14 +75,32 @@ describe("schema helper", () => {
     );
   });
 
-  it("validate() should return parsed data", () => {
-    const data = { email: "user@test.com", age: 30 };
-    const result = validate(wrappedSchema, data);
-    expect(result).toEqual(data);
+  it("should expose static schema property", () => {
+    expect(GeneratedClass.schema).toBeDefined();
+    expect(typeof GeneratedClass.schema.validate).toBe("function");
   });
 
-  it("validate() should throw BadRequestException on invalid data", () => {
-    const data = { email: "bad", age: 10 };
-    expect(() => validate(wrappedSchema, data)).toThrow(BadRequestException);
+  it("should create an instance with assigned properties", () => {
+    const input = {
+      email: "test@example.com",
+      age: 20,
+    };
+    const instance = new GeneratedClass(input);
+    expect(instance).toMatchObject(input);
+  });
+
+  it("should preserve type safety via zod", () => {
+    const validInput: StandardSchemaV1.InferInput<typeof wrappedSchema> = {
+      email: "test@example.com",
+      age: 27,
+    };
+
+    const instance = new GeneratedClass(validInput);
+    expect(instance.email).toBe("test@example.com");
+    expect(instance.age).toBe(27);
+  });
+
+  it("should not mutate original schema", () => {
+    expect(wrappedSchema["~standard"].validate).toBe(GeneratedClass.schema.validate);
   });
 });
