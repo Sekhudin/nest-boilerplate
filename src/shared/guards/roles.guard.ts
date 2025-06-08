@@ -2,7 +2,7 @@ import { Request } from "express";
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { authConfig } from "src/config/auth.config";
-import { JwtClaims } from "src/shared/dto/jwt.dto";
+import { Claims } from "src/shared/dto/claims.dto";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -19,7 +19,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const user = request.user as JwtClaims;
+    const user = request.user as Claims;
 
     if (!user?.roles || !user.roles.length) {
       throw new ForbiddenException("User has no roles");

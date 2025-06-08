@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
-import { JwtPayload } from "src/shared/dto/jwt.dto";
+import { Payload } from "src/shared/dto/payload.dto";
 import { TokenService } from "./token.service";
 
 describe("TokenService", () => {
@@ -28,7 +28,7 @@ describe("TokenService", () => {
     jwtService = module.get<JwtService>(JwtService);
   });
 
-  const validPayload: JwtPayload = {
+  const validPayload: Payload = {
     sub: "user-123",
     username: "testuser",
     email: "test@example.com",

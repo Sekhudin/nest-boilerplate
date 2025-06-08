@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-jwt";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
-import { claimsSchema } from "src/shared/dto/jwt.dto";
-import { validate } from "src/utils/validation";
+import { Claims } from "src/shared/dto/claims.dto";
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, jwtRefreshConfig.name) {
@@ -12,6 +11,6 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, jwtRefreshC
   }
 
   async validate(payload: any) {
-    return validate(claimsSchema, payload);
+    return Claims.schema.validate(payload);
   }
 }

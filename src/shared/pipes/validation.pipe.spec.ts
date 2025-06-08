@@ -2,9 +2,7 @@ import { ArgumentMetadata, BadRequestException } from "@nestjs/common";
 import { ValidationPipe } from "./validation.pipe";
 
 const mockSchema = {
-  "~standard": {
-    validate: jest.fn(),
-  },
+  validate: jest.fn(),
 };
 
 describe("ValidationPipe Pipe", () => {
@@ -22,11 +20,11 @@ describe("ValidationPipe Pipe", () => {
     it("should validate and return value for body param", () => {
       const input = { foo: "bar" };
       const metadata: ArgumentMetadata = { type: "body" };
-      mockSchema["~standard"].validate.mockReturnValue(input);
+      mockSchema.validate.mockReturnValue(input);
 
       const result = validationPipe.transform(input, metadata);
 
-      expect(mockSchema["~standard"].validate).toHaveBeenCalledWith(input);
+      expect(mockSchema.validate).toHaveBeenCalledWith(input);
       expect(result).toEqual(input);
     });
 
@@ -36,12 +34,12 @@ describe("ValidationPipe Pipe", () => {
 
       const result = validationPipe.transform(input, metadata);
 
-      expect(mockSchema["~standard"].validate).not.toHaveBeenCalled();
+      expect(mockSchema.validate).not.toHaveBeenCalled();
       expect(result).toEqual(input);
     });
 
     it("should throw BadRequestException on validation failure", () => {
-      mockSchema["~standard"].validate.mockImplementation(() => {
+      mockSchema.validate.mockImplementation(() => {
         throw new BadRequestException("Invalid body");
       });
 
@@ -62,11 +60,11 @@ describe("ValidationPipe Pipe", () => {
     it("should validate and return value for query param", () => {
       const input = { search: "test" };
       const metadata: ArgumentMetadata = { type: "query" };
-      mockSchema["~standard"].validate.mockReturnValue(input);
+      mockSchema.validate.mockReturnValue(input);
 
       const result = validationPipe.transform(input, metadata);
 
-      expect(mockSchema["~standard"].validate).toHaveBeenCalledWith(input);
+      expect(mockSchema.validate).toHaveBeenCalledWith(input);
       expect(result).toEqual(input);
     });
 
@@ -76,12 +74,12 @@ describe("ValidationPipe Pipe", () => {
 
       const result = validationPipe.transform(input, metadata);
 
-      expect(mockSchema["~standard"].validate).not.toHaveBeenCalled();
+      expect(mockSchema.validate).not.toHaveBeenCalled();
       expect(result).toEqual(input);
     });
 
     it("should throw BadRequestException on validation failure", () => {
-      mockSchema["~standard"].validate.mockImplementation(() => {
+      mockSchema.validate.mockImplementation(() => {
         throw new BadRequestException("Invalid query");
       });
 
@@ -102,11 +100,11 @@ describe("ValidationPipe Pipe", () => {
     it("should validate and return value for route param", () => {
       const input = { id: "123" };
       const metadata: ArgumentMetadata = { type: "param" };
-      mockSchema["~standard"].validate.mockReturnValue(input);
+      mockSchema.validate.mockReturnValue(input);
 
       const result = validationPipe.transform(input, metadata);
 
-      expect(mockSchema["~standard"].validate).toHaveBeenCalledWith(input);
+      expect(mockSchema.validate).toHaveBeenCalledWith(input);
       expect(result).toEqual(input);
     });
 
@@ -116,12 +114,12 @@ describe("ValidationPipe Pipe", () => {
 
       const result = validationPipe.transform(input, metadata);
 
-      expect(mockSchema["~standard"].validate).not.toHaveBeenCalled();
+      expect(mockSchema.validate).not.toHaveBeenCalled();
       expect(result).toEqual(input);
     });
 
     it("should throw BadRequestException on validation failure", () => {
-      mockSchema["~standard"].validate.mockImplementation(() => {
+      mockSchema.validate.mockImplementation(() => {
         throw new BadRequestException("Invalid param");
       });
 
