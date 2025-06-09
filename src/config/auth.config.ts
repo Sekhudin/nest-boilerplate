@@ -5,6 +5,10 @@ class AuthConfig extends BaseConfig {
     super();
   }
 
+  get META_KEY_ROLE() {
+    return "roles" as const;
+  }
+
   allRoles() {
     return Object.keys(this.role) as (keyof typeof this.role)[];
   }

@@ -10,7 +10,7 @@ class SerializerConfig extends BaseConfig {
     return "custom:serializer" as const;
   }
 
-  get META_OPTIONS_KEY() {
+  get META_KEY_OPTIONS() {
     return "custom:serializer:options" as const;
   }
 

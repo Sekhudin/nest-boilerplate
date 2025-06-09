@@ -43,6 +43,7 @@ const environmentSchema = z.object({
   COOKIE_MAX_AGE: zr.milliseconds(),
   COOKIE_PATH: zr.path(),
   COOKIE_PRIORITY: zr.priority(),
+  LOG_LEVEL_GLOBAL: zr.loglevel(),
   LOG_LEVEL: zr.loglevel(),
   LOG_DIR: zr.path(),
   LOG_FORMAT: zr.logformat(),

@@ -13,10 +13,6 @@ export abstract class BaseConfig {
     this.env = environment(process.env);
   }
 
-  get ROLE_META_KEY() {
-    return "roles" as const;
-  }
-
   get role() {
     return {
       user: "user",
