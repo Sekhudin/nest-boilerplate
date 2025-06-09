@@ -14,9 +14,11 @@ export class AuthController {
   @Validate(CreateAuthDto, "body")
   @Serialize(CreateAuthDto)
   create(@Body() createAuthDto: CreateAuthDto) {
-    console.log(createAuthDto);
-    const data = { sex: "sekhudin", hello: "sekhudin", age: 27, name: "sekhudin" };
-    return [createAuthDto, createAuthDto, createAuthDto];
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([createAuthDto, createAuthDto, createAuthDto]);
+      }, 4000);
+    });
     return this.authService.create(createAuthDto);
   }
 

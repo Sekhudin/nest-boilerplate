@@ -23,7 +23,7 @@ async function bootstrap() {
   );
 
   await app.listen(appConfig.port, () => {
-    logger.ws.silly(appConfig.runningMessage);
+    logger.ws.info(appConfig.runningMessage);
   });
 }
 bootstrap();
