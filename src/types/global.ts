@@ -16,30 +16,3 @@ export interface RequestWithRes extends Request {
 }
 
 export type ExpressMiddleware = (req: Request, res: Response, next: () => void) => void;
-
-export interface JsonHttpLogFormat {
-  method?: string;
-  path?: string;
-  statusCode?: number;
-  requestId?: string;
-  userId?: string;
-  deviceId?: string;
-  userAgent?: string;
-  queryParams?: Record<string, unknown>;
-  body?: Record<string, unknown>;
-  startTime?: string;
-  endTime?: string;
-  responseTime?: number;
-}
-
-export interface JsonErrorLogFormat {
-  level?: string;
-  timestamp?: string;
-  error?: unknown;
-  ms?: string;
-  _app?: string;
-  _version?: string;
-  _env?: string;
-}
-
-export interface JsonLogFormat extends JsonHttpLogFormat, JsonErrorLogFormat {}
