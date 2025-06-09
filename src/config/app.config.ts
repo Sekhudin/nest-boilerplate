@@ -7,6 +7,14 @@ class AppConfig extends BaseConfig {
     super();
   }
 
+  get name() {
+    return this.env.APP_NAME;
+  }
+
+  get version() {
+    return this.env.APP_VERSION;
+  }
+
   get port(): number {
     return this.env.APP_PORT;
   }

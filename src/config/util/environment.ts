@@ -54,8 +54,6 @@ const environmentSchema = z.object({
   FEATURE_DEBUG_ENABLED: zr.boolean(),
   FEATURE_API_DOCS_ENABLED: zr.boolean(),
   FEATURE_DB_LOGGING_ENABLED: zr.boolean(),
-  FEATURE_LOG_CONSOLE_ENABLED: zr.boolean(),
-  FEATURE_LOG_FILE_ENABLED: zr.boolean(),
   FEATURE_THROTTLER_ENABLED: zr.boolean(),
   FEATURE_SIGNUP_ENABLED: zr.boolean(),
 });

@@ -10,13 +10,13 @@ import { LoggerService } from "./shared/services/logger.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const logger = app.get(LoggerService);
 
   appConfig.setup(app);
   corsConfig.setup(app);
   cookieConfig.setup(app);
   swaggerConfig.setup(app);
 
-  const logger = app.get(LoggerService);
   app.useGlobalInterceptors(
     new SerializerInterceptor(app.get(Reflector)),
     new HttpLoggingInterceptor(logger),
