@@ -25,7 +25,7 @@ export class SerializerInterceptor extends ClassSerializerInterceptor {
   }
 
   protected override getContextOptions(context: ExecutionContext): ClassSerializerContextOptions | undefined {
-    return this.reflector.getAllAndOverride(serializerConfig.META_OPTIONS_KEY, [
+    return this.reflector.getAllAndOverride(serializerConfig.META_KEY_OPTIONS, [
       context.getHandler(),
       context.getClass(),
     ]);

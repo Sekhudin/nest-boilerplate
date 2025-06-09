@@ -51,7 +51,7 @@ describe("SerializerInterceptor", () => {
     });
 
     interceptor.intercept(context, callHandler).subscribe((result) => {
-      expect(reflector.getAllAndOverride).toHaveBeenCalledWith(serializerConfig.META_OPTIONS_KEY, [
+      expect(reflector.getAllAndOverride).toHaveBeenCalledWith(serializerConfig.META_KEY_OPTIONS, [
         context.getHandler(),
         context.getClass(),
       ]);
