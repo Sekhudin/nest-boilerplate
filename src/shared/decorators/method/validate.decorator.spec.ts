@@ -18,7 +18,6 @@ describe("Validate decorator", () => {
 
     expect(UsePipes).toHaveBeenCalledWith(expect.any(ValidationPipe));
     const pipeInstance = (UsePipes as jest.Mock).mock.calls[0][0];
-    console.log(pipeInstance, "HAHHA")
     expect(pipeInstance.schema).toBe(mockSchema.schema);
     expect(pipeInstance.paramtype).toBe(mockParamtype);
   });

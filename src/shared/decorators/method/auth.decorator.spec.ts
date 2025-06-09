@@ -20,7 +20,7 @@ describe("@Auth decorator", () => {
     Auth();
 
     expect(SetMetadata).toHaveBeenCalledWith(
-      authConfig.ROLE_META_KEY,
+      authConfig.META_KEY_ROLE,
       authConfig.pickRoles(authConfig.allRoles()),
     );
 

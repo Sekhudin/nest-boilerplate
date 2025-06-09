@@ -14,7 +14,7 @@ type Guard = keyof typeof GUARDS;
 
 export const Auth = (roles: Role[] = authConfig.allRoles(), name: Guard = "access") => {
   return applyDecorators(
-    SetMetadata(authConfig.ROLE_META_KEY, authConfig.pickRoles(roles)),
+    SetMetadata(authConfig.META_KEY_ROLE, authConfig.pickRoles(roles)),
     UseGuards(GUARDS[name] ?? AccessTokenGuard, RolesGuard),
   );
 };

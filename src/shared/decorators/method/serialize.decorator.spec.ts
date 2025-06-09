@@ -13,7 +13,7 @@ describe("Serialize Decorator", () => {
 
     const dummyController = new DummyController();
     const metadataDto = Reflect.getMetadata(serializerConfig.META_KEY, dummyController.handler);
-    const metadataOptions = Reflect.getMetadata(serializerConfig.META_OPTIONS_KEY, dummyController.handler);
+    const metadataOptions = Reflect.getMetadata(serializerConfig.META_KEY_OPTIONS, dummyController.handler);
 
     expect(metadataDto).toBe(DummyDto);
     expect(metadataOptions).toEqual({ type: DummyDto });
@@ -28,7 +28,7 @@ describe("Serialize Decorator", () => {
     }
 
     const dummyController = new DummyController();
-    const metadataOptions = Reflect.getMetadata(serializerConfig.META_OPTIONS_KEY, dummyController.handler);
+    const metadataOptions = Reflect.getMetadata(serializerConfig.META_KEY_OPTIONS, dummyController.handler);
 
     expect(metadataOptions).toEqual({ type: DummyDto, ...options });
   });
