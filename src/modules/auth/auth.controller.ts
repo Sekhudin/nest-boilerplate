@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/commo
 import { Auth } from "src/shared/decorators/method/auth.decorator";
 import { Serialize } from "src/shared/decorators/method/serialize.decorator";
 import { Validate } from "src/shared/decorators/method/validate.decorator";
+import { QueryFailedError } from "typeorm";
 import { AuthService } from "./auth.service";
 import { CreateAuthDto } from "./dto/create-auth.dto";
 import { UpdateAuthDto } from "./dto/update-auth.dto";

@@ -19,10 +19,6 @@ class AppConfig extends BaseConfig {
     return this.env.APP_PORT;
   }
 
-  get runningMessage() {
-    return `app running on port ${this.env.APP_PORT}`;
-  }
-
   private injectResponseObject: ExpressMiddleware = (req, res, next) => {
     req.res = res;
     next();
