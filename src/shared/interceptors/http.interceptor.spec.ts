@@ -1,15 +1,15 @@
 import { CallHandler, ExecutionContext } from "@nestjs/common";
 import { of } from "rxjs";
 import { LoggerService } from "src/shared/services/logger.service";
-import { HttpLoggingInterceptor } from "./http-logging.interceptor";
+import { HttpInterceptor } from "./http.interceptor";
 
-describe("HttpLoggingInterceptor", () => {
-  let interceptor: HttpLoggingInterceptor;
+describe("HttpInterceptor", () => {
+  let interceptor: HttpInterceptor;
   let logger: LoggerService;
 
   beforeEach(() => {
     logger = { ws: { http: jest.fn() } } as any;
-    interceptor = new HttpLoggingInterceptor(logger);
+    interceptor = new HttpInterceptor(logger);
   });
 
   it("should log HTTP request", async () => {

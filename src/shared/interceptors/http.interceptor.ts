@@ -1,11 +1,11 @@
 import { Request } from "express";
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Observable, tap } from "rxjs";
-import { JsonLogFormatter } from "src/shared/classes/JsonLogFormatter";
+import { JsonLogFormatter } from "src/shared/classes/json-log-formatter";
 import { LoggerService } from "src/shared/services/logger.service";
 
 @Injectable()
-export class HttpLoggingInterceptor implements NestInterceptor {
+export class HttpInterceptor implements NestInterceptor {
   constructor(private readonly logger: LoggerService) {}
 
   intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
