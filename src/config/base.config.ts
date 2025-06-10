@@ -24,6 +24,10 @@ export abstract class BaseConfig {
     return isMatch(this.env.APP_ENV, "production");
   }
 
+  get isNotProduction(): boolean {
+    return !this.isProduction;
+  }
+
   setup(app: INestApplication): void {
     throw new Error(`[${this.constructor.name}] does not implement setup(app).`);
   }
