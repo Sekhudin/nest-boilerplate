@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { HttpException } from "@nestjs/common";
 import { Logform } from "winston";
 
 interface JsonHttpLogFormat {
@@ -36,6 +37,17 @@ interface HttpLogParams {
   endTime: number;
 }
 
+interface HttpErrorLogParams {
+  req: Request;
+  exception: HttpException;
+}
+
+interface UnknownErrorLogParams {
+  req: Request;
+  statusCode: number;
+  exception: unknown;
+}
+
 export class JsonLogFormatter {
   constructor(value: JsonLogFormat) {
     Object.assign(this, value);
@@ -46,7 +58,7 @@ export class JsonLogFormatter {
   }
 
   static http({ req, startTime, endTime, statusCode }: HttpLogParams) {
-    const log: JsonHttpLogFormat = {
+    const log: JsonLogFormat = {
       method: req.method.toUpperCase(),
       path: req.path,
       queryParams: Object.keys(req.query).length ? req.query : null,
@@ -57,7 +69,30 @@ export class JsonLogFormatter {
       responseTime: endTime - startTime,
       responseTimeMs: `+${endTime - startTime}ms`,
     };
+    return new JsonLogFormatter(log);
+  }
 
+  static httpError({ req, exception }: HttpErrorLogParams) {
+    const log: JsonLogFormat = {
+      method: req.method.toUpperCase(),
+      path: req.path,
+      queryParams: Object.keys(req.query).length ? req.query : null,
+      body: req.body ?? null,
+      statusCode: exception.getStatus(),
+      error: exception.getResponse(),
+    };
+    return new JsonLogFormatter(log);
+  }
+
+  static unknownError({ req, statusCode, exception }: UnknownErrorLogParams) {
+    const log: JsonLogFormat = {
+      method: req.method.toUpperCase(),
+      path: req.path,
+      queryParams: Object.keys(req.query).length ? req.query : null,
+      body: req.body ?? null,
+      statusCode,
+      error: exception,
+    };
     return new JsonLogFormatter(log);
   }
 }
