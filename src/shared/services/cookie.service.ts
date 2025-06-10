@@ -1,16 +1,15 @@
-import type { CookieOptions } from "express";
+import type { CookieOptions, RequestWithResponse, Response } from "express";
 import { Inject, Injectable, Scope } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
 import { cookieConfig } from "src/config/cookie.config";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
-import { RequestWithRes } from "src/types/global";
 
 @Injectable({ scope: Scope.REQUEST })
 export class CookieService {
-  private readonly res: RequestWithRes["res"];
+  private readonly res: Response;
 
-  constructor(@Inject(REQUEST) private readonly req: RequestWithRes) {
-    this.res = req.res;
+  constructor(@Inject(REQUEST) private readonly req: RequestWithResponse) {
+    this.res = req.res as Response;
   }
 
   get(key: string) {

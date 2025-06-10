@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
+import { Request, RequestWithResponse, Response } from "express";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
-import { RequestWithRes } from "src/types/global";
 import { CookieService } from "./cookie.service";
 
 describe("CookieService", () => {
@@ -21,7 +20,7 @@ describe("CookieService", () => {
       res: mockResponse as Response,
     };
 
-    service = new CookieService(mockRequest as RequestWithRes);
+    service = new CookieService(mockRequest as RequestWithResponse);
   });
 
   it("should get cookie value", () => {

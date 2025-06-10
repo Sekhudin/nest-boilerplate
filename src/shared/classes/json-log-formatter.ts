@@ -7,7 +7,7 @@ interface JsonHttpLogFormat {
   path?: string;
   statusCode?: number;
   requestId?: string;
-  userId?: string;
+  userId?: string | null;
   deviceId?: string;
   userAgent?: string;
   queryParams?: Record<string, unknown> | null;
@@ -80,6 +80,7 @@ export class JsonLogFormatter {
       body: req.body ?? null,
       statusCode: exception.getStatus(),
       error: exception.getResponse(),
+      userId: req.user?.sub ?? null,
     };
     return new JsonLogFormatter(log);
   }

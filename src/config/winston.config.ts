@@ -94,6 +94,7 @@ class WinstonConfig extends BaseConfig {
     return format.combine(
       format.colorize({ level: true }),
       format.padLevels(),
+      this.formatMaskSensitive()(),
       consoleFormat({
         showMeta: true,
         metaStrip: ["timestamp", "service", "_app", "_version", "_env"],
