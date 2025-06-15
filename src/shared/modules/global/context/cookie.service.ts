@@ -1,27 +1,31 @@
-import type { CookieOptions, RequestWithResponse, Response } from "express";
-import { Inject, Injectable, Scope } from "@nestjs/common";
-import { REQUEST } from "@nestjs/core";
+import { CookieOptions } from "express";
+import { Injectable } from "@nestjs/common";
 import { cookieConfig } from "src/config/cookie.config";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
+import { AsyncStorageService } from "./async-storage.service";
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
 export class CookieService {
-  private readonly res: Response;
+  constructor(private readonly asyncStorageService: AsyncStorageService) {}
 
-  constructor(@Inject(REQUEST) private readonly req: RequestWithResponse) {
-    this.res = req.res as Response;
+  private get req() {
+    return this.asyncStorageService.getRequest();
+  }
+
+  private get res() {
+    return this.asyncStorageService.getResponse();
   }
 
   get(key: string) {
-    return (this.req.cookies[key] as string) || "";
+    return (this.req?.cookies[key] as string) ?? "";
   }
 
   set(key: string, value: unknown, options?: CookieOptions) {
-    this.res.cookie(key, value, { ...cookieConfig.options, ...options });
+    this.res?.cookie(key, value, { ...cookieConfig.options, ...options });
   }
 
   clear(key: string, options?: CookieOptions) {
-    this.res.clearCookie(key, options);
+    this.res?.clearCookie(key, options);
   }
 
   getRefreshToken() {
