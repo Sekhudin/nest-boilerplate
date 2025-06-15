@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext } from "@nestjs/common";
 import { of } from "rxjs";
-import { LoggerService } from "src/shared/services/logger.service";
+import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { HttpInterceptor } from "./http.interceptor";
 
 describe("HttpInterceptor", () => {
