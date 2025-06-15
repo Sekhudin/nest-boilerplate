@@ -24,6 +24,6 @@
       "application": ["./package.json"]
     }
   },
-  "include": ["src/**/*.ts", "src/types/*.d.ts"],
+  "include": ["src/**/*.ts", "src/types"],
   "exclude": ["node_modules"]
 }
