@@ -20,8 +20,7 @@ export class AuthController {
   @Get("token")
   @Serialize(CreateAuthDto)
   findAll() {
-    const data = { sex: "sekhudin", hello: "sekhudin", age: 27, name: "sekhudin" };
-    return [data, data, data];
+    return this.authService.findAll();
   }
 
   @Get(":id")

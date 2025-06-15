@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { CookieService } from "src/shared/services/cookie.service";
+import { CookieService } from "src/shared/modules/global/context/cookie.service";
 import { CreateAuthDto } from "./dto/create-auth.dto";
 import { UpdateAuthDto } from "./dto/update-auth.dto";
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly cookieService: CookieService) {}
+  constructor(private readonly cookieService: CookieService) {
+    console.log("INSTANCE AuthService");
+  }
 
   create(createAuthDto: CreateAuthDto) {
     this.cookieService.setRefreshToken("CONTOH_REFRESH_TOKEN");
@@ -13,6 +15,8 @@ export class AuthService {
   }
 
   findAll() {
+    const token = this.cookieService.getRefreshToken();
+    console.log("TOKEN", token);
     return `This action returns all auth`;
   }
 
