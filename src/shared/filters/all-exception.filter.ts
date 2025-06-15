@@ -10,7 +10,7 @@ import {
 import { HttpAdapterHost } from "@nestjs/core";
 import { appConfig } from "src/config/app.config";
 import { JsonLogFormatter } from "src/shared/classes/json-log-formatter";
-import { LoggerService } from "src/shared/services/logger.service";
+import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
@@ -27,7 +27,7 @@ export class AllExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       const statusCode = exception.getStatus();
-      if (appConfig.isNotProduction && statusCode < 500) {
+      if (!appConfig.isProduction && statusCode < 500) {
         this.logger.ws.warn("HTTP_EXCEPTION", JsonLogFormatter.httpError({ req, exception }));
       }
 
