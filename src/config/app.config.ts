@@ -1,5 +1,3 @@
-import { InjectResponseMiddleware } from "express";
-import { INestApplication } from "@nestjs/common";
 import { BaseConfig } from "./base.config";
 
 class AppConfig extends BaseConfig {
@@ -17,17 +15,6 @@ class AppConfig extends BaseConfig {
 
   get port(): number {
     return this.env.APP_PORT;
-  }
-
-  private injectResponseMiddleware: InjectResponseMiddleware = (req, res, next) => {
-    req.res = res;
-    next();
-  };
-
-  setup(app: INestApplication): void {
-    app.enableShutdownHooks();
-    app.use(this.injectResponseMiddleware);
-    app.setGlobalPrefix("api");
   }
 }
 

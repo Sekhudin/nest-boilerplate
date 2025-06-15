@@ -7,7 +7,7 @@ class CorsConfig extends BaseConfig {
     super();
   }
 
-  get options(): CorsOptions {
+  private get options(): CorsOptions {
     return {
       origin: this.env.CORS_ORIGIN,
       allowedHeaders: this.env.CORS_HEADERS,
