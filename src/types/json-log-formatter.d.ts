@@ -4,15 +4,15 @@ import type { HttpException } from "@nestjs/common";
 
 declare module "src/shared/classes/json-log-formatter" {
   interface JsonHttpLogFormat {
-    method?: string;
-    path?: string;
-    statusCode?: number;
-    requestId?: string;
-    userId?: string | null;
-    deviceId?: string;
-    userAgent?: string;
-    queryParams?: Record<string, unknown> | null;
-    body?: Record<string, unknown>;
+    method: string;
+    path: string;
+    statusCode: number;
+    requestId: string;
+    userId: string | null;
+    deviceId: string | null;
+    userAgent: string;
+    queryParams: Record<string, unknown> | null;
+    body: Record<string, unknown>;
     startTime?: string;
     endTime?: string;
     responseTime?: number;

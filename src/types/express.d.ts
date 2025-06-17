@@ -1,15 +1,17 @@
 import "express";
 import type { Request } from "express";
 import type { Claims } from "src/shared/dto/claims.dto";
+import type { UserAgent } from "src/utils/ua";
 
 declare module "express" {
   interface Request {
     requestId: string;
-    deviceId: string;
-    user: Claims;
+    deviceId: string | null;
+    userAgent: UserAgent;
+    user?: Claims;
   }
 
-  interface Next {
+  interface NextFunction {
     (): void;
     (error?: any): void;
   }
