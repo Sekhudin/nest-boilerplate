@@ -3,12 +3,19 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import { JsonLogFormatter } from "./json-log-formatter";
 
 describe("JsonLogFormatter", () => {
-  const mockRequest = {
+  const mockRequest: Partial<Request> = {
     method: "post",
     path: "/test-path",
     query: { foo: "bar" },
     body: { key: "value" },
-  } as unknown as Request;
+    userAgent: {
+      browser: { name: "Chrome", version: "114.0" },
+      device: "android",
+      ip: "192.168.0.1",
+      os: { name: "Android", version: "13" },
+      userAgent: "Mozilla/5.0 (Linux; Android 13; ...)",
+    },
+  };
 
   describe("transform", () => {
     it("should transform the value to Logform.TransformableInfo", () => {
@@ -25,7 +32,7 @@ describe("JsonLogFormatter", () => {
       const endTime = startTime + 150;
 
       const result = JsonLogFormatter.http({
-        req: mockRequest,
+        req: mockRequest as Request,
         statusCode: 200,
         startTime,
         endTime,
@@ -49,7 +56,7 @@ describe("JsonLogFormatter", () => {
       const exception = new HttpException({ message: "Forbidden" }, HttpStatus.FORBIDDEN);
 
       const result = JsonLogFormatter.httpError({
-        req: mockRequest,
+        req: mockRequest as Request,
         exception,
       });
 
@@ -70,7 +77,7 @@ describe("JsonLogFormatter", () => {
       const error = new Error("Unexpected error");
 
       const result = JsonLogFormatter.unknownError({
-        req: mockRequest,
+        req: mockRequest as Request,
         statusCode: 500,
         exception: error,
       });

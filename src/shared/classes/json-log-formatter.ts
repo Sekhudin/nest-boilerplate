@@ -20,6 +20,10 @@ export class JsonLogFormatter {
       endTime: new Date(endTime).toISOString(),
       responseTime: endTime - startTime,
       responseTimeMs: `+${endTime - startTime}ms`,
+      requestId: req.requestId,
+      deviceId: req.deviceId,
+      userId: req.user?.sub ?? null,
+      userAgent: req.userAgent.userAgent,
     };
     return new JsonLogFormatter(log);
   }
@@ -32,7 +36,10 @@ export class JsonLogFormatter {
       body: req.body ?? null,
       statusCode: exception.getStatus(),
       error: exception.getResponse(),
+      requestId: req.requestId,
+      deviceId: req.deviceId,
       userId: req.user?.sub ?? null,
+      userAgent: req.userAgent.userAgent,
     };
     return new JsonLogFormatter(log);
   }
@@ -45,6 +52,10 @@ export class JsonLogFormatter {
       body: req.body ?? null,
       statusCode,
       error: exception,
+      requestId: req.requestId,
+      deviceId: req.deviceId,
+      userId: req.user?.sub ?? null,
+      userAgent: req.userAgent.userAgent,
     };
     return new JsonLogFormatter(log);
   }
