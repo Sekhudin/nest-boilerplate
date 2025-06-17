@@ -18,7 +18,6 @@ export class AuthController {
   }
 
   @Get("token")
-  @Serialize(CreateAuthDto)
   findAll() {
     return this.authService.findAll();
   }
