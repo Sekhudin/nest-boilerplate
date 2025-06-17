@@ -13,7 +13,8 @@ describe("AsyncStorageService", () => {
     store.set("key1", "value1");
 
     service.run(store, () => {
-      expect(service.get("key1" as any)).toBe("value1");
+      const value = service.get<string>("key1" as any);
+      expect(value).toBe("value1");
       done();
     });
   });
@@ -22,7 +23,9 @@ describe("AsyncStorageService", () => {
     const store = new Map();
 
     service.run(store, () => {
-      expect(service.get("nonexistent" as any)).toBeNull();
+      const value = service.get("nonexistent" as any);
+      console.log(value);
+      expect(value).toBeNull();
       done();
     });
   });
@@ -56,7 +59,8 @@ describe("AsyncStorageService", () => {
 
     service.run(store, () => {
       service.set("foo" as any, "bar");
-      expect(service.get("foo" as any)).toBe("bar");
+      const value = service.get<string>("foo" as any);
+      expect(value).toBe("bar");
       done();
     });
   });

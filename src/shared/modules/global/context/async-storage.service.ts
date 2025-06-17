@@ -22,19 +22,11 @@ export class AsyncStorageService {
     return (this.store?.get(key) as T) ?? null;
   }
 
-  setRequest(req: Request) {
-    this.set("req", req);
-  }
-
   getRequest() {
-    return this.get<Request>("req");
-  }
-
-  setResponse(res: Response) {
-    this.set("res", res);
+    return this.get<Request>("req") as Request;
   }
 
   getResponse() {
-    return this.get<Response>("res");
+    return this.get<Response>("res") as Response;
   }
 }
