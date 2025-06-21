@@ -1,13 +1,6 @@
 import { ExecutionContext } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
-import { UserAgent } from "src/utils/ua";
 import { Agent } from "./agent.decorator";
-
-jest.mock("src/utils/ua", () => ({
-  UserAgent: {
-    parse: jest.fn(),
-  },
-}));
 
 describe("Agent Decorator", () => {
   function getFactory(decorator: Function) {
@@ -20,12 +13,17 @@ describe("Agent Decorator", () => {
     return args[key].factory;
   }
 
-  it("should return parsed user agent from request", () => {
-    const mockParsedUA = { browser: "Chrome", os: "Windows" };
-    (UserAgent.parse as jest.Mock).mockReturnValue(mockParsedUA);
+  it("should return userAgent from request", () => {
+    const mockUserAgent = {
+      browser: { name: "Chrome", version: "114.0" },
+      device: "Desktop",
+      ip: "192.168.1.1",
+      os: { name: "Windows", version: "10" },
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
+    };
 
     const mockRequest = {
-      headers: { "user-agent": "some-agent-string" },
+      userAgent: mockUserAgent,
     };
 
     const mockContext = {
@@ -37,7 +35,6 @@ describe("Agent Decorator", () => {
     const factory = getFactory(Agent);
     const result = factory(null, mockContext);
 
-    expect(UserAgent.parse).toHaveBeenCalledWith(mockRequest);
-    expect(result).toEqual(mockParsedUA);
+    expect(result).toEqual(mockUserAgent);
   });
 });
