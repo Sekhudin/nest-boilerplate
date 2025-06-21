@@ -8,9 +8,9 @@ import {
   InternalServerErrorException,
 } from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
-import { appConfig } from "src/config/app.config";
-import { JsonLogFormatter } from "src/shared/classes/json-log-formatter";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
+import { JsonLogFormatter } from "src/shared/classes/json-log-formatter";
+import { appConfig } from "src/config/app.config";
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {

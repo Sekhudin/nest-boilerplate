@@ -1,5 +1,5 @@
-import { INestApplication } from "@nestjs/common";
 import * as dotEnv from "dotenv";
+import { INestApplication } from "@nestjs/common";
 import { isMatch } from "src/utils";
 import { environment, Environment, envpath } from "./util/environment";
 

@@ -1,9 +1,9 @@
-import { HttpAdapterHost, NestFactory, Reflector } from "@nestjs/core";
 import { AppModule } from "src/app.module";
+import { HttpAdapterHost, NestFactory, Reflector } from "@nestjs/core";
+import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { AllExceptionFilter } from "src/shared/filters/all-exception.filter";
 import { HttpInterceptor } from "src/shared/interceptors/http.interceptor";
 import { SerializerInterceptor } from "src/shared/interceptors/serializer.interceptor";
-import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { appConfig } from "./config/app.config";
 import { cookieConfig } from "./config/cookie.config";
 import { corsConfig } from "./config/cors.config";

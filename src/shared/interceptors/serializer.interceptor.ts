@@ -1,3 +1,4 @@
+import { map, Observable } from "rxjs";
 import {
   CallHandler,
   ClassSerializerContextOptions,
@@ -6,7 +7,6 @@ import {
   Injectable,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { map, Observable } from "rxjs";
 import { serializerConfig } from "src/config/serializer.config";
 
 @Injectable()

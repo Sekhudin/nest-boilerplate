@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { Payload } from "src/shared/dto/payload.dto";
 import { jwtAccessConfig } from "src/config/jwt-access.config";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
-import { Payload } from "src/shared/dto/payload.dto";
 
 @Injectable()
 export class TokenService {

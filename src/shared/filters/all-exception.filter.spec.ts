@@ -1,8 +1,8 @@
 import { Request } from "express";
 import { ArgumentsHost, HttpException, HttpStatus, InternalServerErrorException } from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
-import { Claims } from "src/shared/dto/claims.dto";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
+import { Claims } from "src/shared/dto/claims.dto";
 import { AllExceptionFilter } from "./all-exception.filter";
 
 jest.mock("src/config/app.config", () => ({

@@ -1,8 +1,8 @@
 import { Request } from "express";
-import { CallHandler, ExecutionContext } from "@nestjs/common";
 import { of } from "rxjs";
-import { Claims } from "src/shared/dto/claims.dto";
+import { CallHandler, ExecutionContext } from "@nestjs/common";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
+import { Claims } from "src/shared/dto/claims.dto";
 import { HttpInterceptor } from "./http.interceptor";
 
 describe("HttpInterceptor", () => {

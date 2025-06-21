@@ -1,8 +1,8 @@
 import { SetMetadata, UseGuards } from "@nestjs/common";
-import { authConfig } from "src/config/auth.config";
 import { AccessTokenGuard } from "src/shared/guards/access-token.guard";
 import { RefreshTokenGuard } from "src/shared/guards/refresh-token.guard";
 import { RolesGuard } from "src/shared/guards/roles.guard";
+import { authConfig } from "src/config/auth.config";
 import { Auth } from "./auth.decorator";
 
 jest.mock("@nestjs/common", () => ({

@@ -25,9 +25,8 @@ class DatabaseConfig extends BaseConfig {
 
   get table() {
     return {
-      user: "User",
-      device: "Device",
-      authProvider: "AuthProvider",
+      user: "users",
+      role: "roles",
     } as const;
   }
 }

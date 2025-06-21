@@ -1,5 +1,5 @@
-import { applyDecorators, Paramtype, UsePipes } from "@nestjs/common";
 import { StandarSchemaClass } from "@standard-schema/spec";
+import { applyDecorators, Paramtype, UsePipes } from "@nestjs/common";
 import { ValidationPipe } from "src/shared/pipes/validation.pipe";
 
 export const Validate = <T extends StandarSchemaClass<any>>(schema: T, paramtype: Paramtype) => {

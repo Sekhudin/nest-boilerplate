@@ -1,6 +1,6 @@
-import { cookieConfig } from "src/config/cookie.config";
 import { AsyncStorageService } from "src/shared/modules/global/context/async-storage.service";
 import { CookieService } from "src/shared/modules/global/context/cookie.service";
+import { cookieConfig } from "src/config/cookie.config";
 import { ContextMiddleware } from "./context.middleware";
 
 jest.mock("src/utils/ua", () => ({

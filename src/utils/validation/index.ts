@@ -1,6 +1,6 @@
-import { BadRequestException, HttpException } from "@nestjs/common";
-import { StandardSchemaV1, StandarSchemaClass } from "@standard-schema/spec";
 import z from "zod/v4";
+import { StandardSchemaV1, StandarSchemaClass } from "@standard-schema/spec";
+import { BadRequestException, HttpException } from "@nestjs/common";
 import * as zr from "./schemas";
 
 export const schema = <T extends z.ZodType<any, any, any>>(

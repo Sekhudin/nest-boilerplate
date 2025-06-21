@@ -1,8 +1,8 @@
 import { Request } from "express";
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { authConfig } from "src/config/auth.config";
 import { Claims } from "src/shared/dto/claims.dto";
+import { authConfig } from "src/config/auth.config";
 
 @Injectable()
 export class RolesGuard implements CanActivate {

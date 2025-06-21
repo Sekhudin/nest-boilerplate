@@ -1,6 +1,6 @@
 import { CookieOptions, Request } from "express";
-import { JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 import { StrategyOptionsWithoutRequest } from "passport-jwt";
+import { JwtSignOptions, JwtVerifyOptions } from "@nestjs/jwt";
 import { BaseConfig } from "./base.config";
 
 class JwtRefreshConfig extends BaseConfig {

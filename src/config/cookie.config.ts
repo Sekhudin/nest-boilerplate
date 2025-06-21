@@ -1,6 +1,6 @@
 import { CookieOptions } from "express";
-import { INestApplication } from "@nestjs/common";
 import cookieParser from "cookie-parser";
+import { INestApplication } from "@nestjs/common";
 import { BaseConfig } from "./base.config";
 
 class CookieConfig extends BaseConfig {
