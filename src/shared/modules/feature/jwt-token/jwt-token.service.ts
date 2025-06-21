@@ -5,7 +5,7 @@ import { jwtAccessConfig } from "src/config/jwt-access.config";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
 
 @Injectable()
-export class TokenService {
+export class JwtTokenService {
   constructor(private readonly jwtService: JwtService) {}
 
   signRefreshToken(payload: Payload) {

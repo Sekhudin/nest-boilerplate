@@ -2,10 +2,10 @@ import { InternalServerErrorException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 import { Payload } from "src/shared/dto/payload.dto";
-import { TokenService } from "./token.service";
+import { JwtTokenService } from "./jwt-token.service";
 
-describe("TokenService", () => {
-  let tokenService: TokenService;
+describe("JwtTokenService", () => {
+  let tokenService: JwtTokenService;
   let jwtService: JwtService;
 
   const mockJwtService = {
@@ -16,7 +16,7 @@ describe("TokenService", () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TokenService,
+        JwtTokenService,
         {
           provide: JwtService,
           useValue: mockJwtService,
@@ -24,7 +24,7 @@ describe("TokenService", () => {
       ],
     }).compile();
 
-    tokenService = module.get<TokenService>(TokenService);
+    tokenService = module.get<JwtTokenService>(JwtTokenService);
     jwtService = module.get<JwtService>(JwtService);
   });
 
@@ -57,7 +57,7 @@ describe("TokenService", () => {
     );
   });
 
-  it("should return both access and refresh tokens in signToken()", async () => {
+  it("should return both access and refresh tokens in signJwtToken()", async () => {
     mockJwtService.signAsync.mockResolvedValueOnce("refresh-token").mockResolvedValueOnce("access-token");
 
     const result = await tokenService.signToken(validPayload);

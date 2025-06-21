@@ -11,25 +11,25 @@ jest.mock("src/utils/ua", () => ({
 
 describe("ContextMiddleware", () => {
   let middleware: ContextMiddleware;
-  let mockAsyncStorageService: Partial<AsyncStorageService>;
-  let mockCookieService: Partial<CookieService>;
+  let mockAsyncStorage: Partial<AsyncStorageService>;
+  let mockCookie: Partial<CookieService>;
   let mockReq: any;
   let mockRes: any;
   let next: jest.Mock;
 
   beforeEach(() => {
-    mockAsyncStorageService = {
+    mockAsyncStorage = {
       run: jest.fn((store, callback) => callback()),
     };
 
-    mockCookieService = {
+    mockCookie = {
       getDeviceId: jest.fn().mockReturnValue("dev-123"),
       setDeviceId: jest.fn(),
     };
 
     middleware = new ContextMiddleware(
-      mockAsyncStorageService as AsyncStorageService,
-      mockCookieService as CookieService,
+      mockAsyncStorage as AsyncStorageService,
+      mockCookie as CookieService,
     );
 
     mockReq = {
@@ -46,19 +46,19 @@ describe("ContextMiddleware", () => {
     expect(mockReq.deviceId).toBe("dev-123");
     expect(mockReq.userAgent).toEqual({ device: "mock-device" });
 
-    expect(mockCookieService.getDeviceId).toHaveBeenCalled();
-    expect(mockCookieService.setDeviceId).toHaveBeenCalled();
+    expect(mockCookie.getDeviceId).toHaveBeenCalled();
+    expect(mockCookie.setDeviceId).toHaveBeenCalled();
 
-    expect(mockAsyncStorageService.run).toHaveBeenCalledTimes(1);
+    expect(mockAsyncStorage.run).toHaveBeenCalledTimes(1);
     expect(next).toHaveBeenCalled();
   });
 
   it("should fallback deviceId to null if cookie service returns falsy", () => {
-    (mockCookieService.getDeviceId as jest.Mock).mockReturnValue(null);
+    (mockCookie.getDeviceId as jest.Mock).mockReturnValue(null);
 
     middleware.use(mockReq, mockRes, next);
 
     expect(mockReq.deviceId).toBeNull();
-    expect(mockCookieService.setDeviceId).toHaveBeenCalled();
+    expect(mockCookie.setDeviceId).toHaveBeenCalled();
   });
 });
