@@ -1,0 +1,52 @@
+import { Test, TestingModule } from "@nestjs/testing";
+import { CryptoService } from "./crypto.service";
+
+describe("CryptoService", () => {
+  let service: CryptoService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [CryptoService],
+    }).compile();
+
+    service = module.get<CryptoService>(CryptoService);
+  });
+
+  describe("Password Hashing", () => {
+    it("should hash and verify password correctly", async () => {
+      const password = "s3cret!";
+      const hash = await service.hashPassword(password);
+
+      expect(typeof hash).toBe("string");
+      expect(hash).toMatch(/^\$argon2/);
+
+      const isValid = await service.verifyPassword(password, hash);
+      expect(isValid).toBe(true);
+    });
+
+    it("should fail to verify wrong password", async () => {
+      const password = "password123";
+      const wrongPassword = "wrong-password";
+      const hash = await service.hashPassword(password);
+
+      const isValid = await service.verifyPassword(wrongPassword, hash);
+      expect(isValid).toBe(false);
+    });
+  });
+
+  describe("Encryption", () => {
+    it("should encrypt and decrypt correctly", () => {
+      const plain = "Hello world!";
+      const encrypted = service.encrypt(plain);
+      expect(typeof encrypted).toBe("string");
+      expect(encrypted).toContain(":");
+
+      const decrypted = service.decrypt(encrypted);
+      expect(decrypted).toBe(plain);
+    });
+
+    it("should throw error for invalid encrypted input", () => {
+      expect(() => service.decrypt("invalidformat")).toThrowError("Invalid encrypted format");
+    });
+  });
+});
