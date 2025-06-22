@@ -7,7 +7,7 @@ import { AllExceptionFilter } from "./all-exception.filter";
 
 jest.mock("src/config/app.config", () => ({
   appConfig: {
-    isNotProduction: true,
+    isProduction: false,
   },
 }));
 
