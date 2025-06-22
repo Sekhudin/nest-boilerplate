@@ -24,7 +24,6 @@ describe("AsyncStorageService", () => {
 
     service.run(store, () => {
       const value = service.get("nonexistent" as any);
-      console.log(value);
       expect(value).toBeNull();
       done();
     });

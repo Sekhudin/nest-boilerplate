@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Test, TestingModule } from "@nestjs/testing";
 import { cookieConfig } from "src/config/cookie.config";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
 import { AsyncStorageService } from "./async-storage.service";
@@ -13,9 +14,8 @@ describe("CookieService", () => {
   let mockAsyncStorageService: Partial<AsyncStorageService>;
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
-  let mockStorage: Record<string, unknown>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockRequest = {
       cookies: {
         [jwtRefreshConfig.cookieName]: "sample-token",
@@ -27,18 +27,22 @@ describe("CookieService", () => {
       clearCookie: jest.fn(),
     };
 
-    mockStorage = {
-      req: mockRequest,
-      res: mockResponse,
-    };
-
     mockAsyncStorageService = {
-      get: <T>(key: string) => mockStorage[key] as T,
       getRequest: () => mockRequest as Request,
       getResponse: () => mockResponse as Response,
     };
 
-    service = new CookieService(mockAsyncStorageService as AsyncStorageService);
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        CookieService,
+        {
+          provide: AsyncStorageService,
+          useValue: mockAsyncStorageService,
+        },
+      ],
+    }).compile();
+
+    service = module.get<CookieService>(CookieService);
   });
 
   it("should get refresh token from cookies", () => {
@@ -46,11 +50,10 @@ describe("CookieService", () => {
   });
 
   it("should set refresh token cookie and device id if not exist", () => {
-    if (mockRequest.cookies) {
-      delete mockRequest.cookies[cookieConfig.name.deviceId];
-    }
+    delete mockRequest.cookies?.[cookieConfig.name.deviceId];
 
     service.setRefreshToken("new-token");
+
     expect(mockResponse.cookie).toHaveBeenCalledWith(
       cookieConfig.name.deviceId,
       "mock-device-id",
@@ -66,6 +69,17 @@ describe("CookieService", () => {
       jwtRefreshConfig.cookieName,
       "new-token",
       jwtRefreshConfig.cookieOptions,
+    );
+  });
+
+  it("should not set device id again if already exists", () => {
+    mockRequest.cookies![cookieConfig.name.deviceId] = "existing-id";
+    service.setDeviceId();
+
+    expect(mockResponse.cookie).not.toHaveBeenCalledWith(
+      cookieConfig.name.deviceId,
+      expect.anything(),
+      expect.anything(),
     );
   });
 

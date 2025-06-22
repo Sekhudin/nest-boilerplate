@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { Test, TestingModule } from "@nestjs/testing";
 import { Claims } from "src/shared/dto/claims.dto";
 import { AsyncStorageService } from "./async-storage.service";
 import { ContextService } from "./context.service";
@@ -33,12 +34,22 @@ describe("ContextService", () => {
     user: mockUser,
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockAsyncStorageService = {
       getRequest: jest.fn().mockReturnValue(mockRequest),
     };
 
-    service = new ContextService(mockAsyncStorageService as AsyncStorageService);
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ContextService,
+        {
+          provide: AsyncStorageService,
+          useValue: mockAsyncStorageService,
+        },
+      ],
+    }).compile();
+
+    service = module.get<ContextService>(ContextService);
   });
 
   it("should return requestId", () => {
