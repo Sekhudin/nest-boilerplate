@@ -1,8 +1,15 @@
+import { INestApplication } from "@nestjs/common";
 import { BaseConfig } from "./base.config";
 
-class AppConfig extends BaseConfig {
+export class AppConfig extends BaseConfig {
   constructor() {
     super();
+  }
+
+  static register(app: INestApplication, configs: BaseConfig[]): void {
+    configs.forEach((config) => {
+      config.setup(app);
+    });
   }
 
   get name() {
