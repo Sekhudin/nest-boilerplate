@@ -1,3 +1,4 @@
+import path from "path";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { BaseConfig } from "./base.config";
 
@@ -15,9 +16,10 @@ class DatabaseConfig extends BaseConfig {
       port: this.env.DB_PORT,
       username: this.env.DB_USERNAME,
       password: this.env.DB_PASSWORD,
-      synchronize: this.isProduction,
+      synchronize: this.env.DB_SYNCHRONIZE,
       autoLoadEntities: this.isProduction,
       logging: this.env.FEATURE_DB_LOGGING_ENABLED,
+      entities: [path.join(__dirname, "..", "modules/**/*.entity{.ts,.js}")],
       ssl: this.env.DB_SSL,
       poolSize: this.env.DB_POOL_SIZE,
     };
@@ -30,6 +32,7 @@ class DatabaseConfig extends BaseConfig {
       role: "roles",
       userAuth: "user_auths",
       authProvider: "auth_providers",
+      authHistory: "auth_history",
     } as const;
   }
 }
