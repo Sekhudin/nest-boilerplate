@@ -10,11 +10,12 @@ import { ContextModule } from "./shared/modules/global/context/context.module";
 import { DatabaseModule } from "./shared/modules/global/database/database.module";
 import { LoggerModule } from "./shared/modules/global/logger/logger.module";
 import { MailerModule } from "./shared/modules/global/mailer/mailer.module";
+import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.module";
 
 @Module({
   imports: [
-    AppFilterModule,
     AppGuardModule,
+    AppFilterModule,
     AppInterceptorModule,
     ContextModule,
     DatabaseModule,
@@ -23,6 +24,7 @@ import { MailerModule } from "./shared/modules/global/mailer/mailer.module";
     AuthModule,
     UserModule,
     TokenModule,
+    ThrottlerModule,
   ],
 })
 export class AppModule implements NestModule {
