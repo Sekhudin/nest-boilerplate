@@ -4,8 +4,8 @@ import { databaseConfig } from "src/config/database.config";
 
 @Entity(databaseConfig.table.token)
 export class Token {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({ length: 512 })
   token: string;

@@ -1,14 +1,12 @@
 import { Module } from "@nestjs/common";
-import { PassportModule } from "@nestjs/passport";
-import { AccessTokenStrategy } from "src/shared/strategies/access-token.strategy";
-import { RefreshTokenStrategy } from "src/shared/strategies/refresh-token.strategy";
+import { JwtTokenModule } from "src/shared/modules/feature/jwt-token/jwt-token.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 
 @Module({
-  imports: [PassportModule],
+  imports: [JwtTokenModule],
   controllers: [AuthController],
-  providers: [RefreshTokenStrategy, AccessTokenStrategy, AuthService],
-  exports: [PassportModule, AuthService],
+  providers: [AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

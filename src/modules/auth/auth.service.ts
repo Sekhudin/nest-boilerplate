@@ -15,9 +15,7 @@ export class AuthService {
     private readonly otpMailer: OtpMailerService,
     private readonly billingMailer: BillingMailerService,
     private readonly newsletterMailer: NewsletterMailerService,
-  ) {
-    console.log("INSTANCE AuthService");
-  }
+  ) {}
 
   async create(createAuthDto: CreateAuthDto) {
     this.cookieService.setRefreshToken("CONTOH_REFRESH_TOKEN");

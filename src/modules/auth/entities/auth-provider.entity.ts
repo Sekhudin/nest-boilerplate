@@ -5,10 +5,13 @@ import { UserAuth } from "./user-auth.entity";
 @Entity(databaseConfig.table.authProvider)
 export class AuthProvider {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @Column({ unique: true })
   name: "LOCAL" | "GOOGLE" | "GITHUB";
+
+  @Column()
+  description: string;
 
   @OneToMany(() => UserAuth, (userAuth) => userAuth.provider)
   userAuths: UserAuth[];

@@ -1,9 +1,11 @@
-import { Column, CreateDateColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/modules/user/entities/user.entity";
+import { databaseConfig } from "src/config/database.config";
 
+@Entity(databaseConfig.table.authHistory)
 export class AuthHistory {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @ManyToOne(() => User)
   user: User;

@@ -7,7 +7,6 @@ class MigrationConfig extends BaseConfig {
   }
 
   get options(): DataSourceOptions {
-    const folder = this.isProduction ? "prod" : "dev";
     return {
       type: this.env.DB_TYPE as "postgres",
       database: this.env.DB_NAME,
@@ -20,7 +19,8 @@ class MigrationConfig extends BaseConfig {
       logging: this.env.FEATURE_DB_LOGGING_ENABLED,
       migrationsTableName: this.env.DB_MIGRATION_TABLE,
       entities: ["src/modules/**/entities/*.entity.ts"],
-      migrations: [`migrations/${folder}/*.ts`],
+      migrations: [`migrations/*.ts`],
+      migrationsTransactionMode: "all",
       ssl: this.env.DB_SSL,
       poolSize: this.env.DB_POOL_SIZE,
     };

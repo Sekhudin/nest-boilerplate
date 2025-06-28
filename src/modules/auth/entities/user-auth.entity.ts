@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/modules/user/entities/user.entity";
 import { databaseConfig } from "src/config/database.config";
 import { AuthProvider } from "./auth-provider.entity";
@@ -6,7 +6,7 @@ import { AuthProvider } from "./auth-provider.entity";
 @Entity(databaseConfig.table.userAuth)
 export class UserAuth {
   @PrimaryGeneratedColumn("uuid")
-  id: number;
+  id: string;
 
   @ManyToOne(() => User, (user) => user.authMethods)
   user: User;
@@ -25,4 +25,7 @@ export class UserAuth {
    */
   @Column({ nullable: true })
   passwordHash?: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

@@ -1,4 +1,12 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { AuthHistory } from "src/modules/auth/entities/auth-history.entity";
 import { UserAuth } from "src/modules/auth/entities/user-auth.entity";
 import { Role } from "src/modules/role/entities/role.entity";
@@ -32,5 +40,8 @@ export class User {
   tokens: Token[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  timestamp: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
