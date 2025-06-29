@@ -21,7 +21,9 @@
     "^src/shared/decorators(/.*)?$",
     "^src/shared(/.*)?$",
     "^src/types(/.*)?$",
+    "^src/utils/[^/]+",
     "^src/utils(/.*)?$",
+    "^src/utils$",
     "^src/config(/.*)?$",
     "^[.]"
   ],
