@@ -3,7 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { RoleModule } from "src/modules/role/role.module";
 import { TokenModule } from "src/modules/token/token.module";
 import { UserModule } from "src/modules/user/user.module";
-import { JwtTokenModule } from "src/shared/modules/feature/jwt-token/jwt-token.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { AuthHistory } from "./entities/auth-history.entity";
@@ -15,7 +14,6 @@ import { UserAuthRepository } from "./repositories/user-auth.repository";
 
 @Module({
   imports: [
-    JwtTokenModule,
     RoleModule,
     TokenModule,
     UserModule,

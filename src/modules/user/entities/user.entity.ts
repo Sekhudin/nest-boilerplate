@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { AuthHistory } from "src/modules/auth/entities/auth-history.entity";
 import { UserAuth } from "src/modules/auth/entities/user-auth.entity";
+import { Otp } from "src/modules/otp/entities/otp.entity";
 import { Role } from "src/modules/role/entities/role.entity";
 import { Token } from "src/modules/token/entities/token.entity";
 import { z, zr } from "src/utils/validation";
@@ -31,12 +32,6 @@ export class User {
   @Column({ default: false })
   isEmailVerified: boolean;
 
-  @Column({ nullable: true, length: 128 })
-  emailVerificationToken: string;
-
-  @Column({ type: "timestamp", nullable: true })
-  emailVerificationTokenExpiresAt: Date;
-
   @ManyToOne(() => Role)
   role: Role;
 
@@ -48,6 +43,9 @@ export class User {
 
   @OneToMany(() => Token, (token) => token.user)
   tokens: Token[];
+
+  @OneToMany(() => Otp, (otp) => otp.user)
+  otpd: Otp[];
 
   @CreateDateColumn()
   timestamp: Date;
@@ -62,8 +60,6 @@ export class User {
       password: zr.password(),
       isActive: z.boolean(),
       isEmailVerified: z.boolean(),
-      emailVerificationToken: z.string().length(6),
-      emailVerificationTokenExpiresAt: z.date(),
       get role() {
         return Role.dto;
       },
@@ -75,6 +71,9 @@ export class User {
       },
       get tokens() {
         return z.array(Token.dto);
+      },
+      get otps() {
+        return z.array(Otp.dto);
       },
       timestamp: z.date(),
       updatedAt: z.date(),
