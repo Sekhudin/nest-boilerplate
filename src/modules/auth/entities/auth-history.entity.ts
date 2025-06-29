@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/modules/user/entities/user.entity";
+import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 
 @Entity(databaseConfig.table.authHistory)
@@ -36,4 +37,22 @@ export class AuthHistory {
 
   @CreateDateColumn()
   timestamp: Date;
+
+  static get dto() {
+    return z.object({
+      id: z.uuidv4(),
+      get user() {
+        return User.dto;
+      },
+      ipAddress: z.string(),
+      userAgentString: z.string().trim(),
+      device: z.string(),
+      browserName: z.string(),
+      browserVersion: z.string(),
+      osName: z.string(),
+      osVersion: z.string(),
+      action: z.enum(["LOGIN", "LOGOUT", "REFRESH"]),
+      timestamp: z.date(),
+    });
+  }
 }
