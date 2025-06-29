@@ -13,6 +13,7 @@ import { DatabaseModule } from "./shared/modules/global/database/database.module
 import { JwtTokenModule } from "./shared/modules/global/jwt-token/jwt-token.module";
 import { LoggerModule } from "./shared/modules/global/logger/logger.module";
 import { MailerModule } from "./shared/modules/global/mailer/mailer.module";
+import { OtpGeneratorModule } from "./shared/modules/global/otp-generator/otp-generator.module";
 import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.module";
 
 @Module({
@@ -31,6 +32,7 @@ import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.mod
     LoggerModule,
     MailerModule,
     ThrottlerModule,
+    OtpGeneratorModule,
   ],
 })
 export class AppModule implements NestModule {
