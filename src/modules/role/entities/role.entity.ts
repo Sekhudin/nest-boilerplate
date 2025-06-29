@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/modules/user/entities/user.entity";
+import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 
 @Entity(databaseConfig.table.role)
@@ -18,4 +19,16 @@ export class Role {
 
   @CreateDateColumn()
   timestamp: Date;
+
+  static get dto() {
+    return z.object({
+      id: z.uuidv4(),
+      name: z.string().min(1).toUpperCase(),
+      description: z.string().toLowerCase(),
+      get users() {
+        return z.array(User.dto);
+      },
+      timestamp: z.date(),
+    });
+  }
 }
