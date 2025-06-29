@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AuthModule } from "./modules/auth/auth.module";
+import { OtpModule } from "./modules/otp/otp.module";
 import { RoleModule } from "./modules/role/role.module";
 import { TokenModule } from "./modules/token/token.module";
 import { UserModule } from "./modules/user/user.module";
@@ -19,6 +20,7 @@ import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.mod
 @Module({
   imports: [
     AuthModule,
+    OtpModule,
     RoleModule,
     TokenModule,
     UserModule,

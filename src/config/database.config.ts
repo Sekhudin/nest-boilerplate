@@ -30,6 +30,7 @@ class DatabaseConfig extends BaseConfig {
       user: "users",
       token: "tokens",
       role: "roles",
+      otp: "otps",
       userAuth: "user_auths",
       authProvider: "auth_providers",
       authHistory: "auth_history",
