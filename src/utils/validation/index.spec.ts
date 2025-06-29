@@ -4,7 +4,7 @@ import { Schema, schema, z } from "./index";
 
 describe("schema helper", () => {
   const testSchema = z.object({
-    email: z.string().email(),
+    email: z.email(),
     age: z.number().min(18),
   });
 

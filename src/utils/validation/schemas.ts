@@ -1,7 +1,10 @@
 import z from "zod/v4";
 
-export const string = (field: string = "field") => z.string().trim().min(1, `${field} can't be empty`);
-export const email = () => z.string().toLowerCase().trim().email();
+export const username = () => z.string().min(1).toLowerCase().trim();
 
-export const username = () => string("username").toLowerCase();
-export const password = () => string("password");
+export const password = () => {
+  const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{8,}$/;
+  return z.string().trim().regex(pattern, {
+    message: "Password must be at least 8 characters, include uppercase, lowercase, number, and symbol.",
+  });
+};
