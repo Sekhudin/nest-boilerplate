@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { schema, Schema, z, zr } from "src/utils/validation";
+import { schema, Schema, z } from "src/utils/validation";
 
 const createauth = z.object({
-  username: zr.string(),
-  password: zr.string(),
+  username: z.string(),
+  password: z.string(),
 });
 
 export class CreateAuthDto extends Schema(schema(createauth)) {
