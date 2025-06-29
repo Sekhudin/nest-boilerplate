@@ -21,8 +21,8 @@
     "^src/shared/decorators(/.*)?$",
     "^src/shared(/.*)?$",
     "^src/types(/.*)?$",
-    "^src/config(/.*)?$",
     "^src/utils(/.*)?$",
+    "^src/config(/.*)?$",
     "^[.]"
   ],
   "importOrderSeparation": true,
