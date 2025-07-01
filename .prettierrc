@@ -27,8 +27,6 @@
     "^src/config(/.*)?$",
     "^[.]"
   ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
   "overrides": [
     {
       "files": "*.hbs",
