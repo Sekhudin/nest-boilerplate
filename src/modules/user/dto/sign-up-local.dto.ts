@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { User } from "src/modules/user/entities/user.entity";
 import { schema, Schema, z } from "src/utils/validation";
 import { isNotMatch } from "src/utils";
@@ -22,4 +23,13 @@ const signUpLocal = schema(
     }),
 );
 
-export class SignUpLocalDto extends Schema(signUpLocal) {}
+export class SignUpLocalDto extends Schema(signUpLocal) {
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  password: string;
+
+  @ApiProperty()
+  confirmPassword: string;
+}
