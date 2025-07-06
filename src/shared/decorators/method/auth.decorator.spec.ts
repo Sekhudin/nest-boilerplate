@@ -11,7 +11,7 @@ jest.mock("@nestjs/common", () => ({
   UseGuards: jest.fn(() => () => {}),
 }));
 
-describe("@Auth decorator", () => {
+describe("Auth decorator", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
