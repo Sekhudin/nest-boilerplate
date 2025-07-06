@@ -8,7 +8,7 @@ const SAME_SITES = ["strict", "lax", "none"] as const;
 
 const PRIORITIES = ["low", "medium", "high"] as const;
 
-const MODES = ["development", "production", "test"] as const;
+const MODES = ["local", "development", "production", "test"] as const;
 
 const DATABASES = ["postgres", "mysql", "mariadb", "sqlite"] as const;
 

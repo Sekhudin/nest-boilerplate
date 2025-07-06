@@ -16,6 +16,7 @@ class WinstonConfig extends BaseConfig {
 
     this._sensitiveData = new Set([
       "password",
+      "confirmPassword",
       "token",
       "accessToken",
       "refreshToken",
