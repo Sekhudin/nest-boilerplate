@@ -1,5 +1,5 @@
 import { InternalServerErrorException } from "@nestjs/common";
-import { Schema, schema, z, zr } from "src/utils/validation";
+import { Schema, schema, z } from "src/utils/validation";
 
 export const payload = z.object({
   sub: z.string(),
