@@ -15,16 +15,13 @@ import { Token } from "src/modules/token/entities/token.entity";
 import { z, zr } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 
-@Entity(databaseConfig.table.user)
+@Entity(databaseConfig.TABLES.USER)
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ unique: true })
   email: string;
-
-  @Column({ nullable: true })
-  password: string;
 
   @Column({ default: true })
   isActive: boolean;

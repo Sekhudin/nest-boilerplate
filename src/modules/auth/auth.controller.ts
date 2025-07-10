@@ -10,7 +10,6 @@ export class AuthController {
   @Post("signup")
   @Validate(SignUpLocalDto, "body")
   signup(@Body() signUpLocalDto: SignUpLocalDto) {
-    console.log(signUpLocalDto);
-    return signUpLocalDto;
+    return this.authService.signUpLocal(signUpLocalDto);
   }
 }

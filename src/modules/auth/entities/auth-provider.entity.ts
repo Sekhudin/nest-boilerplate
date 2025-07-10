@@ -3,12 +3,12 @@ import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 import { UserAuth } from "./user-auth.entity";
 
-@Entity(databaseConfig.table.authProvider)
+@Entity(databaseConfig.TABLES.AUTH_PROVIDER)
 export class AuthProvider {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: "varchar", length: 30, unique: true })
   name: "LOCAL" | "GOOGLE" | "GITHUB";
 
   @Column()

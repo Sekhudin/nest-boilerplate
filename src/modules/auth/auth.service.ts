@@ -1,52 +1,28 @@
+import { DataSource } from "typeorm";
 import { Injectable } from "@nestjs/common";
-import { ContextService } from "src/shared/modules/global/context/context.service";
-import { CookieService } from "src/shared/modules/global/context/cookie.service";
-import { BillingMailerService } from "src/shared/modules/global/mailer/billing-mailer.service";
-import { NewsletterMailerService } from "src/shared/modules/global/mailer/newsletter-mailer.service";
-import { OtpMailerService } from "src/shared/modules/global/mailer/otp-mailer.service";
-import { CreateAuthDto } from "./dto/create-auth.dto";
-import { UpdateAuthDto } from "./dto/update-auth.dto";
+import { OtpService } from "src/modules/otp/otp.service";
+import { UserService } from "src/modules/user/user.service";
+import { BaseService } from "src/shared/base/base.service";
+import { UserAuthService } from "./services/user-auth.service";
+import { SignUpLocalDto } from "./dto/sign-up-local.dto";
 
 @Injectable()
-export class AuthService {
+export class AuthService extends BaseService {
   constructor(
-    private readonly cookieService: CookieService,
-    private readonly contextService: ContextService,
-    private readonly otpMailer: OtpMailerService,
-    private readonly billingMailer: BillingMailerService,
-    private readonly newsletterMailer: NewsletterMailerService,
-  ) {}
-
-  async create(createAuthDto: CreateAuthDto) {
-    this.cookieService.setRefreshToken("CONTOH_REFRESH_TOKEN");
-    try {
-      await this.otpMailer.send();
-      await this.billingMailer.send();
-      return "success";
-    } catch (error) {
-      console.log(error);
-      return "failed";
-    }
+    private readonly userService: UserService,
+    private readonly userAuthService: UserAuthService,
+    private readonly otpService: OtpService,
+    private readonly datasource: DataSource,
+  ) {
+    super();
   }
 
-  findAll() {
-    const token = this.cookieService.getRefreshToken();
-    const requestId = this.contextService.getRequestId();
-    const deviceId = this.contextService.getDeviceId();
-    const userAgent = this.contextService.getUserAgent();
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove() {
-    this.cookieService.clearRefreshToken();
-    return `This action removes a # auth`;
+  async signUpLocal(signUpLocalDto: SignUpLocalDto) {
+    return await this.datasource.transaction(async (entityManager) => {
+      const user = await this.userService.createLocalUser(signUpLocalDto, entityManager);
+      const authUser = await this.userAuthService.createLocalUserAuth(user, signUpLocalDto.password, entityManager);
+      await this.otpService.sendOtpForLocalSignup(authUser.user, entityManager);
+      return user;
+    });
   }
 }

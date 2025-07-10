@@ -3,7 +3,7 @@ import { User } from "src/modules/user/entities/user.entity";
 import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 
-@Entity(databaseConfig.table.role)
+@Entity(databaseConfig.TABLES.ROLE)
 export class Role {
   @PrimaryGeneratedColumn("uuid")
   id: string;

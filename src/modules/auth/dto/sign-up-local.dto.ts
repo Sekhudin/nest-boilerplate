@@ -20,7 +20,8 @@ const signUpLocal = schema(
           message: "password and confirm password not match!",
         });
       }
-    }),
+    })
+    .transform(({ email, password }) => ({ email, password })),
 );
 
 export class SignUpLocalDto extends Schema(signUpLocal) {

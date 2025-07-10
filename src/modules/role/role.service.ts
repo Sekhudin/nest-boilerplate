@@ -1,26 +1,20 @@
 import { Injectable } from "@nestjs/common";
-import { CreateRoleDto } from "./dto/create-role.dto";
-import { UpdateRoleDto } from "./dto/update-role.dto";
+import { BaseService } from "src/shared/base/base.service";
+import { authConfig } from "src/config/auth.config";
+import { RoleRepository } from "./role.repository";
 
 @Injectable()
-export class RoleService {
-  create(createRoleDto: CreateRoleDto) {
-    return "This action adds a new role";
+export class RoleService extends BaseService {
+  constructor(private readonly roleRepository: RoleRepository) {
+    super();
   }
 
-  findAll() {
-    return `This action returns all role`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
-  }
-
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async findDefaultRole() {
+    const existingRole = await this.roleRepository.findOneBy({ name: authConfig.DEFAULT_ROLE });
+    if (existingRole) return existingRole;
+    const role = this.roleRepository.create();
+    role.name = authConfig.DEFAULT_ROLE;
+    role.description = "Default Role";
+    return await this.roleRepository.save(role);
   }
 }

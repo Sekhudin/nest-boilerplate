@@ -4,7 +4,7 @@ import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 import { AuthProvider } from "./auth-provider.entity";
 
-@Entity(databaseConfig.table.userAuth)
+@Entity(databaseConfig.TABLES.USER_AUTH)
 export class UserAuth {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -18,8 +18,8 @@ export class UserAuth {
   /**
    * @description only for LOCAL
    */
-  @Column({ nullable: true })
-  passwordHash?: string;
+  @Column({ default: "" })
+  passwordHash: string;
 
   @ManyToOne(() => User, (user) => user.authMethods)
   user: User;

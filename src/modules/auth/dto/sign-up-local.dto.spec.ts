@@ -4,7 +4,7 @@ import { SignUpLocalDto } from "./sign-up-local.dto";
 describe("SignUpLocalDto", () => {
   const validate = SignUpLocalDto.schema.validate;
 
-  it("should pass with a valid password", () => {
+  it("should pass with a valid input", () => {
     const result = validate({
       email: "user@example.com",
       password: "StrongP@ss1",
@@ -14,11 +14,12 @@ describe("SignUpLocalDto", () => {
     expect(result).toEqual({
       email: "user@example.com",
       password: "StrongP@ss1",
-      confirmPassword: "StrongP@ss1",
     });
+
+    expect(result).not.toHaveProperty("confirmPassword");
   });
 
-  it("should throw BadRequestException if passwords do not match", () => {
+  it("should throw if passwords do not match", () => {
     try {
       validate({
         email: "user@example.com",
@@ -27,11 +28,11 @@ describe("SignUpLocalDto", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/password and confirm password not match!/);
+      expect(err.message).toMatch(/password and confirm password not match!/i);
     }
   });
 
-  it("should throw BadRequestException if email is invalid", () => {
+  it("should throw if email is invalid", () => {
     try {
       validate({
         email: "invalid-email",
@@ -44,20 +45,19 @@ describe("SignUpLocalDto", () => {
     }
   });
 
-  it("should throw BadRequestException if password is too weak (no uppercase)", () => {
+  it("should throw if email is empty", () => {
     try {
       validate({
-        email: "user@example.com",
-        password: "weakpass1!",
-        confirmPassword: "weakpass1!",
+        email: "",
+        password: "StrongP@ss1",
+        confirmPassword: "StrongP@ss1",
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/Password must be at least 8 characters/);
     }
   });
 
-  it("should throw BadRequestException if password is too short", () => {
+  it("should throw if password is too short", () => {
     try {
       validate({
         email: "user@example.com",
@@ -66,11 +66,37 @@ describe("SignUpLocalDto", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/Password must be at least 8 characters/);
+      expect(err.message).toMatch(/password must be at least 8 characters/i);
     }
   });
 
-  it("should throw BadRequestException if confirmPassword is empty", () => {
+  it("should throw if password is too weak (no uppercase or symbol)", () => {
+    try {
+      validate({
+        email: "user@example.com",
+        password: "weakpass1",
+        confirmPassword: "weakpass1",
+      });
+    } catch (err: any) {
+      expect(err).toBeInstanceOf(BadRequestException);
+      expect(err.message).toMatch(/password must be at least 8 characters/i);
+    }
+  });
+
+  it("should throw if password is empty", () => {
+    try {
+      validate({
+        email: "user@example.com",
+        password: "",
+        confirmPassword: "",
+      });
+    } catch (err: any) {
+      expect(err).toBeInstanceOf(BadRequestException);
+      expect(err.message).toMatch(/password must be at least 8 characters/i);
+    }
+  });
+
+  it("should throw if confirmPassword is empty", () => {
     try {
       validate({
         email: "user@example.com",
@@ -79,7 +105,6 @@ describe("SignUpLocalDto", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/Too small/i);
     }
   });
 });

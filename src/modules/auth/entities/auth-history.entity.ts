@@ -3,7 +3,7 @@ import { User } from "src/modules/user/entities/user.entity";
 import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 
-@Entity(databaseConfig.table.authHistory)
+@Entity(databaseConfig.TABLES.AUTH_HISTORY)
 export class AuthHistory {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -32,8 +32,8 @@ export class AuthHistory {
   @Column({ type: "varchar", length: 20 })
   osVersion: string;
 
-  @Column({ type: "enum", enum: ["LOGIN", "LOGOUT", "REFRESH"] })
-  action: "LOGIN" | "LOGOUT" | "REFRESH";
+  @Column({ type: "varchar", length: 30 })
+  action: "SIGNUP" | "SIGNIN" | "SIGNOUT" | "REFRESH";
 
   @CreateDateColumn()
   timestamp: Date;
@@ -51,7 +51,7 @@ export class AuthHistory {
       browserVersion: z.string(),
       osName: z.string(),
       osVersion: z.string(),
-      action: z.enum(["LOGIN", "LOGOUT", "REFRESH"]),
+      action: z.enum(["SIGNUP", "SIGN_IN", "SIGNOUT", "REFRESH"]),
       timestamp: z.date(),
     });
   }
