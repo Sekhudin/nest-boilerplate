@@ -5,7 +5,7 @@ import { Claims } from "src/shared/dto/claims.dto";
 import { jwtRefreshConfig } from "src/config/jwt-refresh.config";
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(Strategy, jwtRefreshConfig.name) {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, jwtRefreshConfig.STRATEGY_NAME) {
   constructor() {
     super(jwtRefreshConfig.strategyOptions);
   }

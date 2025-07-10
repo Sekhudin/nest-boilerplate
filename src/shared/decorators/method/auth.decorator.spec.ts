@@ -19,22 +19,19 @@ describe("Auth decorator", () => {
   it("should apply SetMetadata and UseGuards with default values", () => {
     Auth();
 
-    expect(SetMetadata).toHaveBeenCalledWith(
-      authConfig.META_KEY_ROLE,
-      authConfig.pickRoles(authConfig.allRoles()),
-    );
+    expect(SetMetadata).toHaveBeenCalledWith(authConfig.ROLES_META_KEY, authConfig.pickRoles(authConfig.allRoles()));
 
     expect(UseGuards).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
   });
 
   it('should apply AccessTokenGuard when name is "access"', () => {
-    Auth(["admin"], "access");
+    Auth(["ADMIN"], "access");
 
     expect(UseGuards).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
   });
 
   it('should apply RefreshTokenGuard when name is "refresh"', () => {
-    Auth(["admin"], "refresh");
+    Auth(["ADMIN"], "refresh");
 
     expect(UseGuards).toHaveBeenCalledWith(RefreshTokenGuard, RolesGuard);
   });

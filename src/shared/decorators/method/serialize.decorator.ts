@@ -3,7 +3,7 @@ import { serializerConfig } from "src/config/serializer.config";
 
 export const Serialize = (dto: Type<unknown>, options?: ClassSerializerContextOptions) => {
   return applyDecorators(
-    SetMetadata(serializerConfig.META_KEY, dto),
-    SetMetadata(serializerConfig.META_KEY_OPTIONS, { type: dto, ...options }),
+    SetMetadata(serializerConfig.SERIALIZER_META_KEY, dto),
+    SetMetadata(serializerConfig.SERIALIZER_OPTIONS_META_KEY, { type: dto, ...options }),
   );
 };

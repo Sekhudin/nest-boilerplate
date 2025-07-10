@@ -83,10 +83,7 @@ describe("AllExceptionFilter", () => {
 
     filter.catch(exception, mockHost);
 
-    expect(mockLogger.ws.warn).toHaveBeenCalledWith(
-      "HTTP_EXCEPTION",
-      expect.objectContaining({ statusCode: 400 }),
-    );
+    expect(mockLogger.ws.warn).toHaveBeenCalledWith("HTTP_EXCEPTION", expect.objectContaining({ statusCode: 400 }));
     expect(mockReply).toHaveBeenCalledWith({}, "Bad Request", 400);
   });
 
@@ -96,10 +93,7 @@ describe("AllExceptionFilter", () => {
 
     filter.catch(exception, mockHost);
 
-    expect(mockLogger.ws.error).toHaveBeenCalledWith(
-      "HTTP_EXCEPTION",
-      expect.objectContaining({ statusCode: 500 }),
-    );
+    expect(mockLogger.ws.error).toHaveBeenCalledWith("HTTP_EXCEPTION", expect.objectContaining({ statusCode: 500 }));
     expect(mockReply).toHaveBeenCalledWith({}, "Server Error", 500);
   });
 

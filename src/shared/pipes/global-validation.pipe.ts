@@ -4,8 +4,7 @@ import { validationConfig } from "src/config/validation.config";
 
 @Injectable()
 export class GlobalValidationPipe implements PipeTransform {
-  constructor() {
-  }
+  constructor() {}
   transform(value: unknown, metadata: ArgumentMetadata) {
     if (!metadata.metatype) return value;
     const schema = Reflect.getMetadata(validationConfig.SCHEMA_META_KEY, metadata.metatype) as SchemaInstance;

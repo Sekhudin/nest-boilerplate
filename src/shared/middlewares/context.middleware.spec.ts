@@ -43,7 +43,7 @@ describe("ContextMiddleware", () => {
     mockCookie = module.get(CookieService);
 
     mockReq = {
-      cookies: { [cookieConfig.name.deviceId]: "dev-123" },
+      cookies: { [cookieConfig.COOKIE_NAME.DEVICE_ID]: "dev-123" },
     };
     mockRes = {};
     next = jest.fn();

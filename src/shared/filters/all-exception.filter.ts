@@ -25,6 +25,10 @@ export class AllExceptionFilter implements ExceptionFilter {
     const res = context.getResponse<Response>();
     const { httpAdapter } = this.httpAdapterHost;
 
+    if (!appConfig.isProduction) {
+      this.logger.ws.error("ERROR_PLAIN", exception);
+    }
+
     if (exception instanceof HttpException) {
       const statusCode = exception.getStatus();
       if (!appConfig.isProduction && statusCode < 500) {
@@ -38,10 +42,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     } else {
       const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       const body = new InternalServerErrorException("Something went wrong!.").getResponse();
-      this.logger.ws.error(
-        "UNKNOWN_EXCEPTION",
-        JsonLogFormatter.unknownError({ req, statusCode, exception }),
-      );
+      this.logger.ws.error("UNKNOWN_EXCEPTION", JsonLogFormatter.unknownError({ req, statusCode, exception }));
       httpAdapter.reply(res, body, statusCode);
     }
   }

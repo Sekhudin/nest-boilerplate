@@ -12,7 +12,7 @@ import { serializerConfig } from "src/config/serializer.config";
 @Injectable()
 export class SerializerInterceptor extends ClassSerializerInterceptor {
   constructor(protected readonly reflector: Reflector) {
-    super(reflector, serializerConfig.options);
+    super(reflector, serializerConfig.classSerializerInterceptorOptions);
   }
 
   override intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -25,7 +25,7 @@ export class SerializerInterceptor extends ClassSerializerInterceptor {
   }
 
   protected override getContextOptions(context: ExecutionContext): ClassSerializerContextOptions | undefined {
-    return this.reflector.getAllAndOverride(serializerConfig.META_KEY_OPTIONS, [
+    return this.reflector.getAllAndOverride(serializerConfig.SERIALIZER_OPTIONS_META_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
