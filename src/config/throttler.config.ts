@@ -6,13 +6,13 @@ class ThrottlerConfig extends BaseConfig {
     super();
   }
 
-  get options(): ThrottlerModuleOptions {
+  get throttlerModuleOptions(): ThrottlerModuleOptions {
     return {
-      throttlers: this.throttlers,
+      throttlers: this.throttlerOptions,
     };
   }
 
-  private get throttlers(): ThrottlerOptions[] {
+  private get throttlerOptions(): ThrottlerOptions[] {
     return [{ ttl: this.env.THROTTLER_TTL, limit: this.env.THROTTLER_LIMIT }];
   }
 }

@@ -8,13 +8,11 @@ class CookieConfig extends BaseConfig {
     super();
   }
 
-  get name() {
-    return {
-      deviceId: "DEVICE_ID",
-    } as const;
-  }
+  readonly COOKIE_NAME = {
+    DEVICE_ID: "DEVICE_ID",
+  } as const;
 
-  get options(): CookieOptions {
+  get cookieOptions(): CookieOptions {
     return {
       domain: this.env.COOKIE_DOMAIN,
       secure: this.env.COOKIE_SECURE,

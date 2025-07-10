@@ -7,7 +7,17 @@ class DatabaseConfig extends BaseConfig {
     super();
   }
 
-  get options(): TypeOrmModuleOptions {
+  readonly TABLES = {
+    USER: "users",
+    TOKEN: "tokens",
+    ROLE: "roles",
+    OTP: "otps",
+    USER_AUTH: "user_auths",
+    AUTH_PROVIDER: "auth_providers",
+    AUTH_HISTORY: "auth_history",
+  } as const;
+
+  get typeOrmModuleOptions(): TypeOrmModuleOptions {
     return {
       type: this.env.DB_TYPE as "postgres",
       database: this.env.DB_NAME,
@@ -23,18 +33,6 @@ class DatabaseConfig extends BaseConfig {
       ssl: this.env.DB_SSL,
       poolSize: this.env.DB_POOL_SIZE,
     };
-  }
-
-  get table() {
-    return {
-      user: "users",
-      token: "tokens",
-      role: "roles",
-      otp: "otps",
-      userAuth: "user_auths",
-      authProvider: "auth_providers",
-      authHistory: "auth_history",
-    } as const;
   }
 }
 

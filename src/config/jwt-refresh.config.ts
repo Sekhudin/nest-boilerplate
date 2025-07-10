@@ -8,9 +8,8 @@ class JwtRefreshConfig extends BaseConfig {
     super();
   }
 
-  get name() {
-    return "JWT_REFRESH_TOKEN" as const;
-  }
+  readonly STRATEGY_NAME = "JWT_REFRESH_TOKEN" as const;
+  readonly COOKIE_NAME = "REFRESH_TOKEN" as const;
 
   get signOptions(): JwtSignOptions {
     return {
@@ -42,10 +41,6 @@ class JwtRefreshConfig extends BaseConfig {
     };
   }
 
-  get cookieName() {
-    return "REFRESH_TOKEN" as const;
-  }
-
   get cookieOptions(): CookieOptions {
     return {
       domain: this.env.COOKIE_DOMAIN,
@@ -60,7 +55,7 @@ class JwtRefreshConfig extends BaseConfig {
 
   private get token() {
     return (req: Request) => {
-      const refreshToken = req.cookies[this.cookieName];
+      const refreshToken = req.cookies[this.COOKIE_NAME];
       return (refreshToken as string) ?? "";
     };
   }

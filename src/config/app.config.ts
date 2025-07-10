@@ -12,17 +12,9 @@ export class AppConfig extends BaseConfig {
     });
   }
 
-  get name() {
-    return this.env.APP_NAME;
-  }
-
-  get version() {
-    return this.env.APP_VERSION;
-  }
-
-  get port(): number {
-    return this.env.APP_PORT;
-  }
+  readonly APP_NAME = this.env.APP_NAME;
+  readonly APP_VERSION = this.env.APP_VERSION;
+  readonly APP_PORT = this.env.APP_PORT;
 }
 
 export const appConfig = AppConfig.getInstance();

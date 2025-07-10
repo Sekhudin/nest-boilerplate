@@ -1,20 +1,18 @@
 import { ClassSerializerInterceptorOptions } from "@nestjs/common";
+import { APP_FILTER } from "@nestjs/core";
 import { BaseConfig } from "./base.config";
+
+APP_FILTER;
 
 class SerializerConfig extends BaseConfig {
   constructor() {
     super();
   }
 
-  get META_KEY() {
-    return "custom:serializer" as const;
-  }
+  readonly SERIALIZER_META_KEY = "META:SERIALIZER" as const;
+  readonly SERIALIZER_OPTIONS_META_KEY = "META:SERIALIZER:OPTIONS" as const;
 
-  get META_KEY_OPTIONS() {
-    return "custom:serializer:options" as const;
-  }
-
-  get options(): ClassSerializerInterceptorOptions {
+  get classSerializerInterceptorOptions(): ClassSerializerInterceptorOptions {
     return {
       strategy: "excludeAll",
       excludePrefixes: ["_"],

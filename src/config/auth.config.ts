@@ -5,16 +5,15 @@ class AuthConfig extends BaseConfig {
     super();
   }
 
-  get META_KEY_ROLE() {
-    return "roles" as const;
-  }
+  readonly ROLES_META_KEY = "META:ROLES";
+  readonly DEFAULT_ROLE = "USER";
 
   allRoles() {
-    return Object.keys(this.role) as (keyof typeof this.role)[];
+    return Object.keys(this.ROLES) as (keyof typeof this.ROLES)[];
   }
 
-  pickRoles(keys: (keyof typeof this.role)[]) {
-    return keys.map((key) => this.role[key] ?? "");
+  pickRoles(keys: (keyof typeof this.ROLES)[]) {
+    return keys.map((key) => this.ROLES[key] ?? "");
   }
 }
 

@@ -7,9 +7,7 @@ class JwtAccessConfig extends BaseConfig {
     super();
   }
 
-  get name() {
-    return "JWT_ACCESS_TOKEN" as const;
-  }
+  readonly STRATEGY_NAME = "JWT_ACCESS_TOKEN" as const;
 
   get signOptions(): JwtSignOptions {
     return {

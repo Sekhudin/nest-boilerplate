@@ -6,7 +6,7 @@ class MigrationConfig extends BaseConfig {
     super();
   }
 
-  get options(): DataSourceOptions {
+  private get dataSourceOptions(): DataSourceOptions {
     return {
       type: this.env.DB_TYPE as "postgres",
       database: this.env.DB_NAME,
@@ -19,7 +19,7 @@ class MigrationConfig extends BaseConfig {
       logging: this.env.FEATURE_DB_LOGGING_ENABLED,
       migrationsTableName: this.env.DB_MIGRATION_TABLE,
       entities: ["src/modules/**/entities/*.entity.ts"],
-      migrations: [`migrations/*.ts`],
+      migrations: ["migrations/*.ts"],
       migrationsTransactionMode: "all",
       ssl: this.env.DB_SSL,
       poolSize: this.env.DB_POOL_SIZE,
@@ -27,7 +27,7 @@ class MigrationConfig extends BaseConfig {
   }
 
   get dataSource() {
-    return new DataSource(this.options);
+    return new DataSource(this.dataSourceOptions);
   }
 }
 

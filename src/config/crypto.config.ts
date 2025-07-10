@@ -1,4 +1,4 @@
-import argon, { Options } from "argon2";
+import argon from "argon2";
 import { BaseConfig } from "./base.config";
 
 class CryptoConfig extends BaseConfig {
@@ -6,17 +6,25 @@ class CryptoConfig extends BaseConfig {
     super();
   }
 
-  get encryptionOptions() {
+  get encryptionOptions(): EncryptionOptions {
     return {
-      algo: this.env.ENCRYPTION_ALGO,
+      algorithm: this.env.ENCRYPTION_ALGO,
       key: this.env.ENCRYPTION_KEY,
     };
   }
 
-  get hashOptions(): Options {
+  get hashPasswordOptions(): HashPasswordOptions {
     return {
-      salt: Buffer.from(this.env.HASH_SALT),
-      secret: Buffer.from(this.env.HASH_SECRET),
+      salt: Buffer.from(this.env.HASH_PASSWORD_SALT),
+      secret: Buffer.from(this.env.HASH_PASSWORD_SALT),
+      type: argon.argon2id,
+    };
+  }
+
+  get hashOtpOptions(): HashOtpOptions {
+    return {
+      salt: Buffer.from(this.env.HASH_OTP_SALT),
+      secret: Buffer.from(this.env.HASH_OTP_SALT),
       type: argon.argon2id,
     };
   }

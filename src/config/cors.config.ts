@@ -7,7 +7,7 @@ class CorsConfig extends BaseConfig {
     super();
   }
 
-  private get options(): CorsOptions {
+  private get corsOptions(): CorsOptions {
     return {
       origin: this.env.CORS_ORIGIN,
       allowedHeaders: this.env.CORS_HEADERS,
@@ -17,7 +17,7 @@ class CorsConfig extends BaseConfig {
   }
 
   setup(app: INestApplication): void {
-    app.enableCors(this.options);
+    app.enableCors(this.corsOptions);
   }
 }
 
