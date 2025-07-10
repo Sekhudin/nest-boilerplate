@@ -7,7 +7,7 @@ import { OtpMailerService } from "./otp-mailer.service";
 
 @Global()
 @Module({
-  imports: [NestMailerModule.forRoot(mailerConfig.options)],
+  imports: [NestMailerModule.forRoot(mailerConfig.mailerOptions)],
   providers: [OtpMailerService, BillingMailerService, NewsletterMailerService],
   exports: [OtpMailerService, BillingMailerService, NewsletterMailerService],
 })

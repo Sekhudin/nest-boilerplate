@@ -4,8 +4,8 @@ import { NewsletterMailerService } from "./newsletter-mailer.service";
 
 jest.mock("src/config/mailer.config", () => ({
   mailerConfig: {
-    transporter: {
-      newsletter: "NEWSLETTER_TRANSPORT",
+    TRANSPORTERS: {
+      NEWSLETTER: "NEWSLETTER_TRANSPORT",
     },
   },
 }));

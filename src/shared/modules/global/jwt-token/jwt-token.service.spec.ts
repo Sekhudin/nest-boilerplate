@@ -41,20 +41,14 @@ describe("JwtTokenService", () => {
     mockJwtService.signAsync.mockResolvedValueOnce("refresh-token");
     const token = await tokenService.signRefreshToken(validPayload);
     expect(token).toBe("refresh-token");
-    expect(mockJwtService.signAsync).toHaveBeenCalledWith(
-      expect.objectContaining(validPayload),
-      expect.any(Object),
-    );
+    expect(mockJwtService.signAsync).toHaveBeenCalledWith(expect.objectContaining(validPayload), expect.any(Object));
   });
 
   it("should call signAsync with validated payload for access token", async () => {
     mockJwtService.signAsync.mockResolvedValueOnce("access-token");
     const token = await tokenService.signAccessToken(validPayload);
     expect(token).toBe("access-token");
-    expect(mockJwtService.signAsync).toHaveBeenCalledWith(
-      expect.objectContaining(validPayload),
-      expect.any(Object),
-    );
+    expect(mockJwtService.signAsync).toHaveBeenCalledWith(expect.objectContaining(validPayload), expect.any(Object));
   });
 
   it("should return both access and refresh tokens in signJwtToken()", async () => {

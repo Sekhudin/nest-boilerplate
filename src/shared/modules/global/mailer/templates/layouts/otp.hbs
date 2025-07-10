@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8" />
@@ -7,26 +7,30 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
+      background-color: #f4f4f4;
+      padding: 24px;
+      margin: 0;
     }
 
     .content {
-      background: #fff;
-      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 32px;
       border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
   </style>
 </head>
 
 <body>
-  {{> header}}
+  {{> otp-header}}
 
   <div class="content">
     {{{body}}}
   </div>
 
-  {{> footer}}
+  {{> otp-footer}}
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-import { ISendMailOptions, MailerService, MailerServiceContext } from "@nestjs-modules/mailer";
+import { DefaultContext, ISendMailOptions, MailerService, MailerServiceContext } from "@nestjs-modules/mailer";
 import { SentMessageInfo } from "nodemailer";
 import { Injectable } from "@nestjs/common";
 import { mailerConfig } from "src/config/mailer.config";
@@ -7,9 +7,13 @@ import { mailerConfig } from "src/config/mailer.config";
 export class BillingMailerService implements MailerServiceContext {
   constructor(private readonly mailerService: MailerService) {}
 
+  createContext<T>(context: Partial<DefaultContext> & T): DefaultContext & T {
+    return mailerConfig.context<T>(context);
+  }
+
   sendMail(sendMailOptions: Omit<ISendMailOptions, "transporterName">): Promise<SentMessageInfo> {
     return this.mailerService.sendMail({
-      transporterName: mailerConfig.transporter.billing,
+      transporterName: mailerConfig.TRANSPORTERS.BILLING,
       ...sendMailOptions,
     });
   }

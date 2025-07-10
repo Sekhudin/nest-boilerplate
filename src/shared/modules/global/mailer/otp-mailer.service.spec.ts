@@ -4,8 +4,8 @@ import { OtpMailerService } from "./otp-mailer.service";
 
 jest.mock("src/config/mailer.config", () => ({
   mailerConfig: {
-    transporter: {
-      otp: "OTP_TRANSPORT",
+    TRANSPORTERS: {
+      OTP: "OTP_TRANSPORT",
     },
   },
 }));

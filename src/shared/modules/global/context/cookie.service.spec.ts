@@ -18,7 +18,7 @@ describe("CookieService", () => {
   beforeEach(async () => {
     mockRequest = {
       cookies: {
-        [jwtRefreshConfig.cookieName]: "sample-token",
+        [jwtRefreshConfig.COOKIE_NAME]: "sample-token",
       },
     };
 
@@ -50,12 +50,12 @@ describe("CookieService", () => {
   });
 
   it("should set refresh token cookie and device id if not exist", () => {
-    delete mockRequest.cookies?.[cookieConfig.name.deviceId];
+    delete mockRequest.cookies?.[cookieConfig.COOKIE_NAME.DEVICE_ID];
 
     service.setRefreshToken("new-token");
 
     expect(mockResponse.cookie).toHaveBeenCalledWith(
-      cookieConfig.name.deviceId,
+      cookieConfig.COOKIE_NAME.DEVICE_ID,
       "mock-device-id",
       expect.objectContaining({
         httpOnly: expect.any(Boolean),
@@ -66,18 +66,18 @@ describe("CookieService", () => {
     );
 
     expect(mockResponse.cookie).toHaveBeenCalledWith(
-      jwtRefreshConfig.cookieName,
+      jwtRefreshConfig.COOKIE_NAME,
       "new-token",
       jwtRefreshConfig.cookieOptions,
     );
   });
 
   it("should not set device id again if already exists", () => {
-    mockRequest.cookies![cookieConfig.name.deviceId] = "existing-id";
+    mockRequest.cookies![cookieConfig.COOKIE_NAME.DEVICE_ID] = "existing-id";
     service.setDeviceId();
 
     expect(mockResponse.cookie).not.toHaveBeenCalledWith(
-      cookieConfig.name.deviceId,
+      cookieConfig.COOKIE_NAME.DEVICE_ID,
       expect.anything(),
       expect.anything(),
     );
@@ -85,11 +85,11 @@ describe("CookieService", () => {
 
   it("should clear refresh token cookie", () => {
     service.clearRefreshToken();
-    expect(mockResponse.clearCookie).toHaveBeenCalledWith(jwtRefreshConfig.cookieName, undefined);
+    expect(mockResponse.clearCookie).toHaveBeenCalledWith(jwtRefreshConfig.COOKIE_NAME, undefined);
   });
 
   it("should clear device id cookie", () => {
     service.clearDeviceId();
-    expect(mockResponse.clearCookie).toHaveBeenCalledWith(cookieConfig.name.deviceId, undefined);
+    expect(mockResponse.clearCookie).toHaveBeenCalledWith(cookieConfig.COOKIE_NAME.DEVICE_ID, undefined);
   });
 });

@@ -1,41 +1,101 @@
-import { Test, TestingModule } from "@nestjs/testing";
+import { addMinutes } from "date-fns";
+import { authenticator, hotp, totp } from "otplib";
+import { Test } from "@nestjs/testing";
 import { otpConfig } from "src/config/otp.config";
 import { OtpGeneratorService } from "./otp-generator.service";
 
-const mockOtpInstance = {
-  totp: jest.fn(),
-};
-
-const MockOtpClass = jest.fn(() => mockOtpInstance);
+jest.mock("otplib", () => {
+  const actual = jest.requireActual("otplib");
+  return {
+    ...actual,
+    authenticator: {
+      ...actual.authenticator,
+      generate: jest.fn(() => "123456"),
+      verify: jest.fn(() => true),
+      options: {},
+    },
+    hotp: {
+      generate: jest.fn(() => "654321"),
+      verify: jest.fn(() => true),
+      options: {},
+    },
+    totp: {
+      generate: jest.fn(() => "999999"),
+      verify: jest.fn(() => true),
+      options: {},
+    },
+  };
+});
 
 describe("OtpGeneratorService", () => {
   let service: OtpGeneratorService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        OtpGeneratorService,
-        {
-          provide: otpConfig.INJECTOR_KEY,
-          useClass: MockOtpClass,
-        },
-      ],
+    const moduleRef = await Test.createTestingModule({
+      providers: [OtpGeneratorService],
     }).compile();
 
-    service = module.get<OtpGeneratorService>(OtpGeneratorService);
+    service = moduleRef.get(OtpGeneratorService);
   });
 
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe("generateOtp", () => {
-    it("should return a TOTP string", () => {
-      mockOtpInstance.totp.mockReturnValue("123456");
-      const result = service.generateTotp();
+  it("should generate OTP with expiresAt", () => {
+    const { code, expiresAt } = service.generateOtp();
 
-      expect(result).toBe("123456");
-      expect(mockOtpInstance.totp).toHaveBeenCalled();
+    expect(code).toBe("999999");
+    expect(totp.generate).toHaveBeenCalledWith(otpConfig.SECRETS.TOTP);
+    expect(expiresAt).toBeInstanceOf(Date);
+
+    const expected = addMinutes(new Date(), 5).getTime();
+    expect(Math.abs(expected - expiresAt.getTime())).toBeLessThan(1000);
+  });
+
+  it("should generate TOTP", () => {
+    const result = service.generateTotp();
+    expect(result).toBe("999999");
+    expect(totp.generate).toHaveBeenCalledWith(otpConfig.SECRETS.TOTP);
+  });
+
+  it("should verify TOTP", () => {
+    const result = service.verifyTotp("999999");
+    expect(result).toBe(true);
+    expect(totp.verify).toHaveBeenCalledWith({
+      token: "999999",
+      secret: otpConfig.SECRETS.TOTP,
+    });
+  });
+
+  it("should generate HOTP", () => {
+    const result = service.generateHotp(5);
+    expect(result).toBe("654321");
+    expect(hotp.generate).toHaveBeenCalledWith(otpConfig.SECRETS.HOTP, 5);
+  });
+
+  it("should verify HOTP", () => {
+    const result = service.verifyHotp("654321", 5);
+    expect(result).toBe(true);
+    expect(hotp.verify).toHaveBeenCalledWith({
+      token: "654321",
+      secret: otpConfig.SECRETS.HOTP,
+      counter: 5,
+    });
+  });
+
+  it("should generate Authenticator token", () => {
+    const result = service.generateAuthenticator();
+    expect(result).toBe("123456");
+    expect(authenticator.generate).toHaveBeenCalledWith(otpConfig.SECRETS.AUTHENTICATOR);
+  });
+
+  it("should verify Authenticator token", () => {
+    const result = service.verifyAuthenticator("123456");
+    expect(result).toBe(true);
+    expect(authenticator.verify).toHaveBeenCalledWith({
+      token: "123456",
+      secret: otpConfig.SECRETS.AUTHENTICATOR,
     });
   });
 });

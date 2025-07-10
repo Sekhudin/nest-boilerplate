@@ -4,8 +4,8 @@ import { BillingMailerService } from "./billing-mailer.service";
 
 jest.mock("src/config/mailer.config", () => ({
   mailerConfig: {
-    transporter: {
-      billing: "BILLING_TRANSPORT",
+    TRANSPORTERS: {
+      BILLING: "BILLING_TRANSPORT",
     },
   },
 }));
