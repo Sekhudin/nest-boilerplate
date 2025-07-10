@@ -10,6 +10,4 @@ export const payload = z.object({
   deviceId: z.string(),
 });
 
-export class Payload extends Schema(
-  schema(payload, new InternalServerErrorException("invalid jwt payload.")),
-) {}
+export class Payload extends Schema(schema(payload, new InternalServerErrorException("invalid jwt payload."))) {}
