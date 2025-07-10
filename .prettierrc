@@ -1,7 +1,7 @@
 {
   "singleQuote": false,
   "trailingComma": "all",
-  "printWidth": 110,
+  "printWidth": 120,
   "semi": true,
   "plugins": ["@ianvs/prettier-plugin-sort-imports"],
   "importOrderParserPlugins": ["typescript", "decorators-legacy", "classProperties"],
@@ -25,6 +25,9 @@
     "^src/utils(/.*)?$",
     "^src/utils$",
     "^src/config(/.*)?$",
+    "^[.]/services(/.*)?$",
+    "^[.]/repositories(/.*)?$",
+    "^[.]/entities(/.*)?$",
     "^[.]"
   ],
   "overrides": [
