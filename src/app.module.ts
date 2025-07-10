@@ -8,11 +8,13 @@ import { ContextMiddleware } from "./shared/middlewares/context.middleware";
 import { AppFilterModule } from "./shared/modules/global/app-filter/app-filter.module";
 import { AppGuardModule } from "./shared/modules/global/app-guard/app-guard.module";
 import { AppInterceptorModule } from "./shared/modules/global/app-interceptor/app-interceptor.module";
+import { AppPipeModule } from "./shared/modules/global/app-pipe/app-pipe.module";
 import { ContextModule } from "./shared/modules/global/context/context.module";
 import { CryptoModule } from "./shared/modules/global/crypto/crypto.module";
 import { DatabaseModule } from "./shared/modules/global/database/database.module";
 import { JwtTokenModule } from "./shared/modules/global/jwt-token/jwt-token.module";
 import { LoggerModule } from "./shared/modules/global/logger/logger.module";
+import { MagicLinkModule } from "./shared/modules/global/magic-link/magic-link.module";
 import { MailerModule } from "./shared/modules/global/mailer/mailer.module";
 import { OtpGeneratorModule } from "./shared/modules/global/otp-generator/otp-generator.module";
 import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.module";
@@ -27,6 +29,7 @@ import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.mod
     AppFilterModule,
     AppGuardModule,
     AppInterceptorModule,
+    AppPipeModule,
     ContextModule,
     CryptoModule,
     DatabaseModule,
@@ -35,6 +38,7 @@ import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.mod
     MailerModule,
     ThrottlerModule,
     OtpGeneratorModule,
+    MagicLinkModule,
   ],
 })
 export class AppModule implements NestModule {

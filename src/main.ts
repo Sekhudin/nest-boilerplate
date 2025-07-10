@@ -12,8 +12,8 @@ async function bootstrap() {
 
   AppConfig.register(app, [corsConfig, cookieConfig, swaggerConfig]);
   await app.init();
-  await app.listen(appConfig.port);
-  logger.ws.info(`[${appConfig.name}] running on port ${appConfig.port}`);
+  await app.listen(appConfig.APP_PORT);
+  logger.ws.info(`[${appConfig.APP_NAME}] running on port ${appConfig.APP_PORT}`);
 }
 
 bootstrap().catch((error) => {
