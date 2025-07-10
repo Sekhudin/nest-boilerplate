@@ -1,5 +1,6 @@
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import { BadRequestException, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
+import { validationConfig } from "src/config/validation.config";
 import { Schema, schema, z } from "./index";
 
 describe("schema helper", () => {
@@ -10,6 +11,13 @@ describe("schema helper", () => {
 
   const wrappedSchema = schema(testSchema);
   const GeneratedClass = Schema(wrappedSchema);
+
+  it("should set schema metadata on the generated class", () => {
+    const metadata = Reflect.getMetadata(validationConfig.SCHEMA_META_KEY, GeneratedClass);
+
+    expect(metadata).toBeDefined();
+    expect(typeof metadata["~standard"].validate).toBe("function");
+  });
 
   it("should validate successfully and return parsed data", () => {
     const validData = { email: "test@example.com", age: 20 };
@@ -70,9 +78,7 @@ describe("schema helper", () => {
     const fallback = new UnauthorizedException("Unauthorized fallback");
     const wrappedWithFallback = schema(testSchema, fallback);
 
-    expect(() => wrappedWithFallback["~standard"].validate({ email: "invalid", age: 1 })).toThrowError(
-      fallback,
-    );
+    expect(() => wrappedWithFallback["~standard"].validate({ email: "invalid", age: 1 })).toThrowError(fallback);
   });
 
   it("should expose static schema property", () => {

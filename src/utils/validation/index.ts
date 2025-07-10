@@ -1,6 +1,8 @@
 import z from "zod/v4";
-import { StandardSchemaV1, StandarSchemaClass } from "@standard-schema/spec";
-import { BadRequestException, HttpException } from "@nestjs/common";
+import { StandardSchemaV1 } from "@standard-schema/spec";
+import { BadRequestException, HttpException, SetMetadata } from "@nestjs/common";
+import { StandarSchemaClass } from "src/types/standard-shema";
+import { validationConfig } from "src/config/validation.config";
 import * as zr from "./schemas";
 
 export const schema = <T extends z.ZodType<any, any, any>>(
@@ -24,12 +26,15 @@ export const schema = <T extends z.ZodType<any, any, any>>(
 });
 
 export const Schema = <T extends StandardSchemaV1>(schema: T): StandarSchemaClass<T> => {
-  return class {
+  @SetMetadata(validationConfig.SCHEMA_META_KEY, schema)
+  class BaseShema {
     static readonly schema = schema["~standard"];
     constructor(value: StandardSchemaV1.InferInput<T>) {
       Object.assign(this, value);
     }
-  };
+  }
+
+  return BaseShema;
 };
 
 export { z, zr };
