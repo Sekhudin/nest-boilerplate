@@ -1,34 +1,19 @@
 import { BadRequestException } from "@nestjs/common";
-import { SignUpLocalDto } from "./sign-up-local.dto";
+import { CreateLocalUserDto } from "./create-local-user.dto";
 
 describe("SignUpLocalDto", () => {
-  const validate = SignUpLocalDto.schema.validate;
+  const validate = CreateLocalUserDto.schema.validate;
 
   it("should pass with a valid password", () => {
     const result = validate({
       email: "user@example.com",
       password: "StrongP@ss1",
-      confirmPassword: "StrongP@ss1",
     });
 
     expect(result).toEqual({
       email: "user@example.com",
       password: "StrongP@ss1",
-      confirmPassword: "StrongP@ss1",
     });
-  });
-
-  it("should throw BadRequestException if passwords do not match", () => {
-    try {
-      validate({
-        email: "user@example.com",
-        password: "StrongP@ss1",
-        confirmPassword: "MismatchP@ss1",
-      });
-    } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/password and confirm password not match!/);
-    }
   });
 
   it("should throw BadRequestException if email is invalid", () => {
@@ -36,7 +21,6 @@ describe("SignUpLocalDto", () => {
       validate({
         email: "invalid-email",
         password: "StrongP@ss1",
-        confirmPassword: "StrongP@ss1",
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
@@ -49,7 +33,6 @@ describe("SignUpLocalDto", () => {
       validate({
         email: "user@example.com",
         password: "weakpass1!",
-        confirmPassword: "weakpass1!",
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
@@ -62,24 +45,10 @@ describe("SignUpLocalDto", () => {
       validate({
         email: "user@example.com",
         password: "Sh0!",
-        confirmPassword: "Sh0!",
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(BadRequestException);
       expect(err.message).toMatch(/Password must be at least 8 characters/);
-    }
-  });
-
-  it("should throw BadRequestException if confirmPassword is empty", () => {
-    try {
-      validate({
-        email: "user@example.com",
-        password: "StrongP@ss1",
-        confirmPassword: "",
-      });
-    } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/Too small/i);
     }
   });
 });
