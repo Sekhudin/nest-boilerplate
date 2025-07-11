@@ -1,5 +1,4 @@
 import "@nestjs-modules/mailer";
-import "src/shared/modules/global/mailer/otp-mailer.service";
 import { ISendMailOptions } from "@nestjs-modules/mailer";
 import { SentMessageInfo } from "nodemailer";
 
@@ -19,9 +18,7 @@ declare module "@nestjs-modules/mailer" {
     unsubscribeLink: string;
     billingAddressEmail: string;
   }
-}
 
-declare module "src/shared/modules/global/mailer/otp-mailer.service" {
   interface SendEmailVerificationContext {
     to: string;
     code: string;
