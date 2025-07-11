@@ -7,6 +7,14 @@ jest.mock("src/config/mailer.config", () => ({
     TRANSPORTERS: {
       NEWSLETTER: "NEWSLETTER_TRANSPORT",
     },
+
+    context<T>(contextValue: T): { year: number } & T {
+      return { year: 2025, ...contextValue };
+    },
+
+    emailFrom(senderType: string) {
+      return senderType;
+    },
   },
 }));
 
@@ -34,6 +42,23 @@ describe("NewsletterMailerService", () => {
   });
 
   afterEach(() => jest.clearAllMocks());
+
+  it("should create context with default merged values", () => {
+    const context = service.createContext({
+      to: "user@example.com",
+      otp: "123456",
+      magicLink: "https://example.com/verify",
+      expiresIn: 10,
+    });
+
+    expect(context).toMatchObject({
+      to: "user@example.com",
+      otp: "123456",
+      magicLink: "https://example.com/verify",
+      expiresIn: 10,
+      year: expect.any(Number),
+    });
+  });
 
   it("should send mail with transporterName set to newsletter", async () => {
     mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "789" });

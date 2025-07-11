@@ -1,4 +1,5 @@
-import argon from "argon2";
+import { EncryptionOptions } from "crypto";
+import argon, { HashOtpOptions, HashPasswordOptions } from "argon2";
 import { BaseConfig } from "./base.config";
 
 class CryptoConfig extends BaseConfig {

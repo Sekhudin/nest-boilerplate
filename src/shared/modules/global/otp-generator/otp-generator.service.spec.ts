@@ -1,4 +1,4 @@
-import { addMinutes } from "date-fns";
+import { addMinutes, subMinutes } from "date-fns";
 import { authenticator, hotp, totp } from "otplib";
 import { Test } from "@nestjs/testing";
 import { otpConfig } from "src/config/otp.config";
@@ -42,12 +42,28 @@ describe("OtpGeneratorService", () => {
     expect(service).toBeDefined();
   });
 
+  it("should return false if expiresAt is in the future", () => {
+    const expiresAt = addMinutes(new Date(), 5);
+    expect(service.isOtpExpired(expiresAt)).toBe(false);
+  });
+
+  it("should return true if expiresAt is in the past", () => {
+    const expiresAt = subMinutes(new Date(), 5);
+    expect(service.isOtpExpired(expiresAt)).toBe(true);
+  });
+
+  it("should return false if expiresAt is exactly now", () => {
+    const expiresAt = new Date();
+    expect(service.isOtpExpired(expiresAt)).toBe(false);
+  });
+
   it("should generate OTP with expiresAt", () => {
-    const { code, expiresAt } = service.generateOtp();
+    const { code, expiresAt, expiresInMinutes } = service.generateOtp();
 
     expect(code).toBe("999999");
     expect(totp.generate).toHaveBeenCalledWith(otpConfig.SECRETS.TOTP);
     expect(expiresAt).toBeInstanceOf(Date);
+    expect(expiresInMinutes).toBeTruthy();
 
     const expected = addMinutes(new Date(), 5).getTime();
     expect(Math.abs(expected - expiresAt.getTime())).toBeLessThan(1000);

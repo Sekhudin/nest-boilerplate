@@ -8,6 +8,29 @@ describe("AsyncStorageService", () => {
     service = new AsyncStorageService();
   });
 
+  it("should return null when accessed outside run()", () => {
+    expect(service.get("key1" as AsyncStorageKey)).toBeNull();
+    expect(service.getRequest()).toBeNull();
+    expect(service.getResponse()).toBeNull();
+  });
+
+  it("should isolate data between different runs", (done) => {
+    const store1 = new Map();
+    store1.set("key", "value1");
+
+    const store2 = new Map();
+    store2.set("key", "value2");
+
+    service.run(store1, () => {
+      expect(service.get("key" as AsyncStorageKey)).toBe("value1");
+
+      service.run(store2, () => {
+        expect(service.get("key" as AsyncStorageKey)).toBe("value2");
+        done();
+      });
+    });
+  });
+
   it("should store and retrieve values using run()", (done) => {
     const store = new Map();
     store.set("key1", "value1");

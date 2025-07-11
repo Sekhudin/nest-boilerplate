@@ -1,4 +1,4 @@
-import { MailerService } from "@nestjs-modules/mailer";
+import { MailerService, SendEmailVerificationContext } from "@nestjs-modules/mailer";
 import { Test, TestingModule } from "@nestjs/testing";
 import { OtpMailerService } from "./otp-mailer.service";
 
@@ -6,6 +6,14 @@ jest.mock("src/config/mailer.config", () => ({
   mailerConfig: {
     TRANSPORTERS: {
       OTP: "OTP_TRANSPORT",
+    },
+
+    context<T>(contextValue: T): { year: number } & T {
+      return { year: 2025, ...contextValue };
+    },
+
+    emailFrom(senderType: string) {
+      return senderType;
     },
   },
 }));
@@ -35,6 +43,23 @@ describe("OtpMailerService", () => {
 
   afterEach(() => jest.clearAllMocks());
 
+  it("should create context with default merged values", () => {
+    const context = service.createContext({
+      to: "user@example.com",
+      otp: "123456",
+      magicLink: "https://example.com/verify",
+      expiresIn: 10,
+    });
+
+    expect(context).toMatchObject({
+      to: "user@example.com",
+      otp: "123456",
+      magicLink: "https://example.com/verify",
+      expiresIn: 10,
+      year: expect.any(Number),
+    });
+  });
+
   it("should send mail with transporterName set to otp", async () => {
     mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "otp-123" });
 
@@ -54,18 +79,22 @@ describe("OtpMailerService", () => {
     expect(result).toEqual({ messageId: "otp-123" });
   });
 
-  it("should call sendMail with default OTP email values", async () => {
-    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "otp-456" });
+  it("should send email verification with correct options", async () => {
+    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "abc-456" });
 
-    const result = await service.send();
+    const context: SendEmailVerificationContext = {
+      to: "user@example.com",
+      code: "123456",
+      magicLink: "https://example.com/verify",
+      expiresInMinutes: 10,
+      ipAddress: "127.0.0.1",
+      browser: "Chrome",
+      os: "Windows",
+    };
 
-    expect(mailerService.sendMail).toHaveBeenCalledWith({
-      transporterName: "OTP_TRANSPORT",
-      subject: "OTP!",
-      to: "sekhudinpbg3@gmail.com",
-      template: "default-otp",
-    });
+    const result = await service.sendEmailVerification(context);
 
-    expect(result).toEqual({ messageId: "otp-456" });
+    expect(mailerService.sendMail).toHaveBeenCalled();
+    expect(result).toEqual({ messageId: "abc-456" });
   });
 });

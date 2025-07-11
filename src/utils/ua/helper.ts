@@ -43,27 +43,27 @@ export const OS = {
 export const BROWSER = {
   chrome: {
     name: "chrome",
-    pattern: /chrome\/(\d+)/,
+    pattern: /chrome\/(\d+)*/,
   },
   firefox: {
     name: "firefox",
-    pattern: /firefox\/(\d+)/,
+    pattern: /firefox\/(\d+)*/,
   },
   safari: {
     name: "safari",
-    pattern: /safari\/(\d+)/,
+    pattern: /safari\/(\d+)*/,
   },
   edge: {
     name: "edge",
-    pattern: /edg\/(\d+)/,
+    pattern: /edg\/(\d+)*/,
   },
   opera: {
     name: "opera",
-    pattern: /opr\/(\d+)/,
+    pattern: /opr\/(\d+)*/,
   },
   ie: {
     name: "internet explorer",
-    pattern: /msie (\d+)/,
+    pattern: /msie (\d+)*/,
   },
 } as const;
 

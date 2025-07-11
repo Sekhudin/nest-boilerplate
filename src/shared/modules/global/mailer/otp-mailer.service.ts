@@ -1,4 +1,10 @@
-import { DefaultContext, ISendMailOptions, MailerService, MailerServiceContext } from "@nestjs-modules/mailer";
+import {
+  DefaultContext,
+  ISendMailOptions,
+  MailerService,
+  MailerServiceContext,
+  SendEmailVerificationContext,
+} from "@nestjs-modules/mailer";
 import { SentMessageInfo } from "nodemailer";
 import { Injectable } from "@nestjs/common";
 import { mailerConfig } from "src/config/mailer.config";
@@ -18,16 +24,6 @@ export class OtpMailerService implements MailerServiceContext {
     });
   }
 
-  checkDefaultContext() {
-    return this.sendMail({
-      subject: "CHECK DEFAULT CONTEXT!",
-      to: "sekhudinpbg3@gmail.com",
-      layout: "plain",
-      template: "check-default-context",
-      context: this.createContext({}),
-    });
-  }
-
   sendEmailVerification(emailContext: SendEmailVerificationContext) {
     const context = this.createContext(emailContext);
     return this.sendMail({
@@ -41,14 +37,6 @@ export class OtpMailerService implements MailerServiceContext {
         "X-Mail-Category": "email-verification",
         "X-App-Name": context.appName,
       },
-    });
-  }
-
-  send() {
-    return this.sendMail({
-      subject: "OTP!",
-      to: "sekhudinpbg3@gmail.com",
-      template: "default-otp",
     });
   }
 }

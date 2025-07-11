@@ -1,5 +1,5 @@
-import { addMinutes } from "date-fns";
-import { authenticator, hotp, totp } from "otplib";
+import { addMinutes, isBefore } from "date-fns";
+import { authenticator, GeneratedOtp, hotp, totp } from "otplib";
 import { Injectable } from "@nestjs/common";
 import { otpConfig } from "src/config/otp.config";
 
@@ -11,11 +11,14 @@ export class OtpGeneratorService {
     totp.options = otpConfig.totpOptions;
   }
 
-  generateOtp(expiresInMinutes: number = 5) {
+  isOtpExpired(expiresAt: Date) {
+    return isBefore(expiresAt, new Date());
+  }
+
+  generateOtp(expiresInMinutes: number = 5): GeneratedOtp {
     const code = this.generateTotp();
     const expiresAt = addMinutes(new Date(), expiresInMinutes);
-    const magicLink = "https://google.com";
-    return { code, expiresAt, expiresInMinutes, magicLink };
+    return { code, expiresAt, expiresInMinutes };
   }
 
   generateAuthenticator() {

@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 import { Observable, tap } from "rxjs";
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
@@ -10,7 +10,7 @@ export class HttpInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest<Request>();
-    const statusCode = (context.switchToHttp().getResponse().statusCode as number) ?? 200;
+    const { statusCode } = context.switchToHttp().getResponse<Response>();
     const startTime = Date.now();
 
     return next.handle().pipe(

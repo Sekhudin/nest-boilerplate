@@ -57,6 +57,15 @@ describe("helper functions", () => {
 
       expect(detectIP(req)).toBe("127.0.0.1");
     });
+
+    it("should return unknown if no ip sources", () => {
+      const req = {
+        headers: {},
+        socket: { remoteAddress: undefined },
+      } as unknown as Request;
+
+      expect(detectIP(req)).toBe("unknown");
+    });
   });
 
   describe("detectDeviceType", () => {
@@ -98,6 +107,10 @@ describe("helper functions", () => {
     it("should return unknown for unmatched os", () => {
       expect(detectOS("some unknown os")).toEqual({ name: "unknown", version: "unknown" });
     });
+
+    it("should return version with underscore converted to dot", () => {
+      expect(detectOS("mac os x 10_14_6")).toEqual({ name: "macos", version: "10.14.6" });
+    });
   });
 
   describe("detectBrowser", () => {
@@ -127,6 +140,14 @@ describe("helper functions", () => {
 
     it("should return unknown for unmatched browser", () => {
       expect(detectBrowser("some unknown browser")).toEqual({ name: "unknown", version: "unknown" });
+    });
+
+    it("should return 'unknown' when no version is found in match", () => {
+      expect(detectBrowser("chrome/ ")).toEqual({ name: "chrome", version: "unknown" });
+    });
+
+    it("should fallback to version/ pattern when specific pattern fails", () => {
+      expect(detectBrowser("Version/15.2 Safari")).toEqual({ name: "unknown", version: "unknown" });
     });
   });
 });

@@ -34,6 +34,28 @@ describe("CryptoService", () => {
     });
   });
 
+  describe("OTP Hashing", () => {
+    it("should hash and verify otp correctly", async () => {
+      const otp = "123456";
+      const hash = await service.hashOtp(otp);
+
+      expect(typeof hash).toBe("string");
+      expect(hash).toMatch(/^\$argon2/);
+
+      const isValid = await service.verifyOtp(otp, hash);
+      expect(isValid).toBe(true);
+    });
+
+    it("should fail to verify wrong otp", async () => {
+      const otp = "123456";
+      const wrongOtp = "213456";
+      const hash = await service.hashOtp(otp);
+
+      const isValid = await service.verifyOtp(wrongOtp, hash);
+      expect(isValid).toBe(false);
+    });
+  });
+
   describe("Encryption", () => {
     it("should encrypt and decrypt correctly", () => {
       const plain = "Hello world!";
