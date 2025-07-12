@@ -19,19 +19,19 @@ describe("Auth decorator", () => {
   it("should apply SetMetadata and UseGuards with default values", () => {
     Auth();
 
-    expect(SetMetadata).toHaveBeenCalledWith(authConfig.ROLES_META_KEY, authConfig.pickRoles(authConfig.allRoles()));
+    expect(SetMetadata).toHaveBeenCalledWith(authConfig.ROLES_META_KEY, authConfig.pickRoles(authConfig.ALL_ROLES));
 
     expect(UseGuards).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
   });
 
   it('should apply AccessTokenGuard when name is "access"', () => {
-    Auth(["ADMIN"], "access");
+    Auth(["ADMIN"], "ACCESS_GUARD");
 
     expect(UseGuards).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
   });
 
   it('should apply RefreshTokenGuard when name is "refresh"', () => {
-    Auth(["ADMIN"], "refresh");
+    Auth(["ADMIN"], "REFRESH_GUARD");
 
     expect(UseGuards).toHaveBeenCalledWith(RefreshTokenGuard, RolesGuard);
   });
@@ -47,7 +47,7 @@ describe("Auth decorator", () => {
     const spy = jest.spyOn(authConfig, "pickRoles");
     const roles = ["admin", "user"] as any;
 
-    Auth(roles, "access");
+    Auth(roles, "ACCESS_GUARD");
 
     expect(spy).toHaveBeenCalledWith(roles);
   });
