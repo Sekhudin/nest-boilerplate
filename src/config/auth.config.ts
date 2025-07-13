@@ -1,3 +1,4 @@
+import { RoleName } from "@nestjs/passport";
 import { BaseConfig } from "./base.config";
 
 class AuthConfig extends BaseConfig {
@@ -5,14 +6,16 @@ class AuthConfig extends BaseConfig {
     super();
   }
 
-  readonly ROLES_META_KEY = "META:ROLES";
+  readonly ROLES = {
+    USER: "USER",
+    ADMIN: "ADMIN",
+  } as const;
+
   readonly DEFAULT_ROLE = "USER";
+  readonly ROLES_META_KEY = "META:ROLES";
+  readonly ALL_ROLES = Object.keys(this.ROLES) as RoleName[];
 
-  allRoles() {
-    return Object.keys(this.ROLES) as (keyof typeof this.ROLES)[];
-  }
-
-  pickRoles(keys: (keyof typeof this.ROLES)[]) {
+  pickRoles(keys: RoleName[]) {
     return keys.map((key) => this.ROLES[key] ?? "");
   }
 }

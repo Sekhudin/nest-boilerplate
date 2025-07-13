@@ -13,11 +13,6 @@ export abstract class BaseConfig {
     this.env = environment(process.env);
   }
 
-  readonly ROLES = {
-    USER: "USER",
-    ADMIN: "ADMIN",
-  } as const;
-
   get isProduction(): boolean {
     return isMatch(this.env.APP_ENV, "production");
   }
