@@ -28,7 +28,7 @@ export class Otp {
 
   static get dto() {
     return z.object({
-      token: z.uuidv4(),
+      token: z.uuidv4({ error: "invalid token" }),
       get user() {
         return User.dto;
       },

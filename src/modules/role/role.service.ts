@@ -9,12 +9,14 @@ export class RoleService extends BaseService {
     super();
   }
 
-  async findDefaultRole() {
+  async findOrCreateDefaultRole() {
     const existingRole = await this.roleRepository.findOneBy({ name: authConfig.DEFAULT_ROLE });
     if (existingRole) return existingRole;
+
     const role = this.roleRepository.create();
     role.name = authConfig.DEFAULT_ROLE;
     role.description = "Default Role";
+
     return await this.roleRepository.save(role);
   }
 }
