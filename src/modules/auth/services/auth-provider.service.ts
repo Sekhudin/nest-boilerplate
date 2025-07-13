@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { AuthProviderRepository } from "src/modules/auth/repositories/auth-provider.repository";
 import { BaseService } from "src/shared/base/base.service";
+import { AuthProviderRepository } from "src/modules/auth/repositories/auth-provider.repository";
 
 @Injectable()
 export class AuthProviderService extends BaseService {
@@ -8,11 +8,13 @@ export class AuthProviderService extends BaseService {
     super();
   }
 
-  async fidLocalAuthProvider() {
+  async findOrCreateLocalAuthProvider() {
     const existingAuthProvider = await this.authProviderRepository.findOneBy({ name: "LOCAL" });
     if (existingAuthProvider) return existingAuthProvider;
-    const authProvider = this.authProviderRepository.create({ name: "LOCAL" });
-    authProvider.description = "for local auth provider";
-    return await this.authProviderRepository.save(authProvider);
+
+    const newAuthProvider = this.authProviderRepository.create({ name: "LOCAL" });
+    newAuthProvider.description = "for local auth provider";
+
+    return await this.authProviderRepository.save(newAuthProvider);
   }
 }
