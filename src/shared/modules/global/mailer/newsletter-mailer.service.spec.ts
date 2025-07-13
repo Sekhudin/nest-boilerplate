@@ -1,38 +1,29 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Test, TestingModule } from "@nestjs/testing";
+import { getFresMailerConfigMock } from "test/mocks/config/mailer.config.mock";
+import { getFreshMailerServiceMock } from "test/mocks/services/mailer.service.mock";
 import { NewsletterMailerService } from "./newsletter-mailer.service";
 
+let mailerConfigMock: ReturnType<typeof getFresMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({
-  mailerConfig: {
-    TRANSPORTERS: {
-      NEWSLETTER: "NEWSLETTER_TRANSPORT",
-    },
-
-    context<T>(contextValue: T): { year: number } & T {
-      return { year: 2025, ...contextValue };
-    },
-
-    emailFrom(senderType: string) {
-      return senderType;
-    },
+  get mailerConfig() {
+    return mailerConfigMock;
   },
 }));
 
 describe("NewsletterMailerService", () => {
+  const mailerServiceMock = getFreshMailerServiceMock();
   let service: NewsletterMailerService;
   let mailerService: MailerService;
 
-  const mockMailerService = {
-    sendMail: jest.fn(),
-  };
-
   beforeEach(async () => {
+    mailerConfigMock = getFresMailerConfigMock();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         NewsletterMailerService,
         {
           provide: MailerService,
-          useValue: mockMailerService,
+          useValue: mailerServiceMock,
         },
       ],
     }).compile();
@@ -40,8 +31,6 @@ describe("NewsletterMailerService", () => {
     service = module.get<NewsletterMailerService>(NewsletterMailerService);
     mailerService = module.get<MailerService>(MailerService);
   });
-
-  afterEach(() => jest.clearAllMocks());
 
   it("should create context with default merged values", () => {
     const context = service.createContext({
@@ -61,7 +50,7 @@ describe("NewsletterMailerService", () => {
   });
 
   it("should send mail with transporterName set to newsletter", async () => {
-    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "789" });
+    mailerServiceMock.sendMail.mockResolvedValueOnce({ messageId: "789" });
 
     const result = await service.sendMail({
       subject: "Test Newsletter",
@@ -80,7 +69,7 @@ describe("NewsletterMailerService", () => {
   });
 
   it("should call sendMail with default newsletter email values", async () => {
-    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "101112" });
+    mailerServiceMock.sendMail.mockResolvedValueOnce({ messageId: "101112" });
 
     const result = await service.send();
 

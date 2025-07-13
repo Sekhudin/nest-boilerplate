@@ -1,38 +1,29 @@
 import { MailerService, SendEmailVerificationContext } from "@nestjs-modules/mailer";
 import { Test, TestingModule } from "@nestjs/testing";
+import { getFresMailerConfigMock } from "test/mocks/config/mailer.config.mock";
+import { getFreshMailerServiceMock } from "test/mocks/services/mailer.service.mock";
 import { OtpMailerService } from "./otp-mailer.service";
 
+let mailerConfigMock: ReturnType<typeof getFresMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({
-  mailerConfig: {
-    TRANSPORTERS: {
-      OTP: "OTP_TRANSPORT",
-    },
-
-    context<T>(contextValue: T): { year: number } & T {
-      return { year: 2025, ...contextValue };
-    },
-
-    emailFrom(senderType: string) {
-      return senderType;
-    },
+  get mailerConfig() {
+    return mailerConfigMock;
   },
 }));
 
 describe("OtpMailerService", () => {
+  const mailerServiceMock = getFreshMailerServiceMock();
   let service: OtpMailerService;
   let mailerService: MailerService;
 
-  const mockMailerService = {
-    sendMail: jest.fn(),
-  };
-
   beforeEach(async () => {
+    mailerConfigMock = getFresMailerConfigMock();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OtpMailerService,
         {
           provide: MailerService,
-          useValue: mockMailerService,
+          useValue: mailerServiceMock,
         },
       ],
     }).compile();
@@ -40,8 +31,6 @@ describe("OtpMailerService", () => {
     service = module.get<OtpMailerService>(OtpMailerService);
     mailerService = module.get<MailerService>(MailerService);
   });
-
-  afterEach(() => jest.clearAllMocks());
 
   it("should create context with default merged values", () => {
     const context = service.createContext({
@@ -61,7 +50,7 @@ describe("OtpMailerService", () => {
   });
 
   it("should send mail with transporterName set to otp", async () => {
-    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "otp-123" });
+    mailerServiceMock.sendMail.mockResolvedValueOnce({ messageId: "otp-123" });
 
     const result = await service.sendMail({
       subject: "Test OTP",
@@ -80,7 +69,7 @@ describe("OtpMailerService", () => {
   });
 
   it("should send email verification with correct options", async () => {
-    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "abc-456" });
+    mailerServiceMock.sendMail.mockResolvedValueOnce({ messageId: "abc-456" });
 
     const context: SendEmailVerificationContext = {
       to: "user@example.com",

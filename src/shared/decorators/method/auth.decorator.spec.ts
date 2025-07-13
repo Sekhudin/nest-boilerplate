@@ -1,54 +1,58 @@
-import { SetMetadata, UseGuards } from "@nestjs/common";
+import { RoleName } from "@nestjs/passport";
 import { AccessTokenGuard } from "src/shared/guards/access-token.guard";
 import { RefreshTokenGuard } from "src/shared/guards/refresh-token.guard";
 import { RolesGuard } from "src/shared/guards/roles.guard";
-import { authConfig } from "src/config/auth.config";
+import { getFresAuthConfigMock } from "test/mocks/config/auth.config.mock";
+import { getFreshSetMetadataMock } from "test/mocks/decorators/set-metadata.decorator.mock";
+import { getFreshUseGuardsMock } from "test/mocks/decorators/use-guards.decorator.mock";
 import { Auth } from "./auth.decorator";
 
-jest.mock("@nestjs/common", () => ({
-  ...jest.requireActual("@nestjs/common"),
-  SetMetadata: jest.fn(() => () => {}),
-  UseGuards: jest.fn(() => () => {}),
-}));
+let SetMetadataMock: ReturnType<typeof getFreshSetMetadataMock>;
+let UseGuardsMock: ReturnType<typeof getFreshUseGuardsMock>;
+jest.mock("@nestjs/common", () => {
+  const actual = jest.requireActual("@nestjs/common");
+  return {
+    ...actual,
+    SetMetadata: (metadata: unknown, metadataValue: unknown) => SetMetadataMock(metadata, metadataValue),
+    UseGuards: (...args: any[]) => UseGuardsMock(...args),
+  };
+});
 
 describe("Auth decorator", () => {
+  const authConfig = getFresAuthConfigMock();
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    SetMetadataMock = getFreshSetMetadataMock();
+    UseGuardsMock = getFreshUseGuardsMock();
   });
 
   it("should apply SetMetadata and UseGuards with default values", () => {
     Auth();
-
-    expect(SetMetadata).toHaveBeenCalledWith(authConfig.ROLES_META_KEY, authConfig.pickRoles(authConfig.ALL_ROLES));
-
-    expect(UseGuards).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
+    expect(SetMetadataMock).toHaveBeenCalledWith(authConfig.ROLES_META_KEY, authConfig.pickRoles(authConfig.ALL_ROLES));
+    expect(UseGuardsMock).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
   });
 
   it('should apply AccessTokenGuard when name is "access"', () => {
     Auth(["ADMIN"], "ACCESS_GUARD");
-
-    expect(UseGuards).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
+    expect(UseGuardsMock).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
   });
 
   it('should apply RefreshTokenGuard when name is "refresh"', () => {
     Auth(["ADMIN"], "REFRESH_GUARD");
-
-    expect(UseGuards).toHaveBeenCalledWith(RefreshTokenGuard, RolesGuard);
+    expect(UseGuardsMock).toHaveBeenCalledWith(RefreshTokenGuard, RolesGuard);
   });
 
   it("should fallback to AccessTokenGuard if unknown guard name given", () => {
     // @ts-expect-error intentional wrong value
     Auth(["admin"], "invalid")();
-
-    expect(UseGuards).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
+    expect(UseGuardsMock).toHaveBeenCalledWith(AccessTokenGuard, RolesGuard);
   });
 
   it("should map roles correctly using authConfig.pickRoles", () => {
     const spy = jest.spyOn(authConfig, "pickRoles");
-    const roles = ["admin", "user"] as any;
+    const roles = ["USER", "ADMIN"] as RoleName[];
 
     Auth(roles, "ACCESS_GUARD");
-
     expect(spy).toHaveBeenCalledWith(roles);
   });
 });

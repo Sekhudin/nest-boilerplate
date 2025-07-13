@@ -1,38 +1,29 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Test, TestingModule } from "@nestjs/testing";
+import { getFresMailerConfigMock } from "test/mocks/config/mailer.config.mock";
+import { getFreshMailerServiceMock } from "test/mocks/services/mailer.service.mock";
 import { BillingMailerService } from "./billing-mailer.service";
 
+let mailerConfigMock: ReturnType<typeof getFresMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({
-  mailerConfig: {
-    TRANSPORTERS: {
-      BILLING: "BILLING_TRANSPORT",
-    },
-
-    context<T>(contextValue: T): { year: number } & T {
-      return { year: 2025, ...contextValue };
-    },
-
-    emailFrom(senderType: string) {
-      return senderType;
-    },
+  get mailerConfig() {
+    return mailerConfigMock;
   },
 }));
 
 describe("BillingMailerService", () => {
+  const mailerServiceMock = getFreshMailerServiceMock();
   let service: BillingMailerService;
   let mailerService: MailerService;
 
-  const mockMailerService = {
-    sendMail: jest.fn(),
-  };
-
   beforeEach(async () => {
+    mailerConfigMock = getFresMailerConfigMock();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BillingMailerService,
         {
           provide: MailerService,
-          useValue: mockMailerService,
+          useValue: mailerServiceMock,
         },
       ],
     }).compile();
@@ -40,8 +31,6 @@ describe("BillingMailerService", () => {
     service = module.get<BillingMailerService>(BillingMailerService);
     mailerService = module.get<MailerService>(MailerService);
   });
-
-  afterEach(() => jest.clearAllMocks());
 
   it("should create context with default merged values", () => {
     const context = service.createContext({
@@ -61,7 +50,7 @@ describe("BillingMailerService", () => {
   });
 
   it("should send mail with transporterName set to billing", async () => {
-    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "123" });
+    mailerServiceMock.sendMail.mockResolvedValueOnce({ messageId: "123" });
 
     const result = await service.sendMail({
       subject: "Test Subject",
@@ -70,7 +59,7 @@ describe("BillingMailerService", () => {
     });
 
     expect(mailerService.sendMail).toHaveBeenCalledWith({
-      transporterName: "BILLING_TRANSPORT", // 💡 gunakan value dari mock
+      transporterName: "BILLING_TRANSPORT",
       subject: "Test Subject",
       to: "user@example.com",
       template: "template-name",
@@ -79,7 +68,7 @@ describe("BillingMailerService", () => {
   });
 
   it("should call sendMail with default billing email values", async () => {
-    mockMailerService.sendMail.mockResolvedValueOnce({ messageId: "456" });
+    mailerServiceMock.sendMail.mockResolvedValueOnce({ messageId: "456" });
 
     const result = await service.send();
 
