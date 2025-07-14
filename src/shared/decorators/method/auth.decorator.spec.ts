@@ -2,7 +2,7 @@ import { RoleName } from "@nestjs/passport";
 import { AccessTokenGuard } from "src/shared/guards/access-token.guard";
 import { RefreshTokenGuard } from "src/shared/guards/refresh-token.guard";
 import { RolesGuard } from "src/shared/guards/roles.guard";
-import { getFresAuthConfigMock } from "test/mocks/config/auth.config.mock";
+import { getFreshAuthConfigMock } from "test/mocks/config/auth.config.mock";
 import { getFreshSetMetadataMock } from "test/mocks/decorators/set-metadata.decorator.mock";
 import { getFreshUseGuardsMock } from "test/mocks/decorators/use-guards.decorator.mock";
 import { Auth } from "./auth.decorator";
@@ -19,7 +19,7 @@ jest.mock("@nestjs/common", () => {
 });
 
 describe("Auth decorator", () => {
-  const authConfig = getFresAuthConfigMock();
+  const authConfig = getFreshAuthConfigMock();
 
   beforeEach(() => {
     SetMetadataMock = getFreshSetMetadataMock();

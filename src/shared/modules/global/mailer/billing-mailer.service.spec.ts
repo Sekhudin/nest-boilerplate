@@ -1,10 +1,10 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Test, TestingModule } from "@nestjs/testing";
-import { getFresMailerConfigMock } from "test/mocks/config/mailer.config.mock";
+import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshMailerServiceMock } from "test/mocks/services/mailer.service.mock";
 import { BillingMailerService } from "./billing-mailer.service";
 
-let mailerConfigMock: ReturnType<typeof getFresMailerConfigMock>;
+let mailerConfigMock: ReturnType<typeof getFreshMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({
   get mailerConfig() {
     return mailerConfigMock;
@@ -17,7 +17,7 @@ describe("BillingMailerService", () => {
   let mailerService: MailerService;
 
   beforeEach(async () => {
-    mailerConfigMock = getFresMailerConfigMock();
+    mailerConfigMock = getFreshMailerConfigMock();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BillingMailerService,

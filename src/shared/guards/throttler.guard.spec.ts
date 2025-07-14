@@ -8,7 +8,7 @@ describe("ThrottlerGuard", () => {
     guard = new ThrottlerGuard(null as any, null as any, null as any);
   });
 
-  describe("throwThrottlingException", () => {
+  describe("throw ThrottlingException", () => {
     it("should throw HttpException with correct structure", async () => {
       try {
         // @ts-expect-error – kita sengaja panggil protected method untuk test

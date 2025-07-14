@@ -5,7 +5,7 @@ const mockSchema = {
   validate: jest.fn(),
 };
 
-describe("ValidationPipe Pipe", () => {
+describe("ValidationPipe", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

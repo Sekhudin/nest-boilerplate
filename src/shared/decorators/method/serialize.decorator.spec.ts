@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { serializerConfig } from "src/config/serializer.config";
 import { Serialize } from "./serialize.decorator";
 
-describe("Serialize Decorator", () => {
+describe("Serialize decorator", () => {
   class DummyDto {}
 
   it("should set metadata with dto and default options", () => {

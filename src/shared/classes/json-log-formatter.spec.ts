@@ -17,32 +17,6 @@ describe("JsonLogFormatter", () => {
     },
   };
 
-  it("should set queryParams to null when query is empty", () => {
-    const result = JsonLogFormatter.http({
-      req: { ...mockRequest, query: {} } as Request,
-      statusCode: 200,
-      startTime: 0,
-      endTime: 10,
-    });
-
-    expect(result).toMatchObject({
-      queryParams: null,
-    });
-  });
-
-  it("should set userId to null when user is not present", () => {
-    const result = JsonLogFormatter.http({
-      req: { ...mockRequest, user: undefined } as Request,
-      statusCode: 200,
-      startTime: 0,
-      endTime: 10,
-    });
-
-    expect(result).toMatchObject({
-      userId: null,
-    });
-  });
-
   it("should instantiate JsonLogFormatter directly with valid value", () => {
     const formatter = new JsonLogFormatter({ method: "GET", path: "/direct" } as any) as any;
     expect(formatter).toBeInstanceOf(JsonLogFormatter);
@@ -50,17 +24,31 @@ describe("JsonLogFormatter", () => {
     expect(formatter.path).toBe("/direct");
   });
 
-  describe("transform", () => {
-    it("should transform the value to Logform.TransformableInfo", () => {
-      const value = { method: "GET", path: "/test" };
-      const result = JsonLogFormatter.transform(value);
-      expect(result).toBeInstanceOf(JsonLogFormatter);
-      expect(result).toMatchObject(value);
+  describe("http", () => {
+    it("should set queryParams to null when query is empty", () => {
+      const result = JsonLogFormatter.http({
+        req: { ...mockRequest, query: {} } as Request,
+        statusCode: 200,
+        startTime: 0,
+        endTime: 10,
+      });
+
+      expect(result).toMatchObject({
+        queryParams: null,
+      });
     });
 
-    it("should handle transform with empty object", () => {
-      const result = JsonLogFormatter.transform({});
-      expect(result).toBeInstanceOf(JsonLogFormatter);
+    it("should set userId to null when user is not present", () => {
+      const result = JsonLogFormatter.http({
+        req: { ...mockRequest, user: undefined } as Request,
+        statusCode: 200,
+        startTime: 0,
+        endTime: 10,
+      });
+
+      expect(result).toMatchObject({
+        userId: null,
+      });
     });
 
     it("should set body to null when body is undefined", () => {
@@ -101,9 +89,7 @@ describe("JsonLogFormatter", () => {
         userId: null,
       });
     });
-  });
 
-  describe("http", () => {
     it("should create a correct http log format", () => {
       const startTime = Date.now();
       const endTime = startTime + 150;
@@ -125,6 +111,20 @@ describe("JsonLogFormatter", () => {
         responseTime: 150,
         responseTimeMs: "+150ms",
       });
+    });
+  });
+
+  describe("transform", () => {
+    it("should transform the value to Logform.TransformableInfo", () => {
+      const value = { method: "GET", path: "/test" };
+      const result = JsonLogFormatter.transform(value);
+      expect(result).toBeInstanceOf(JsonLogFormatter);
+      expect(result).toMatchObject(value);
+    });
+
+    it("should handle transform with empty object", () => {
+      const result = JsonLogFormatter.transform({});
+      expect(result).toBeInstanceOf(JsonLogFormatter);
     });
   });
 

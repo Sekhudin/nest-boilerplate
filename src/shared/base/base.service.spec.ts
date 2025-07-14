@@ -32,14 +32,16 @@ describe("BaseService", () => {
     } as any;
   });
 
-  it("should return default repository when no entity manager is provided", () => {
-    const result = service.testGetRepository(DummyEntity, mockRepo);
-    expect(result).toBe(mockRepo);
-  });
+  describe("getRepository", () => {
+    it("should return default repository when no entity manager is provided", () => {
+      const result = service.testGetRepository(DummyEntity, mockRepo);
+      expect(result).toBe(mockRepo);
+    });
 
-  it("should return repository from entity manager when provided", () => {
-    const result = service.testGetRepository(DummyEntity, mockRepo, mockManager);
-    expect(mockManager.getRepository).toHaveBeenCalledWith(DummyEntity);
-    expect(result).toBe("mocked-from-manager");
+    it("should return repository from entity manager when provided", () => {
+      const result = service.testGetRepository(DummyEntity, mockRepo, mockManager);
+      expect(mockManager.getRepository).toHaveBeenCalledWith(DummyEntity);
+      expect(result).toBe("mocked-from-manager");
+    });
   });
 });

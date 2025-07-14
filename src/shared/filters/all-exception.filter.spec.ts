@@ -3,11 +3,13 @@ import { ArgumentsHost, HttpException, HttpStatus, InternalServerErrorException 
 import { HttpAdapterHost } from "@nestjs/core";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { Claims } from "src/shared/dto/claims.dto";
+import { getFreshAppConfigMock } from "test/mocks/config/app.config.mock";
 import { AllExceptionFilter } from "./all-exception.filter";
 
+let appConfigMock: ReturnType<typeof getFreshAppConfigMock>;
 jest.mock("src/config/app.config", () => ({
-  appConfig: {
-    isProduction: false,
+  get appConfig() {
+    return appConfigMock;
   },
 }));
 
@@ -71,7 +73,7 @@ describe("AllExceptionFilter", () => {
     }) as unknown as ArgumentsHost;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    appConfigMock = getFreshAppConfigMock();
     logger = mockLogger as unknown as LoggerService;
     httpAdapterHost = mockHttpAdapterHost as unknown as HttpAdapterHost;
     filter = new AllExceptionFilter(httpAdapterHost, logger);

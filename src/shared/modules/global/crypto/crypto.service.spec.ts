@@ -12,7 +12,7 @@ describe("CryptoService", () => {
     service = module.get<CryptoService>(CryptoService);
   });
 
-  describe("Password Hashing", () => {
+  describe("password hashing", () => {
     it("should hash and verify password correctly", async () => {
       const password = "s3cret!";
       const hash = await service.hashPassword(password);
@@ -34,7 +34,7 @@ describe("CryptoService", () => {
     });
   });
 
-  describe("OTP Hashing", () => {
+  describe("OTP hashing", () => {
     it("should hash and verify otp correctly", async () => {
       const otp = "123456";
       const hash = await service.hashOtp(otp);
@@ -56,7 +56,7 @@ describe("CryptoService", () => {
     });
   });
 
-  describe("Encryption", () => {
+  describe("encryption", () => {
     it("should encrypt and decrypt correctly", () => {
       const plain = "Hello world!";
       const encrypted = service.encrypt(plain);
