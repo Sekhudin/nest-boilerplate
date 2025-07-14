@@ -5,7 +5,7 @@ jest.mock("src/utils", () => ({
   isMatchRegex: (pattern: RegExp, value: string) => pattern.test(value),
 }));
 
-describe("helper functions", () => {
+describe("ua helper functions", () => {
   describe("detectIP", () => {
     it("should return first IP from x-forwarded-for header", () => {
       const req = {
