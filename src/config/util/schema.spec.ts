@@ -1,6 +1,6 @@
 import * as schema from "./schema";
 
-describe("Zod schema utilities", () => {
+describe("environment schema utilities", () => {
   it("should validate non-empty trimmed string", () => {
     const s = schema.string("name");
     expect(() => s.parse("  valid  ")).not.toThrow();
