@@ -22,7 +22,6 @@ export class UserService extends BaseService {
 
     const role = await this.roleService.findOrCreateDefaultRole();
     const newUser = repository.create(createLocalUserDto);
-    console.log(newUser, role);
     newUser.role = role;
 
     return await repository.save(newUser);
