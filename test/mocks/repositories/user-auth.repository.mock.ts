@@ -5,6 +5,7 @@ import { UserAuthRepository } from "src/modules/auth/repositories/user-auth.repo
 
 export const getFreshUserAuthRepositoryMock = () => {
   const repository = mock<UserAuthRepository>();
+
   repository.save.mockImplementation(async <T extends DeepPartial<UserAuth>>(entity: T | T[]) => {
     return entity;
   });

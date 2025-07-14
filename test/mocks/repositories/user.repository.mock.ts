@@ -5,6 +5,8 @@ import { UserRepository } from "src/modules/user/user.repository";
 
 export const getFreshUserRepositoryMock = () => {
   const repository = mock<UserRepository>();
+
+  repository.create.mockReturnValue(mock<User>());
   repository.save.mockImplementation(async <T extends DeepPartial<User>>(entity: T | T[]) => {
     return entity;
   });

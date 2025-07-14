@@ -2,7 +2,7 @@ import { MockConfig, mockDeep } from "jest-mock-extended";
 import { authConfig } from "src/config/auth.config";
 
 type AuthConfig = MockConfig<typeof authConfig>;
-export const getFresAuthConfigMock = () => {
+export const getFreshAuthConfigMock = () => {
   const config = mockDeep<AuthConfig>();
 
   config.pickRoles.mockImplementation((roles) => roles);

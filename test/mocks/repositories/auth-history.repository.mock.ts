@@ -5,6 +5,7 @@ import { AuthHistoryRepository } from "src/modules/auth/repositories/auth-histor
 
 export const getFreshAuthHistoryRepositoryMock = () => {
   const repository = mock<AuthHistoryRepository>();
+
   repository.save.mockImplementation(async <T extends DeepPartial<AuthHistory>>(entity: T | T[]) => {
     return entity;
   });

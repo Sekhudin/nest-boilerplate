@@ -5,6 +5,7 @@ import { AuthProviderRepository } from "src/modules/auth/repositories/auth-provi
 
 export const getFreshAuthProviderRepositoryMock = () => {
   const repository = mock<AuthProviderRepository>();
+
   repository.save.mockImplementation(async <T extends DeepPartial<AuthProvider>>(entity: T | T[]) => {
     return entity;
   });

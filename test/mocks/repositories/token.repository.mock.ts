@@ -5,6 +5,7 @@ import { TokenRepository } from "src/modules/token/token.repository";
 
 export const getFreshTokenRepositoryMock = () => {
   const repository = mock<TokenRepository>();
+
   repository.save.mockImplementation(async <T extends DeepPartial<Token>>(entity: T | T[]) => {
     return entity;
   });

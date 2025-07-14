@@ -4,7 +4,7 @@ import { MockConfig, mockDeep } from "jest-mock-extended";
 import { mailerConfig } from "src/config/mailer.config";
 
 type MailerConfig = MockConfig<typeof mailerConfig>;
-export const getFresMailerConfigMock = () => {
+export const getFreshMailerConfigMock = () => {
   const config = mockDeep<MailerConfig>();
 
   config.context.mockImplementation(<T>(contextValue: T) => ({ year: 2025, ...contextValue }) as DefaultContext & T);
