@@ -1,15 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "src/modules/user/entities/user.entity";
-import { schema, Schema, z } from "src/utils/validation";
+import { schema, Schema, z, zr } from "src/utils/validation";
 import { isNotMatch } from "src/utils";
 
 const signUpLocal = schema(
   User.dto
     .pick({
       email: true,
-      password: true,
     })
     .extend({
+      password: zr.password(),
       confirmPassword: z.string().min(1),
     })
     .check((context) => {

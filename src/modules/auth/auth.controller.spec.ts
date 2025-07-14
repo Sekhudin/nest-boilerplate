@@ -1,12 +1,12 @@
 import { GeneratedOtp } from "otplib";
 import { Test, TestingModule } from "@nestjs/testing";
-import { getFresMailerConfigMock } from "test/mocks/config/mailer.config.mock";
+import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshAuthServiceMock } from "test/mocks/services/auth.service.mock";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { SignUpLocalDto } from "./dto/sign-up-local.dto";
 
-let mailerConfigMock: ReturnType<typeof getFresMailerConfigMock>;
+let mailerConfigMock: ReturnType<typeof getFreshMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({
   get mailerConfig() {
     return mailerConfigMock;
@@ -18,7 +18,7 @@ describe("AuthController", () => {
   const authServiceMock = getFreshAuthServiceMock();
 
   beforeEach(async () => {
-    mailerConfigMock = getFresMailerConfigMock();
+    mailerConfigMock = getFreshMailerConfigMock();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [{ provide: AuthService, useValue: authServiceMock }],
