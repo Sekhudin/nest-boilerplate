@@ -125,6 +125,7 @@
       "**/*.(t|j)s",
       "!**/*.config.ts",
       "!**/*.module.ts",
+      "!**/*.entity.ts",
       "!**/main.ts"
     ],
     "coverageDirectory": "../coverage",
