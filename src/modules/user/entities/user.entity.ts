@@ -2,8 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -32,8 +34,9 @@ export class User {
   @ManyToOne(() => Role)
   role: Role;
 
-  @OneToMany(() => UserAuth, (auth) => auth.user)
-  authMethods: UserAuth[];
+  @OneToOne(() => UserAuth, (userAuth) => userAuth.user)
+  @JoinColumn()
+  authMethod: UserAuth;
 
   @OneToMany(() => AuthHistory, (authHistory) => authHistory.user)
   authHistories: AuthHistory[];
@@ -42,7 +45,7 @@ export class User {
   tokens: Token[];
 
   @OneToMany(() => Otp, (otp) => otp.user)
-  otpd: Otp[];
+  otps: Otp[];
 
   @CreateDateColumn()
   timestamp: Date;
@@ -54,14 +57,13 @@ export class User {
     return z.object({
       id: z.uuidv4(),
       email: z.email(),
-      password: zr.password(),
       isActive: z.boolean(),
       isEmailVerified: z.boolean(),
       get role() {
         return Role.dto;
       },
-      get authMethods() {
-        return z.array(UserAuth.dto);
+      get authMethod() {
+        return UserAuth.dto;
       },
       get authHistories() {
         return z.array(AuthHistory.dto);

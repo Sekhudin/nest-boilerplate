@@ -32,7 +32,7 @@ export class Otp {
       get user() {
         return User.dto;
       },
-      hashOtp: z.string().length(6),
+      hashOtp: z.string(),
       purpose: z.enum(["EMAIL_VERIFICATION", "PASSWORD_RESET", "SIGNIN"]),
       isUsed: z.boolean(),
       expiresAt: z.date(),
