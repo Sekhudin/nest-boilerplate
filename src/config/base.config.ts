@@ -1,6 +1,6 @@
+import { isMatching, P } from "ts-pattern";
 import * as dotEnv from "dotenv";
 import { INestApplication } from "@nestjs/common";
-import { isMatch } from "src/utils";
 import { environment, Environment, envpath } from "./util/environment";
 
 const instances = new WeakMap<Function, unknown>();
@@ -13,8 +13,12 @@ export abstract class BaseConfig {
     this.env = environment(process.env);
   }
 
+  get environment() {
+    return this.env.APP_ENV.toLowerCase().trim();
+  }
+
   get isProduction(): boolean {
-    return isMatch(this.env.APP_ENV, "production");
+    return this.environment === "production";
   }
 
   setup(app: INestApplication): void {

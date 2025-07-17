@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "src/modules/user/entities/user.entity";
 import { schema, Schema, z, zr } from "src/utils/validation";
-import { isNotMatch } from "src/utils";
 
 const signUpLocal = schema(
   User.dto
@@ -13,7 +12,7 @@ const signUpLocal = schema(
       confirmPassword: z.string().min(1),
     })
     .check((context) => {
-      if (isNotMatch(context.value.password, context.value.confirmPassword)) {
+      if (context.value.password !== context.value.confirmPassword) {
         context.issues.push({
           code: "custom",
           input: context.value.confirmPassword,
