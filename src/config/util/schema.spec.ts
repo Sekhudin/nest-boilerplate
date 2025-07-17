@@ -6,7 +6,6 @@ describe("environment schema utilities", () => {
     expect(() => s.parse("  valid  ")).not.toThrow();
     expect(() => s.parse("   ")).toThrow("name can't be empty");
 
-    // test default param branch
     const defaultString = schema.string();
     expect(() => defaultString.parse("")).toThrow("field can't be empty");
   });
@@ -15,7 +14,6 @@ describe("environment schema utilities", () => {
     const s = schema.split();
     expect(s.parse("a,b, c ")).toEqual(["a", "b", "c"]);
 
-    // test min(1) fail
     expect(() => s.parse("")).toThrow();
   });
 
@@ -96,7 +94,6 @@ describe("environment schema utilities", () => {
     expect(schema.secret("password", 6).parse("123456")).toBe("123456");
     expect(() => schema.secret("password", 6).parse("123")).toThrow("password must be at least 6 characters long");
 
-    // test trimming
     expect(() => schema.secret("apiKey", 8).parse("      ")).toThrow("apiKey must be at least 8 characters long");
   });
 
@@ -104,7 +101,6 @@ describe("environment schema utilities", () => {
     expect(schema.semver("version").parse("1.0.0")).toBe("1.0.0");
     expect(() => schema.semver("version").parse("1.0")).toThrow("version must be valid semver (e.g., 1.0.0)");
 
-    // default param test
     expect(() => schema.semver().parse("0")).toThrow("field must be valid semver (e.g., 1.0.0)");
   });
 });
