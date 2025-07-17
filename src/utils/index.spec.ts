@@ -1,7 +1,6 @@
 import { isMatchRegex, isNotMatchRegex } from "./index";
 
 describe("utils", () => {
-
   describe("isMatchRegex", () => {
     it("should return true if regex matches", () => {
       expect(isMatchRegex(/abc/, "abcde")).toBe(true);
