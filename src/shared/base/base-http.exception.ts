@@ -6,6 +6,7 @@ export abstract class BaseHttpException extends HttpException {
       statusCode,
       message,
     };
+
     if (BaseHttpException.hasErrors(errors)) {
       baseHttpExceptionBody.errors = errors;
     }
