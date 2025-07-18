@@ -3,10 +3,10 @@ import { BaseHttpException } from "src/shared/base/base-http.exception";
 import { ERROR_MESSAGES } from "src/shared/constants/error-messages.constant";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
 
-export class TokenExpiredException extends BaseHttpException {
+export class ThrottlerTooManyRequestsException extends BaseHttpException {
   constructor() {
-    super(HttpStatus.UNAUTHORIZED, ERROR_MESSAGES[ErrorCode.AUTH_TOKEN_EXPIRED], {
-      token: [ErrorCode.AUTH_TOKEN_EXPIRED],
+    super(HttpStatus.TOO_MANY_REQUESTS, ERROR_MESSAGES[ErrorCode.THROTTLER_TOO_MANY_REQUESTS], {
+      throttler: [ErrorCode.THROTTLER_TOO_MANY_REQUESTS],
     });
   }
 }
