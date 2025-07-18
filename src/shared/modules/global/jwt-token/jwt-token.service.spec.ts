@@ -1,7 +1,7 @@
-import { InternalServerErrorException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 import { Payload } from "src/shared/dto/payload.dto";
+import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
 import { JwtTokenService } from "./jwt-token.service";
 
 describe("JwtTokenService", () => {
@@ -64,7 +64,7 @@ describe("JwtTokenService", () => {
     expect(mockJwtService.signAsync).toHaveBeenCalledTimes(2);
   });
 
-  it("should throw InternalServerErrorException if payload is invalid", async () => {
+  it("should throw SystemInternalErrorException if payload is invalid", async () => {
     const invalidPayload = {
       ...validPayload,
       email: "not-an-email",
@@ -72,10 +72,9 @@ describe("JwtTokenService", () => {
 
     try {
       await tokenService.signAccessToken(invalidPayload as any);
-      fail("Expected InternalServerErrorException was not thrown");
+      fail("Expected SystemInternalErrorException was not thrown");
     } catch (err: any) {
-      expect(err).toBeInstanceOf(InternalServerErrorException);
-      expect(err.message).toBe("invalid jwt payload.");
+      expect(err).toBeInstanceOf(SystemInternalErrorException);
     }
   });
 });

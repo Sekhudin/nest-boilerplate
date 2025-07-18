@@ -1,4 +1,4 @@
-import { AuthClaimsInvalidException } from "src/shared/exceptions/auth/auth-claims-invalid.exception";
+import { TokenInvalidException } from "src/shared/exceptions/auth/token-invalid.exception";
 import { Schema, schema, z } from "src/utils/validation";
 import { payload } from "./payload.dto";
 
@@ -12,4 +12,4 @@ const claims = z.object({
   ...payload.shape,
 });
 
-export class Claims extends Schema(schema(claims, new AuthClaimsInvalidException())) {}
+export class Claims extends Schema(schema(claims, new TokenInvalidException())) {}

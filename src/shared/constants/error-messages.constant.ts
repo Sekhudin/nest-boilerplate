@@ -9,7 +9,6 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ErrorCode.AUTH_FORBIDDEN]: "You do not have permission to access this resource.",
   [ErrorCode.AUTH_TOKEN_EXPIRED]: "Your session has expired. Please log in again.",
   [ErrorCode.AUTH_TOKEN_INVALID]: "Invalid token.",
-  [ErrorCode.AUTH_CLAIMS_INVALID]: "Invalid token claims",
   [ErrorCode.AUTH_ACCOUNT_LOCKED]: "Your account is locked. Please contact support.",
 
   /******************************
