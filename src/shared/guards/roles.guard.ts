@@ -1,7 +1,9 @@
 import { Request } from "express";
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Claims } from "src/shared/dto/claims.dto";
+import { ForbiddenException } from "src/shared/exceptions/auth/forbidden.exception";
+import { PermissionRoleRequiredException } from "src/shared/exceptions/permission/permission-role-required.exception";
 import { authConfig } from "src/config/auth.config";
 
 @Injectable()
@@ -22,13 +24,13 @@ export class RolesGuard implements CanActivate {
     const user = request.user as Claims;
 
     if (!user?.roles || !user.roles.length) {
-      throw new ForbiddenException("User has no roles");
+      throw new ForbiddenException();
     }
 
     const hasRole = requiredRoles.some((role) => user.roles.includes(role));
 
     if (!hasRole) {
-      throw new ForbiddenException("Access denied");
+      throw new PermissionRoleRequiredException();
     }
 
     return true;

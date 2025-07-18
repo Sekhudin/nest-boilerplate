@@ -6,7 +6,7 @@ import { ErrorCode } from "src/shared/enums/error-code.enum";
 export class InvalidCredentialsException extends BaseHttpException {
   constructor() {
     super(HttpStatus.UNAUTHORIZED, ERROR_MESSAGES[ErrorCode.AUTH_INVALID_CREDENTIALS], {
-      auth: [ErrorCode.AUTH_INVALID_CREDENTIALS],
+      auth: [ErrorCode.AUTH_UNAUTHORIZED, ErrorCode.AUTH_INVALID_CREDENTIALS],
     });
   }
 }

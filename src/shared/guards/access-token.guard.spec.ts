@@ -1,4 +1,4 @@
-import { UnauthorizedException } from "@nestjs/common";
+import { TokenInvalidException } from "src/shared/exceptions/auth/token-invalid.exception";
 import { AccessTokenGuard } from "./access-token.guard";
 
 describe("AccessTokenGuard", () => {
@@ -20,11 +20,11 @@ describe("AccessTokenGuard", () => {
   });
 
   it("should throw UnauthorizedException if user is missing", () => {
-    expect(() => guard.handleRequest(null, null)).toThrow(UnauthorizedException);
+    expect(() => guard.handleRequest(null, null)).toThrow(TokenInvalidException);
     try {
       guard.handleRequest(null, null);
     } catch (e: any) {
-      expect(e.message).toBe("invalid token");
+      expect(e.message).toMatch(/Invalid token/);
     }
   });
 });

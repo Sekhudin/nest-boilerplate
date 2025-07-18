@@ -1,6 +1,7 @@
-import { ForbiddenException } from "@nestjs/common";
 import type { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { ForbiddenException } from "src/shared/exceptions/auth/forbidden.exception";
+import { PermissionRoleRequiredException } from "src/shared/exceptions/permission/permission-role-required.exception";
 import { RolesGuard } from "./roles.guard";
 
 describe("RolesGuard", () => {
@@ -36,12 +37,12 @@ describe("RolesGuard", () => {
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
   });
 
-  it("should throw ForbiddenException if user does not have required role", () => {
+  it("should throw PermissionRoleRequiredException if user does not have required role", () => {
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(["admin"]);
     const req = { user: { roles: ["user"] } };
     (context.switchToHttp().getRequest as jest.Mock).mockReturnValue(req);
 
-    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+    expect(() => guard.canActivate(context)).toThrow(PermissionRoleRequiredException);
   });
 
   it("should allow access if user has required role", () => {

@@ -6,7 +6,7 @@ import { ErrorCode } from "src/shared/enums/error-code.enum";
 export class TokenExpiredException extends BaseHttpException {
   constructor() {
     super(HttpStatus.UNAUTHORIZED, ERROR_MESSAGES[ErrorCode.AUTH_TOKEN_EXPIRED], {
-      token: [ErrorCode.AUTH_TOKEN_EXPIRED],
+      token: [ErrorCode.AUTH_UNAUTHORIZED, ErrorCode.AUTH_TOKEN_EXPIRED],
     });
   }
 }

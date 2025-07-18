@@ -13,7 +13,7 @@ describe("Auth Exceptions", () => {
     const response = exception.getResponse() as any;
     expect(exception.getStatus()).toBe(401);
     expect(response.message).toBe(ERROR_MESSAGES[ErrorCode.AUTH_INVALID_CREDENTIALS]);
-    expect(response.errors).toEqual({ auth: [ErrorCode.AUTH_INVALID_CREDENTIALS] });
+    expect(response.errors).toEqual({ auth: [ErrorCode.AUTH_UNAUTHORIZED, ErrorCode.AUTH_INVALID_CREDENTIALS] });
   });
 
   it("UnauthorizedException should be constructed correctly", () => {
@@ -37,7 +37,7 @@ describe("Auth Exceptions", () => {
     const response = exception.getResponse() as any;
     expect(exception.getStatus()).toBe(401);
     expect(response.message).toBe(ERROR_MESSAGES[ErrorCode.AUTH_TOKEN_EXPIRED]);
-    expect(response.errors).toEqual({ token: [ErrorCode.AUTH_TOKEN_EXPIRED] });
+    expect(response.errors).toEqual({ token: [ErrorCode.AUTH_UNAUTHORIZED, ErrorCode.AUTH_TOKEN_EXPIRED] });
   });
 
   it("TokenInvalidException should be constructed correctly", () => {
@@ -45,7 +45,7 @@ describe("Auth Exceptions", () => {
     const response = exception.getResponse() as any;
     expect(exception.getStatus()).toBe(401);
     expect(response.message).toBe(ERROR_MESSAGES[ErrorCode.AUTH_TOKEN_INVALID]);
-    expect(response.errors).toEqual({ token: [ErrorCode.AUTH_TOKEN_INVALID] });
+    expect(response.errors).toEqual({ token: [ErrorCode.AUTH_UNAUTHORIZED, ErrorCode.AUTH_TOKEN_INVALID] });
   });
 
   it("AccountLockedException should be constructed correctly", () => {
@@ -53,6 +53,6 @@ describe("Auth Exceptions", () => {
     const response = exception.getResponse() as any;
     expect(exception.getStatus()).toBe(403);
     expect(response.message).toBe(ERROR_MESSAGES[ErrorCode.AUTH_ACCOUNT_LOCKED]);
-    expect(response.errors).toEqual({ auth: [ErrorCode.AUTH_ACCOUNT_LOCKED] });
+    expect(response.errors).toEqual({ auth: [ErrorCode.AUTH_FORBIDDEN, ErrorCode.AUTH_ACCOUNT_LOCKED] });
   });
 });

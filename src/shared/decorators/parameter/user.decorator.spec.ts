@@ -1,5 +1,5 @@
-import { UnauthorizedException } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
+import { InvalidCredentialsException } from "src/shared/exceptions/auth/invalid-credentials.exception";
 import { User } from "./user.decorator";
 
 describe("User Decorator", () => {
@@ -39,7 +39,7 @@ describe("User Decorator", () => {
     expect(result).toEqual(mockUser);
   });
 
-  it("should throw UnauthorizedException if user not found", () => {
+  it("should throw InvalidCredentialsException if user not found", () => {
     const mockRequest = {};
     const mockContext = {
       switchToHttp: () => ({
@@ -48,6 +48,6 @@ describe("User Decorator", () => {
     };
 
     const factory = getFactory(User);
-    expect(() => factory(null, mockContext)).toThrow(UnauthorizedException);
+    expect(() => factory(null, mockContext)).toThrow(InvalidCredentialsException);
   });
 });

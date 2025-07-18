@@ -1,4 +1,5 @@
 import { ExecutionContext, HttpException, HttpStatus } from "@nestjs/common";
+import { ThrottlerTooManyRequestsException } from "src/shared/exceptions/throttler/throttler-too-many-requests.exception";
 import { ThrottlerGuard } from "./throttler.guard";
 
 describe("ThrottlerGuard", () => {
@@ -16,13 +17,9 @@ describe("ThrottlerGuard", () => {
         fail("Expected exception to be thrown");
       } catch (e) {
         const error = e as HttpException;
-        expect(error).toBeInstanceOf(HttpException);
+        expect(error).toBeInstanceOf(ThrottlerTooManyRequestsException);
         expect(error.getStatus()).toBe(HttpStatus.TOO_MANY_REQUESTS);
-        expect(error.getResponse()).toEqual({
-          message: "Too Many Requests",
-          error: "Too Many Requests",
-          statusCode: HttpStatus.TOO_MANY_REQUESTS,
-        });
+        expect(error.getResponse()).toEqual(new ThrottlerTooManyRequestsException().getResponse());
       }
     });
   });
