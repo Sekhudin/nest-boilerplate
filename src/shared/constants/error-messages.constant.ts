@@ -24,6 +24,7 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
    ******************************/
   [ErrorCode.OTP_INVALID]: "Invalid OTP code.",
   [ErrorCode.OTP_EXPIRED]: "OTP code has expired.",
+  [ErrorCode.OTP_INVALID_TOKEN]: "Invalid OTP token.",
   [ErrorCode.OTP_EMAIL_NOT_VERIFIED]: "Email address has not been verified.",
   [ErrorCode.OTP_MAGIC_LINK_INVALID]: "Invalid magic link.",
   [ErrorCode.OTP_MAGIC_LINK_EXPIRED]: "Magic link has expired.",
