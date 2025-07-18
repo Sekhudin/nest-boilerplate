@@ -1,13 +1,15 @@
 import z from "zod/v4";
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { BadRequestException, HttpException, SetMetadata } from "@nestjs/common";
+import { SetMetadata } from "@nestjs/common";
+import { BaseHttpException } from "src/shared/base/base-http.exception";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { StandarSchemaClass } from "src/types/standard-shema";
 import { validationConfig } from "src/config/validation.config";
 import * as zr from "./schemas";
 
 export const schema = <T extends z.ZodType<any, any, any>>(
   schema: T,
-  fallback?: HttpException,
+  fallback?: BaseHttpException,
 ): StandardSchemaV1<z.infer<T>> => ({
   "~standard": {
     version: 1,
@@ -15,10 +17,10 @@ export const schema = <T extends z.ZodType<any, any, any>>(
     validate: (value) => {
       const result = schema.safeParse(value);
       if (!result.success) {
-        const issue = result.error.issues[0];
-        const path = issue.path.length ? issue.path.join(".") : "root";
+        const flatten = z.flattenError(result.error);
+        const errors = flatten.fieldErrors as Record<string, string[]>;
         if (fallback) throw fallback;
-        throw new BadRequestException(`${path}: ${issue.message}`);
+        throw new ValidationException(errors);
       }
       return result.data;
     },

@@ -1,5 +1,7 @@
 import { StandardSchemaV1 } from "@standard-schema/spec";
-import { BadRequestException, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
+import { UnauthorizedException } from "src/shared/exceptions/auth/unauthorized.exception";
+import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { validationConfig } from "src/config/validation.config";
 import { Schema, schema, z } from "./index";
 
@@ -30,14 +32,14 @@ describe("validation schema helper", () => {
       expect(result).toEqual({ email: "test@example.com", age: 20 });
     });
 
-    it("should throw BadRequestException with correct message on validation failure", () => {
+    it("should throw ValidationException with correct message on validation failure", () => {
       const invalidData = { email: "invalid-email", age: 15 };
       try {
         wrappedSchema["~standard"].validate(invalidData);
-        fail("Expected BadRequestException was not thrown");
+        fail("Expected ValidationException was not thrown");
       } catch (err: any) {
-        expect(err).toBeInstanceOf(BadRequestException);
-        expect(err.message).toMatch(/email: Invalid email/);
+        expect(err).toBeInstanceOf(ValidationException);
+        expect(err.message).toMatch(/Validation failed/);
       }
     });
 
@@ -54,22 +56,22 @@ describe("validation schema helper", () => {
 
       try {
         wrappedNested["~standard"].validate(invalidNestedData);
-        fail("Expected BadRequestException was not thrown");
+        fail("Expected ValidationException was not thrown");
       } catch (err: any) {
-        expect(err).toBeInstanceOf(BadRequestException);
-        expect(err.message).toMatch(/^user\.username: /);
+        expect(err).toBeInstanceOf(ValidationException);
+        expect(err.message).toMatch(/Validation failed/);
       }
     });
 
-    it("should throw fallback InternalServerErrorException if provided", () => {
-      const fallback = new InternalServerErrorException("Internal fallback");
+    it("should throw fallback SystemInternalErrorException if provided", () => {
+      const fallback = new SystemInternalErrorException();
       const wrappedWithFallback = schema(testSchema, fallback);
 
       expect(() => wrappedWithFallback["~standard"].validate({ email: "a", age: 12 })).toThrow(fallback);
     });
 
     it("should throw fallback UnauthorizedException if provided", () => {
-      const fallback = new UnauthorizedException("Unauthorized fallback");
+      const fallback = new UnauthorizedException();
       const wrappedWithFallback = schema(testSchema, fallback);
 
       expect(() => wrappedWithFallback["~standard"].validate({ email: "invalid", age: 1 })).toThrow(fallback);

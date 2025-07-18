@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { OtpVerifyLinkDto } from "./otp-verify-link.dto";
 
 describe("OtpVerifyLinkDto", () => {
@@ -45,7 +45,7 @@ describe("OtpVerifyLinkDto", () => {
       validate({
         purpose: "EMAIL_VERIFICATION",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if token is empty", () => {
@@ -54,7 +54,7 @@ describe("OtpVerifyLinkDto", () => {
         token: "",
         purpose: "EMAIL_VERIFICATION",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if purpose is missing", () => {
@@ -62,7 +62,7 @@ describe("OtpVerifyLinkDto", () => {
       validate({
         token: "9f74bb4c-5ef4-4f85-b22d-123456abcdef",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if purpose is invalid", () => {
@@ -71,6 +71,6 @@ describe("OtpVerifyLinkDto", () => {
         token: "9f74bb4c-5ef4-4f85-b22d-123456abcdef",
         purpose: "INVALID" as any,
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 });

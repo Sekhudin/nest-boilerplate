@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { SignUpLocalDto } from "./sign-up-local.dto";
 
 describe("SignUpLocalDto", () => {
@@ -27,8 +27,8 @@ describe("SignUpLocalDto", () => {
         confirmPassword: "MismatchP@ss1",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/password and confirm password not match!/i);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
@@ -40,8 +40,8 @@ describe("SignUpLocalDto", () => {
         confirmPassword: "StrongP@ss1",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/email/i);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
@@ -53,7 +53,7 @@ describe("SignUpLocalDto", () => {
         confirmPassword: "StrongP@ss1",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
+      expect(err).toBeInstanceOf(ValidationException);
     }
   });
 
@@ -65,8 +65,8 @@ describe("SignUpLocalDto", () => {
         confirmPassword: "Sh0!",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/password must be at least 8 characters/i);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
@@ -78,8 +78,8 @@ describe("SignUpLocalDto", () => {
         confirmPassword: "weakpass1",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/password must be at least 8 characters/i);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
@@ -91,8 +91,8 @@ describe("SignUpLocalDto", () => {
         confirmPassword: "",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/password must be at least 8 characters/i);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
@@ -104,7 +104,7 @@ describe("SignUpLocalDto", () => {
         confirmPassword: "",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
+      expect(err).toBeInstanceOf(ValidationException);
     }
   });
 });

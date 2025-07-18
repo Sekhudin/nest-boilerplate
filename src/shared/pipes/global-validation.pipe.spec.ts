@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { ArgumentMetadata, BadRequestException } from "@nestjs/common";
+import { ArgumentMetadata } from "@nestjs/common";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { Schema, schema, z } from "src/utils/validation";
 import { GlobalValidationPipe } from "./global-validation.pipe";
 
@@ -11,7 +12,7 @@ describe("GlobalValidationPipe", () => {
     email: z.email(),
   });
 
-  const fallback = new BadRequestException("Custom error");
+  const fallback = new ValidationException();
 
   class ValidDto extends Schema(schema(zodSchema)) {}
   class NoSchemaDto {}
@@ -40,13 +41,13 @@ describe("GlobalValidationPipe", () => {
     expect(result).toEqual(input);
   });
 
-  it("should throw BadRequestException with default error", () => {
+  it("should throw ValidationException with default error", () => {
     const input = { username: "x", email: "not-an-email" };
     try {
       pipe.transform(input, makeMeta(ValidDto));
     } catch (e: any) {
-      expect(e).toBeInstanceOf(BadRequestException);
-      expect(e.message).toMatch(/username/);
+      expect(e).toBeInstanceOf(ValidationException);
+      expect(e.message).toMatch(/Validation failed/);
     }
   });
 
@@ -59,6 +60,6 @@ describe("GlobalValidationPipe", () => {
 
     const input = { code: "not-a-uuid" };
 
-    expect(() => pipe.transform(input, makeMeta(WithFallbackDto))).toThrow("Custom error");
+    expect(() => pipe.transform(input, makeMeta(WithFallbackDto))).toThrow("Validation failed");
   });
 });

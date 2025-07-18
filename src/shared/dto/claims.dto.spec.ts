@@ -1,4 +1,4 @@
-import { UnauthorizedException } from "@nestjs/common";
+import { AuthClaimsInvalidException } from "src/shared/exceptions/auth/auth-claims-invalid.exception";
 import { Claims } from "./claims.dto";
 
 describe("Claims", () => {
@@ -30,71 +30,71 @@ describe("Claims", () => {
     expect(result).toEqual(validClaims);
   });
 
-  it("should throw UnauthorizedException if iat is missing", () => {
+  it("should throw AuthClaimsInvalidException if iat is missing", () => {
     const { iat, ...claims } = validClaims;
     try {
       validate(claims);
     } catch (err: any) {
-      expect(err).toBeInstanceOf(UnauthorizedException);
-      expect(err.message).toMatch(/jwt claims invalid/i);
+      expect(err).toBeInstanceOf(AuthClaimsInvalidException);
+      expect(err.message).toMatch(/Invalid token claims/i);
     }
   });
 
-  it("should throw UnauthorizedException if aud is not array", () => {
+  it("should throw AuthClaimsInvalidException if aud is not array", () => {
     try {
       validate({
         ...validClaims,
-        aud: "not-an-array", // invalid type
+        aud: "not-an-array",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(UnauthorizedException);
-      expect(err.message).toMatch(/jwt claims invalid/i);
+      expect(err).toBeInstanceOf(AuthClaimsInvalidException);
+      expect(err.message).toMatch(/Invalid token claims/i);
     }
   });
 
-  it("should throw UnauthorizedException if email is invalid", () => {
+  it("should throw AuthClaimsInvalidException if email is invalid", () => {
     try {
       validate({
         ...validClaims,
         email: "invalid-email",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(UnauthorizedException);
-      expect(err.message).toMatch(/jwt claims invalid/i);
+      expect(err).toBeInstanceOf(AuthClaimsInvalidException);
+      expect(err.message).toMatch(/Invalid token claims/i);
     }
   });
 
-  it("should throw UnauthorizedException if roles is not array", () => {
+  it("should throw AuthClaimsInvalidException if roles is not array", () => {
     try {
       validate({
         ...validClaims,
         roles: "ADMIN", // should be array
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(UnauthorizedException);
-      expect(err.message).toMatch(/jwt claims invalid/i);
+      expect(err).toBeInstanceOf(AuthClaimsInvalidException);
+      expect(err.message).toMatch(/Invalid token claims/i);
     }
   });
 
-  it("should throw UnauthorizedException if exp is not a number", () => {
+  it("should throw AuthClaimsInvalidException if exp is not a number", () => {
     try {
       validate({
         ...validClaims,
         exp: "not-a-number",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(UnauthorizedException);
-      expect(err.message).toMatch(/jwt claims invalid/i);
+      expect(err).toBeInstanceOf(AuthClaimsInvalidException);
+      expect(err.message).toMatch(/Invalid token claims/i);
     }
   });
 
-  it("should throw UnauthorizedException if deviceId is missing", () => {
+  it("should throw AuthClaimsInvalidException if deviceId is missing", () => {
     const { deviceId, ...claims } = validClaims;
     try {
       validate(claims);
     } catch (err: any) {
-      expect(err).toBeInstanceOf(UnauthorizedException);
-      expect(err.message).toMatch(/jwt claims invalid/i);
+      expect(err).toBeInstanceOf(AuthClaimsInvalidException);
+      expect(err.message).toMatch(/Invalid token claims/i);
     }
   });
 });

@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { CreateLocalUserDto } from "./create-local-user.dto";
 
 describe("SignUpLocalDto", () => {
@@ -16,39 +16,39 @@ describe("SignUpLocalDto", () => {
     });
   });
 
-  it("should throw BadRequestException if email is invalid", () => {
+  it("should throw ValidationException if email is invalid", () => {
     try {
       validate({
         email: "invalid-email",
         password: "StrongP@ss1",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/email/i);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
-  it("should throw BadRequestException if password is too weak (no uppercase)", () => {
+  it("should throw ValidationException if password is too weak (no uppercase)", () => {
     try {
       validate({
         email: "user@example.com",
         password: "weakpass1!",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/Password must be at least 8 characters/);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
-  it("should throw BadRequestException if password is too short", () => {
+  it("should throw ValidationException if password is too short", () => {
     try {
       validate({
         email: "user@example.com",
         password: "Sh0!",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(BadRequestException);
-      expect(err.message).toMatch(/Password must be at least 8 characters/);
+      expect(err).toBeInstanceOf(ValidationException);
+      expect(err.message).toMatch(/Validation failed/);
     }
   });
 });

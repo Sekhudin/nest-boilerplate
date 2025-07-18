@@ -1,4 +1,4 @@
-import { InternalServerErrorException } from "@nestjs/common";
+import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
 import { Schema, schema, z } from "src/utils/validation";
 
 export const payload = z.object({
@@ -10,4 +10,4 @@ export const payload = z.object({
   deviceId: z.string(),
 });
 
-export class Payload extends Schema(schema(payload, new InternalServerErrorException("invalid jwt payload."))) {}
+export class Payload extends Schema(schema(payload, new SystemInternalErrorException())) {}

@@ -1,4 +1,5 @@
-import { ArgumentMetadata, BadRequestException } from "@nestjs/common";
+import { ArgumentMetadata } from "@nestjs/common";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { ValidationPipe } from "./validation.pipe";
 
 const mockSchema = {
@@ -38,15 +39,15 @@ describe("ValidationPipe", () => {
       expect(result).toEqual(input);
     });
 
-    it("should throw BadRequestException on validation failure", () => {
+    it("should throw ValidationException on validation failure", () => {
       mockSchema.validate.mockImplementation(() => {
-        throw new BadRequestException("Invalid body");
+        throw new ValidationException();
       });
 
       const input = { foo: "bar" };
       const metadata: ArgumentMetadata = { type: "body" };
 
-      expect(() => validationPipe.transform(input, metadata)).toThrow(BadRequestException);
+      expect(() => validationPipe.transform(input, metadata)).toThrow(ValidationException);
     });
   });
 
@@ -78,15 +79,15 @@ describe("ValidationPipe", () => {
       expect(result).toEqual(input);
     });
 
-    it("should throw BadRequestException on validation failure", () => {
+    it("should throw ValidationException on validation failure", () => {
       mockSchema.validate.mockImplementation(() => {
-        throw new BadRequestException("Invalid query");
+        throw new ValidationException();
       });
 
       const input = { search: "test" };
       const metadata: ArgumentMetadata = { type: "query" };
 
-      expect(() => validationPipe.transform(input, metadata)).toThrow(BadRequestException);
+      expect(() => validationPipe.transform(input, metadata)).toThrow(ValidationException);
     });
   });
 
@@ -118,15 +119,15 @@ describe("ValidationPipe", () => {
       expect(result).toEqual(input);
     });
 
-    it("should throw BadRequestException on validation failure", () => {
+    it("should throw ValidationException on validation failure", () => {
       mockSchema.validate.mockImplementation(() => {
-        throw new BadRequestException("Invalid param");
+        throw new ValidationException();
       });
 
       const input = { id: "123" };
       const metadata: ArgumentMetadata = { type: "param" };
 
-      expect(() => validationPipe.transform(input, metadata)).toThrow(BadRequestException);
+      expect(() => validationPipe.transform(input, metadata)).toThrow(ValidationException);
     });
   });
 });

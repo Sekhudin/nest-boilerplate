@@ -1,4 +1,4 @@
-import { InternalServerErrorException } from "@nestjs/common";
+import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
 import { Payload } from "./payload.dto";
 
 describe("Payload", () => {
@@ -18,61 +18,61 @@ describe("Payload", () => {
     expect(result).toEqual(validPayload);
   });
 
-  it("should throw InternalServerErrorException if email is invalid", () => {
+  it("should throw SystemInternalErrorException if email is invalid", () => {
     try {
       validate({
         ...validPayload,
         email: "invalid-email",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(InternalServerErrorException);
-      expect(err.message).toMatch(/invalid jwt payload/i);
+      expect(err).toBeInstanceOf(SystemInternalErrorException);
+      expect(err.message).toMatch(/An internal server error occurred/i);
     }
   });
 
-  it("should throw InternalServerErrorException if roles is not array", () => {
+  it("should throw SystemInternalErrorException if roles is not array", () => {
     try {
       validate({
         ...validPayload,
         roles: "USER",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(InternalServerErrorException);
-      expect(err.message).toMatch(/invalid jwt payload/i);
+      expect(err).toBeInstanceOf(SystemInternalErrorException);
+      expect(err.message).toMatch(/An internal server error occurred/i);
     }
   });
 
-  it("should throw InternalServerErrorException if provider is missing", () => {
+  it("should throw SystemInternalErrorException if provider is missing", () => {
     const { provider, ...payload } = validPayload;
     try {
       validate(payload);
     } catch (err: any) {
-      expect(err).toBeInstanceOf(InternalServerErrorException);
-      expect(err.message).toMatch(/invalid jwt payload/i);
+      expect(err).toBeInstanceOf(SystemInternalErrorException);
+      expect(err.message).toMatch(/An internal server error occurred/i);
     }
   });
 
-  it("should throw InternalServerErrorException if deviceId is not string", () => {
+  it("should throw SystemInternalErrorException if deviceId is not string", () => {
     try {
       validate({
         ...validPayload,
         deviceId: 1234,
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(InternalServerErrorException);
-      expect(err.message).toMatch(/invalid jwt payload/i);
+      expect(err).toBeInstanceOf(SystemInternalErrorException);
+      expect(err.message).toMatch(/An internal server error occurred/i);
     }
   });
 
-  it("should throw InternalServerErrorException if sub is empty", () => {
+  it("should throw SystemInternalErrorException if sub is empty", () => {
     try {
       validate({
         ...validPayload,
         sub: "",
       });
     } catch (err: any) {
-      expect(err).toBeInstanceOf(InternalServerErrorException);
-      expect(err.message).toMatch(/invalid jwt payload/i);
+      expect(err).toBeInstanceOf(SystemInternalErrorException);
+      expect(err.message).toMatch(/An internal server error occurred/i);
     }
   });
 });

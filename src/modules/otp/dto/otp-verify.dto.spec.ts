@@ -1,4 +1,4 @@
-import { BadRequestException } from "@nestjs/common";
+import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { OtpVerifyDto } from "./otp-verify.dto";
 
 describe("OtpVerifyDto", () => {
@@ -52,7 +52,7 @@ describe("OtpVerifyDto", () => {
         purpose: "EMAIL_VERIFICATION",
         otpCode: "123456",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if token is empty", () => {
@@ -62,7 +62,7 @@ describe("OtpVerifyDto", () => {
         purpose: "EMAIL_VERIFICATION",
         otpCode: "123456",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if purpose is missing", () => {
@@ -71,7 +71,7 @@ describe("OtpVerifyDto", () => {
         token: "b13ee4f1-f8d1-401d-9c76-123456abcdef",
         otpCode: "123456",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if purpose is invalid", () => {
@@ -81,7 +81,7 @@ describe("OtpVerifyDto", () => {
         purpose: "INVALID" as any,
         otpCode: "123456",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if otpCode is missing", () => {
@@ -90,7 +90,7 @@ describe("OtpVerifyDto", () => {
         token: "b13ee4f1-f8d1-401d-9c76-123456abcdef",
         purpose: "EMAIL_VERIFICATION",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 
   it("should throw if otpCode is empty", () => {
@@ -100,6 +100,6 @@ describe("OtpVerifyDto", () => {
         purpose: "EMAIL_VERIFICATION",
         otpCode: "",
       }),
-    ).toThrow(BadRequestException);
+    ).toThrow(ValidationException);
   });
 });
