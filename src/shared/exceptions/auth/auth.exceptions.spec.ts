@@ -1,7 +1,7 @@
-// exceptions/auth/auth-exceptions.spec.ts
 import { ERROR_MESSAGES } from "src/shared/constants/error-messages.constant";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { AccountLockedException } from "./account-locked.exception";
+import { AuthClaimsInvalidException } from "./auth-claims-invalid.exception";
 import { ForbiddenException } from "./forbidden.exception";
 import { InvalidCredentialsException } from "./invalid-credentials.exception";
 import { TokenExpiredException } from "./token-expired.exception";
@@ -55,5 +55,13 @@ describe("Auth Exceptions", () => {
     expect(exception.getStatus()).toBe(403);
     expect(response.message).toBe(ERROR_MESSAGES[ErrorCode.AUTH_ACCOUNT_LOCKED]);
     expect(response.errors).toEqual({ auth: [ErrorCode.AUTH_ACCOUNT_LOCKED] });
+  });
+
+  it("AuthClaimsInvalidException should be constructed correctly", () => {
+    const exception = new AuthClaimsInvalidException();
+    const response = exception.getResponse() as any;
+    expect(exception.getStatus()).toBe(401);
+    expect(response.message).toBe(ERROR_MESSAGES[ErrorCode.AUTH_CLAIMS_INVALID]);
+    expect(response.errors).toEqual({ claims: [ErrorCode.AUTH_TOKEN_INVALID, ErrorCode.AUTH_CLAIMS_INVALID] });
   });
 });
