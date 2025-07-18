@@ -1,10 +1,14 @@
-import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ContextService } from "src/shared/modules/global/context/context.service";
 import { CryptoService } from "src/shared/modules/global/crypto/crypto.service";
 import { MagicLinkService } from "src/shared/modules/global/magic-link/magic-link.service";
 import { OtpMailerService } from "src/shared/modules/global/mailer/otp-mailer.service";
 import { OtpGeneratorService } from "src/shared/modules/global/otp-generator/otp-generator.service";
+import { OtpExpiredException } from "src/shared/exceptions/otp/otp-expired.exception";
+import { OtpInvalidTokenException } from "src/shared/exceptions/otp/otp-invalid-token.exception";
+import { OtpInvalidException } from "src/shared/exceptions/otp/otp-invalid.exception";
+import { OtpMagicLinkExpiredException } from "src/shared/exceptions/otp/otp-magic-link-expired.exception";
+import { OtpMagicLinkInvalidException } from "src/shared/exceptions/otp/otp-magic-link-invalid.exception";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshOtpMock } from "test/mocks/entities/otp.entity.mock copy";
 import { getFreshUserMock } from "test/mocks/entities/user.entity.mock";
@@ -172,33 +176,33 @@ describe("OtpService", () => {
       expect(result).toBe(otpMock);
     });
 
-    it("should throw BadRequestException if token is not found", async () => {
-      otpRepositoryMock.findOneByOrFail.mockRejectedValue(new BadRequestException("Invalid token"));
+    it("should throw OtpInvalidTokenException if token is not found", async () => {
+      otpRepositoryMock.findOneByOrFail.mockRejectedValue(new OtpInvalidTokenException());
 
-      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new BadRequestException("Invalid token"));
+      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new OtpInvalidTokenException());
       expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({ token: otpVerifyDtoMock.token, isUsed: false });
       expect(otpGeneratorServiceMock.isOtpExpired).not.toHaveBeenCalledWith(otpMock.expiresAt);
       expect(cryptoServiceMock.verifyOtp).not.toHaveBeenCalledWith(otpVerifyDtoMock.otpCode, otpMock.hashOtp);
       expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
     });
 
-    it("should throw BadRequestException if OTP is expired", async () => {
+    it("should throw OtpExpiredException if OTP is expired", async () => {
       otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(true);
 
-      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new BadRequestException("OTP has expired"));
+      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new OtpExpiredException());
       expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({ token: otpVerifyDtoMock.token, isUsed: false });
       expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
       expect(cryptoServiceMock.verifyOtp).not.toHaveBeenCalledWith(otpVerifyDtoMock.otpCode, otpMock.hashOtp);
       expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
     });
 
-    it("should throw BadRequestException if OTP code is incorrect", async () => {
+    it("should throw OtpInvalidException if OTP code is incorrect", async () => {
       otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(false);
       cryptoServiceMock.verifyOtp.mockResolvedValue(false);
 
-      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new BadRequestException("OTP code is incorrect"));
+      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new OtpInvalidException());
       expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({ token: otpVerifyDtoMock.token, isUsed: false });
       expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
       expect(cryptoServiceMock.verifyOtp).toHaveBeenCalledWith(otpVerifyDtoMock.otpCode, otpMock.hashOtp);
@@ -235,10 +239,10 @@ describe("OtpService", () => {
       expect(result).toBe(otpMock);
     });
 
-    it("should throw BadRequestException if link is invalid", async () => {
-      otpRepositoryMock.findOneByOrFail.mockRejectedValue(new BadRequestException("Invalid link"));
+    it("should throw OtpMagicLinkInvalidException if link is invalid", async () => {
+      otpRepositoryMock.findOneByOrFail.mockRejectedValue(new OtpMagicLinkInvalidException());
 
-      await expect(service.verifyLink(otpVerifyLinkDtoMock)).rejects.toThrow(new BadRequestException("Invalid link"));
+      await expect(service.verifyLink(otpVerifyLinkDtoMock)).rejects.toThrow(new OtpMagicLinkInvalidException());
 
       expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({
         token: otpVerifyLinkDtoMock.token,
@@ -248,13 +252,11 @@ describe("OtpService", () => {
       expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
     });
 
-    it("should throw BadRequestException if OTP is expired", async () => {
+    it("should throw OtpMagicLinkExpiredException if magic-link is expired", async () => {
       otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(true);
 
-      await expect(service.verifyLink(otpVerifyLinkDtoMock)).rejects.toThrow(
-        new BadRequestException("OTP has expired"),
-      );
+      await expect(service.verifyLink(otpVerifyLinkDtoMock)).rejects.toThrow(new OtpMagicLinkExpiredException());
 
       expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({
         token: otpVerifyLinkDtoMock.token,

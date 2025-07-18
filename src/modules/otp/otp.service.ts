@@ -1,12 +1,17 @@
 import { EntityManager } from "typeorm";
 import { SendEmailVerificationContext } from "@nestjs-modules/mailer";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/shared/base/base.service";
 import { ContextService } from "src/shared/modules/global/context/context.service";
 import { CryptoService } from "src/shared/modules/global/crypto/crypto.service";
 import { MagicLinkService } from "src/shared/modules/global/magic-link/magic-link.service";
 import { OtpMailerService } from "src/shared/modules/global/mailer/otp-mailer.service";
 import { OtpGeneratorService } from "src/shared/modules/global/otp-generator/otp-generator.service";
+import { OtpExpiredException } from "src/shared/exceptions/otp/otp-expired.exception";
+import { OtpInvalidTokenException } from "src/shared/exceptions/otp/otp-invalid-token.exception";
+import { OtpInvalidException } from "src/shared/exceptions/otp/otp-invalid.exception";
+import { OtpMagicLinkExpiredException } from "src/shared/exceptions/otp/otp-magic-link-expired.exception";
+import { OtpMagicLinkInvalidException } from "src/shared/exceptions/otp/otp-magic-link-invalid.exception";
 import { User } from "src/modules/user/entities/user.entity";
 import { Otp } from "./entities/otp.entity";
 import { OtpVerifyLinkDto } from "./dto/otp-verify-link.dto";
@@ -57,15 +62,15 @@ export class OtpService extends BaseService {
     const foundOtp = await this.otpRepository
       .findOneByOrFail({ token: otpVerifyDto.token, isUsed: false })
       .catch(() => {
-        throw new BadRequestException("Invalid token");
+        throw new OtpInvalidTokenException();
       });
 
     if (this.otpGeneratorService.isOtpExpired(foundOtp.expiresAt)) {
-      throw new BadRequestException("OTP has expired");
+      throw new OtpExpiredException();
     }
 
     const isValidOtp = await this.cryptoService.verifyOtp(otpVerifyDto.otpCode, foundOtp.hashOtp);
-    if (!isValidOtp) throw new BadRequestException("OTP code is incorrect");
+    if (!isValidOtp) throw new OtpInvalidException();
 
     foundOtp.isUsed = true;
     return await this.otpRepository.save(foundOtp);
@@ -75,11 +80,11 @@ export class OtpService extends BaseService {
     const foundOtp = await this.otpRepository
       .findOneByOrFail({ token: otpVerifyLinkDto.token, isUsed: false })
       .catch(() => {
-        throw new BadRequestException("Invalid link");
+        throw new OtpMagicLinkInvalidException();
       });
 
     if (this.otpGeneratorService.isOtpExpired(foundOtp.expiresAt)) {
-      throw new BadRequestException("OTP has expired");
+      throw new OtpMagicLinkExpiredException();
     }
 
     foundOtp.isUsed = true;

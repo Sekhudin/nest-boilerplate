@@ -1,5 +1,5 @@
-import { ConflictException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
+import { UserEmailAlreadyUsedException } from "src/shared/exceptions/user/user-email-already-used.exception";
 import { RoleService } from "src/modules/role/role.service";
 import { getFreshUserMock } from "test/mocks/entities/user.entity.mock";
 import { getFreshUserRepositoryMock } from "test/mocks/repositories/user.repository.mock";
@@ -59,12 +59,12 @@ describe("UserService", () => {
       expect(result).toEqual(userMock);
     });
 
-    it("should throw ConflictException if user already exists", async () => {
+    it("should throw UserEmailAlreadyUsedException if user already exists", async () => {
       const existingUserMock = getFreshUserMock();
 
       userRepositoryMock.findOneBy.mockResolvedValue(existingUserMock);
 
-      await expect(service.createLocalUser(createLocalUserDto)).rejects.toThrow(ConflictException);
+      await expect(service.createLocalUser(createLocalUserDto)).rejects.toThrow(UserEmailAlreadyUsedException);
       expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({ email: createLocalUserDto.email });
     });
 
