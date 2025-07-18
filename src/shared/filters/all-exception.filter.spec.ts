@@ -1,8 +1,9 @@
 import { Request } from "express";
-import { ArgumentsHost, HttpException, HttpStatus, InternalServerErrorException } from "@nestjs/common";
+import { ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { Claims } from "src/shared/dto/claims.dto";
+import { SystemTimeoutException } from "src/shared/exceptions/system/system-timeout.exception";
 import { getFreshAppConfigMock } from "test/mocks/config/app.config.mock";
 import { AllExceptionFilter } from "./all-exception.filter";
 
@@ -115,7 +116,7 @@ describe("AllExceptionFilter", () => {
 
     expect(mockReply).toHaveBeenCalledWith(
       {},
-      new InternalServerErrorException("Something went wrong!.").getResponse(),
+      new SystemTimeoutException().getResponse(),
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   });

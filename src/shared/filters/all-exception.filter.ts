@@ -1,15 +1,9 @@
 import { Request, Response } from "express";
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-  InternalServerErrorException,
-} from "@nestjs/common";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { JsonLogFormatter } from "src/shared/classes/json-log-formatter";
+import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
 import { appConfig } from "src/config/app.config";
 
 @Catch()
@@ -26,7 +20,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
 
     if (!appConfig.isProduction) {
-      this.logger.ws.error("ERROR_PLAIN", exception);
+      this.logger.ws.info("ERROR_PLAIN", exception);
     }
 
     if (exception instanceof HttpException) {
@@ -41,7 +35,7 @@ export class AllExceptionFilter implements ExceptionFilter {
       httpAdapter.reply(res, exception.getResponse(), statusCode);
     } else {
       const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-      const body = new InternalServerErrorException("Something went wrong!.").getResponse();
+      const body = new SystemInternalErrorException().getResponse();
       this.logger.ws.error("UNKNOWN_EXCEPTION", JsonLogFormatter.unknownError({ req, statusCode, exception }));
       httpAdapter.reply(res, body, statusCode);
     }

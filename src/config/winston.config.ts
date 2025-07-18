@@ -128,14 +128,14 @@ class WinstonConfig extends BaseConfig {
   }
 
   private formatMaskSensitive() {
-    return format((transformValue) => {
-      const safeValue = safeStringify(transformValue, (key, value) => {
+    return format(({ queryParams, body, ...value }) => {
+      const safeValue = safeStringify({ queryParams, body }, (key, value) => {
         if (this.SENSITIVE_DATA.has(key)) {
           return "*****";
         }
         return value;
       });
-      return JSON.parse(safeValue) as any;
+      return { ...value, ...JSON.parse(safeValue) };
     });
   }
 }
