@@ -59,4 +59,9 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
    ******************************/
   [ErrorCode.PERMISSION_DENIED]: "Permission denied.",
   [ErrorCode.PERMISSION_ROLE_REQUIRED]: "A specific role is required to access this resource.",
+
+  /******************************
+   *         THROTTLER
+   ******************************/
+  [ErrorCode.THROTTLER_TOO_MANY_REQUESTS]: "Too many requests in a short period. Please try again later.",
 } as const;

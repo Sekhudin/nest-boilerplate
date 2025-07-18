@@ -57,4 +57,9 @@ export enum ErrorCode {
    ******************************/
   PERMISSION_DENIED = "PERMISSION_DENIED",
   PERMISSION_ROLE_REQUIRED = "PERMISSION_ROLE_REQUIRED",
+
+  /******************************
+   *         THROTTLER
+   ******************************/
+  THROTTLER_TOO_MANY_REQUESTS = "THROTTLER_TOO_MANY_REQUESTS",
 }
