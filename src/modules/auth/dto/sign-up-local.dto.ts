@@ -10,12 +10,14 @@ const signUpLocal = schema(
     })
     .extend({
       password: zr.password(),
-      confirmPassword: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_EMPTY),
+      confirmPassword: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_TOO_SHORT),
     })
     .check((context) => {
       if (context.value.password !== context.value.confirmPassword) {
         context.issues.push({
-          code: "custom",
+          code: "invalid_type",
+          expected: "string",
+          path: ["confirmPassword"],
           input: context.value.confirmPassword,
           message: ErrorCode.PASSWORD_MISMATCH,
         });

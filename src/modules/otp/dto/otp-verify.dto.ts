@@ -6,7 +6,7 @@ import { Schema, schema, z } from "src/utils/validation";
 const otpVerify = schema(
   Otp.dto
     .pick({ token: true, purpose: true })
-    .extend({ otpCode: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_EMPTY) }),
+    .extend({ otpCode: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_TOO_SHORT) }),
 );
 
 export class OtpVerifyDto extends Schema(otpVerify) {

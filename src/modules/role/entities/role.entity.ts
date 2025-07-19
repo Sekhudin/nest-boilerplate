@@ -24,7 +24,7 @@ export class Role {
   static get dto() {
     return z.object({
       id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
-      name: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_EMPTY).toUpperCase(),
+      name: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_TOO_SHORT).toUpperCase(),
       description: z.string(ErrorCode.STRING_INVALID).toLowerCase(),
       get users() {
         return z.array(User.dto);
