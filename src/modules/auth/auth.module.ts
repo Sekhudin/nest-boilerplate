@@ -15,6 +15,7 @@ import { AuthProvider } from "./entities/auth-provider.entity";
 import { UserAuth } from "./entities/user-auth.entity";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AuthService } from "./auth.service";
     AuthHistoryService,
     AuthProviderService,
     UserAuthService,
+    SignUpLocalUseCase,
   ],
   exports: [AuthService],
 })

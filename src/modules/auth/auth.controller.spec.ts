@@ -1,10 +1,10 @@
+import { mock } from "jest-mock-extended";
 import { GeneratedOtp } from "otplib";
 import { Test, TestingModule } from "@nestjs/testing";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
-import { getFreshAuthServiceMock } from "test/mocks/services/auth.service.mock";
 import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
 import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
+import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 let mailerConfigMock: ReturnType<typeof getFreshMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({
@@ -15,13 +15,13 @@ jest.mock("src/config/mailer.config", () => ({
 
 describe("AuthController", () => {
   let controller: AuthController;
-  const authServiceMock = getFreshAuthServiceMock();
+  const signUpLocalUseCaseMock = mock<SignUpLocalUseCase>();
 
   beforeEach(async () => {
     mailerConfigMock = getFreshMailerConfigMock();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [{ provide: AuthService, useValue: authServiceMock }],
+      providers: [{ provide: SignUpLocalUseCase, useValue: signUpLocalUseCaseMock }],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
@@ -40,10 +40,10 @@ describe("AuthController", () => {
       };
 
       const expectedResult: GeneratedOtp = { code: "123456", expiresAt: new Date(), expiresInMinutes: 5 };
-      authServiceMock.signUpLocal.mockResolvedValue(expectedResult);
+      signUpLocalUseCaseMock.execute.mockResolvedValue(expectedResult);
 
       const result = await controller.signup(dto);
-      expect(authServiceMock.signUpLocal).toHaveBeenCalledWith(dto);
+      expect(signUpLocalUseCaseMock.execute).toHaveBeenCalledWith(dto);
       expect(result).toEqual(expectedResult);
     });
   });

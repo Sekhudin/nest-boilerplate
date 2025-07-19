@@ -47,36 +47,4 @@ describe("AuthService", () => {
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
-
-  describe("signUpLocal", () => {
-    it("should sign up user locally and send OTP", async () => {
-      const dto: SignUpLocalDto = {
-        email: "john@example.com",
-        password: "@SecurePassword1",
-        confirmPassword: "@SecurePassword1",
-      };
-
-      const userMock = mockDeep<User>();
-
-      const userAuthMock = mockDeep<UserAuth>();
-      userAuthMock.user = userMock;
-      const generatedOtp = mockDeep<GeneratedOtp>();
-      const entityManager = datasourceMock.createEntityManager();
-
-      userServiceMock.createLocalUser.mockResolvedValue(userMock);
-      userAuthServiceMock.createLocalUserAuth.mockResolvedValue(userAuthMock);
-      otpServiceMock.sendOtpForLocalSignup.mockResolvedValue(generatedOtp);
-
-      const result = await service.signUpLocal(dto);
-      expect(result).toBe(generatedOtp);
-      expect(datasourceMock.transaction).toHaveBeenCalled();
-      expect(userServiceMock.createLocalUser).toHaveBeenCalledWith(dto, entityManager);
-      expect(userAuthServiceMock.createLocalUserAuth).toHaveBeenCalledWith(
-        userAuthMock.user,
-        dto.password,
-        entityManager,
-      );
-      expect(otpServiceMock.sendOtpForLocalSignup).toHaveBeenCalledWith(userMock, entityManager);
-    });
-  });
 });
