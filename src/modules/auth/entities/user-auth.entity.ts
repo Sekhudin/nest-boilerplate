@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { User } from "src/modules/user/entities/user.entity";
 import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
@@ -32,16 +33,16 @@ export class UserAuth {
 
   static get dto() {
     return z.object({
-      id: z.uuidv4(),
+      id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
       get user() {
         return User.dto;
       },
       get provider() {
         return AuthProvider.dto;
       },
-      providerUserId: z.string(),
-      passwordHash: z.string().optional(),
-      createdAt: z.date(),
+      providerUserId: z.string(ErrorCode.STRING_INVALID),
+      passwordHash: z.string(ErrorCode.STRING_INVALID).optional(),
+      createdAt: z.date(ErrorCode.DATE_INVALID),
     });
   }
 }

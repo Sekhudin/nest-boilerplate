@@ -1,123 +1,158 @@
-import { Request } from "express";
-import { ArgumentsHost, HttpException, HttpStatus } from "@nestjs/common";
-import { HttpAdapterHost } from "@nestjs/core";
-import { LoggerService } from "src/shared/modules/global/logger/logger.service";
-import { Claims } from "src/shared/dto/claims.dto";
-import { SystemTimeoutException } from "src/shared/exceptions/system/system-timeout.exception";
+import { Request, Response } from "express";
+import { mockDeep } from "jest-mock-extended";
+import { BadRequestException, HttpStatus } from "@nestjs/common";
+import { HttpArgumentsHost } from "@nestjs/common/interfaces";
+import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
+import { getFreshJsonLogFormatterMock } from "test/mocks/classes/json-log-formatter.mock";
 import { getFreshAppConfigMock } from "test/mocks/config/app.config.mock";
+import { getFreshLoggerServiceMock } from "test/mocks/services/logger.service.mock";
+import { getFreshArgumentHostMock } from "test/mocks/utils/argument-host.mock";
+import { getFreshHttpAdapterHostMock } from "test/mocks/utils/http-adapter-host.mock";
 import { AllExceptionFilter } from "./all-exception.filter";
 
 let appConfigMock: ReturnType<typeof getFreshAppConfigMock>;
+let jsonLogFormatterMock: ReturnType<typeof getFreshJsonLogFormatterMock>;
 jest.mock("src/config/app.config", () => ({
   get appConfig() {
     return appConfigMock;
   },
 }));
 
+jest.mock("src/shared/classes/json-log-formatter", () => ({
+  get JsonLogFormatter() {
+    return jsonLogFormatterMock;
+  },
+}));
+
 describe("AllExceptionFilter", () => {
   let filter: AllExceptionFilter;
-  let logger: LoggerService;
-  let httpAdapterHost: HttpAdapterHost;
-
-  const mockUser: Claims = {
-    sub: "user-id-1",
-    username: "john.doe",
-    email: "john@example.com",
-    roles: ["USER"],
-    provider: "google",
-    deviceId: "dev-456",
-    iat: 1718610000,
-    exp: 1718613600,
-    iss: "auth.example.com",
-    aud: ["my-app"],
-  };
-
-  const mockRequest: Partial<Request> = {
-    method: "GET",
-    url: "/test",
-    headers: {},
-    query: {},
-    body: {},
-    requestId: "req-123",
-    deviceId: "dev-456",
-    userAgent: {
-      browser: { name: "Chrome", version: "114.0" },
-      device: "android",
-      ip: "192.168.0.1",
-      os: { name: "Android", version: "13" },
-      userAgent: "Mozilla/5.0 (Linux; Android 13; ...)",
-    },
-    user: mockUser,
-  };
-
-  const mockReply = jest.fn();
-
-  const mockLogger = {
-    ws: {
-      warn: jest.fn(),
-      error: jest.fn(),
-    },
-  };
-
-  const mockHttpAdapterHost = {
-    httpAdapter: {
-      reply: mockReply,
-    },
-  };
-
-  const createMockHost = (req = {}, res = {}) =>
-    ({
-      switchToHttp: () => ({
-        getRequest: () => req,
-        getResponse: () => res,
-      }),
-    }) as unknown as ArgumentsHost;
+  const loggerServiceMock = getFreshLoggerServiceMock();
+  const httpAdapterHostMock = getFreshHttpAdapterHostMock();
+  const argumentHostMock = getFreshArgumentHostMock();
+  const httpArgumentHostMock = mockDeep<HttpArgumentsHost>();
+  const requestMock = mockDeep<Request>();
+  const responseMock = mockDeep<Response>();
 
   beforeEach(() => {
     appConfigMock = getFreshAppConfigMock();
-    logger = mockLogger as unknown as LoggerService;
-    httpAdapterHost = mockHttpAdapterHost as unknown as HttpAdapterHost;
-    filter = new AllExceptionFilter(httpAdapterHost, logger);
+    jsonLogFormatterMock = getFreshJsonLogFormatterMock();
+    filter = new AllExceptionFilter(httpAdapterHostMock, loggerServiceMock);
+
+    loggerServiceMock.ws.info.mockReset();
+    loggerServiceMock.ws.warn.mockReset();
+    loggerServiceMock.ws.error.mockReset();
   });
 
-  it("should handle HttpException with status < 500 in non-production", () => {
-    const exception = new HttpException("Bad Request", HttpStatus.BAD_REQUEST);
-    const mockHost = createMockHost({ ...mockRequest, method: "GET", path: "/", query: {} }, {});
+  describe("status < 500", () => {
+    it("should handle HttpException with status < 500 in non-production", () => {
+      (appConfigMock as any).isProduction = false;
+      const exception = new BadRequestException();
+      httpArgumentHostMock.getRequest.mockReturnValue(requestMock);
+      httpArgumentHostMock.getResponse.mockReturnValue(responseMock);
+      argumentHostMock.switchToHttp.mockReturnValue(httpArgumentHostMock);
 
-    filter.catch(exception, mockHost);
+      filter.catch(exception, argumentHostMock);
 
-    expect(mockLogger.ws.warn).toHaveBeenCalledWith("HTTP_EXCEPTION", expect.objectContaining({ statusCode: 400 }));
-    expect(mockReply).toHaveBeenCalledWith({}, "Bad Request", 400);
+      expect(loggerServiceMock.ws.info).toHaveBeenCalledWith("ERROR_PLAIN", exception);
+      expect(loggerServiceMock.ws.warn).not.toHaveBeenCalled();
+      expect(httpAdapterHostMock.httpAdapter.reply).toHaveBeenCalledWith(responseMock, exception.getResponse(), 400);
+    });
+
+    it("should handle HttpException with status < 500 in production", () => {
+      (appConfigMock as any).isProduction = true;
+      const exception = new BadRequestException();
+      httpArgumentHostMock.getRequest.mockReturnValue(requestMock);
+      httpArgumentHostMock.getResponse.mockReturnValue(responseMock);
+      argumentHostMock.switchToHttp.mockReturnValue(httpArgumentHostMock);
+
+      filter.catch(exception, argumentHostMock);
+
+      expect(loggerServiceMock.ws.info).not.toHaveBeenCalled();
+      expect(loggerServiceMock.ws.warn).toHaveBeenCalledWith(
+        "HTTP_EXCEPTION",
+        jsonLogFormatterMock.httpError({ req: requestMock, exception }),
+      );
+      expect(httpAdapterHostMock.httpAdapter.reply).toHaveBeenCalledWith(responseMock, exception.getResponse(), 400);
+    });
   });
 
-  it("should handle HttpException with status >= 500", () => {
-    const exception = new HttpException("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
-    const mockHost = createMockHost({ ...mockRequest, method: "GET", path: "/", query: {} }, {});
+  describe("status >= 500", () => {
+    it("should handle HttpException with status >= 500 in non-production", () => {
+      (appConfigMock as any).isProduction = false;
+      const exception = new SystemInternalErrorException();
+      httpArgumentHostMock.getRequest.mockReturnValue(requestMock);
+      httpArgumentHostMock.getResponse.mockReturnValue(responseMock);
+      argumentHostMock.switchToHttp.mockReturnValue(httpArgumentHostMock);
 
-    filter.catch(exception, mockHost);
+      filter.catch(exception, argumentHostMock);
 
-    expect(mockLogger.ws.error).toHaveBeenCalledWith("HTTP_EXCEPTION", expect.objectContaining({ statusCode: 500 }));
-    expect(mockReply).toHaveBeenCalledWith({}, "Server Error", 500);
+      expect(loggerServiceMock.ws.info).toHaveBeenCalledWith("ERROR_PLAIN", exception);
+      expect(loggerServiceMock.ws.error).not.toHaveBeenCalled();
+      expect(httpAdapterHostMock.httpAdapter.reply).toHaveBeenCalledWith(responseMock, exception.getResponse(), 500);
+    });
+
+    it("should handle HttpException with status >= 500 in production", () => {
+      (appConfigMock as any).isProduction = true;
+      const exception = new SystemInternalErrorException();
+      httpArgumentHostMock.getRequest.mockReturnValue(requestMock);
+      httpArgumentHostMock.getResponse.mockReturnValue(responseMock);
+      argumentHostMock.switchToHttp.mockReturnValue(httpArgumentHostMock);
+
+      filter.catch(exception, argumentHostMock);
+
+      expect(loggerServiceMock.ws.info).not.toHaveBeenCalled();
+      expect(loggerServiceMock.ws.error).toHaveBeenCalledWith(
+        "HTTP_EXCEPTION",
+        jsonLogFormatterMock.httpError({ req: requestMock, exception }),
+      );
+      expect(httpAdapterHostMock.httpAdapter.reply).toHaveBeenCalledWith(responseMock, exception.getResponse(), 500);
+    });
   });
 
-  it("should handle unknown exception", () => {
-    const unknownError = new Error("Something went wrong");
-    const mockHost = createMockHost({ ...mockRequest, method: "POST", path: "/error", query: {} }, {});
+  describe("unknown error", () => {
+    it("should handle unknown exception in non-production", () => {
+      (appConfigMock as any).isProduction = false;
+      const error = new Error("Something went wrong");
+      const exception = new SystemInternalErrorException();
+      httpArgumentHostMock.getRequest.mockReturnValue(requestMock);
+      httpArgumentHostMock.getResponse.mockReturnValue(responseMock);
+      argumentHostMock.switchToHttp.mockReturnValue(httpArgumentHostMock);
 
-    filter.catch(unknownError, mockHost);
+      filter.catch(error, argumentHostMock);
 
-    expect(mockLogger.ws.error).toHaveBeenCalledWith(
-      "UNKNOWN_EXCEPTION",
-      expect.objectContaining({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        error: unknownError,
-      }),
-    );
+      expect(loggerServiceMock.ws.info).toHaveBeenCalledWith("ERROR_PLAIN", error);
+      expect(loggerServiceMock.ws.error).not.toHaveBeenCalled();
+      expect(httpAdapterHostMock.httpAdapter.reply).toHaveBeenCalledWith(
+        responseMock,
+        exception.getResponse(),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    });
 
-    expect(mockReply).toHaveBeenCalledWith(
-      {},
-      new SystemTimeoutException().getResponse(),
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+    it("should handle unknown exception in production", () => {
+      (appConfigMock as any).isProduction = true;
+      const error = new Error("Something went wrong");
+      const exception = new SystemInternalErrorException();
+      httpArgumentHostMock.getRequest.mockReturnValue(requestMock);
+      httpArgumentHostMock.getResponse.mockReturnValue(responseMock);
+      argumentHostMock.switchToHttp.mockReturnValue(httpArgumentHostMock);
+
+      filter.catch(error, argumentHostMock);
+
+      expect(loggerServiceMock.ws.info).not.toHaveBeenCalled();
+      expect(loggerServiceMock.ws.error).toHaveBeenCalledWith(
+        "UNKNOWN_EXCEPTION",
+        jsonLogFormatterMock.unknownError({
+          req: requestMock,
+          exception,
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        }),
+      );
+      expect(httpAdapterHostMock.httpAdapter.reply).toHaveBeenCalledWith(
+        responseMock,
+        exception.getResponse(),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    });
   });
 });

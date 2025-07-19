@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { ArgumentMetadata } from "@nestjs/common";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { Schema, schema, z } from "src/utils/validation";
 import { GlobalValidationPipe } from "./global-validation.pipe";
@@ -47,19 +48,19 @@ describe("GlobalValidationPipe", () => {
       pipe.transform(input, makeMeta(ValidDto));
     } catch (e: any) {
       expect(e).toBeInstanceOf(ValidationException);
-      expect(e.message).toMatch(/Validation failed/);
+      expect(e.message).toMatch(ErrorCode.VALIDATION_FAILED);
     }
   });
 
   it("should throw fallback error if provided", () => {
     const fallbackSchema = z.object({
-      code: z.string().uuid(),
+      code: z.uuid(),
     });
 
     class WithFallbackDto extends Schema(schema(fallbackSchema, fallback)) {}
 
     const input = { code: "not-a-uuid" };
 
-    expect(() => pipe.transform(input, makeMeta(WithFallbackDto))).toThrow("Validation failed");
+    expect(() => pipe.transform(input, makeMeta(WithFallbackDto))).toThrow(ErrorCode.VALIDATION_FAILED);
   });
 });

@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { User } from "src/modules/user/entities/user.entity";
 import { schema, Schema, z, zr } from "src/utils/validation";
 
@@ -9,14 +10,14 @@ const signUpLocal = schema(
     })
     .extend({
       password: zr.password(),
-      confirmPassword: z.string().min(1),
+      confirmPassword: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_EMPTY),
     })
     .check((context) => {
       if (context.value.password !== context.value.confirmPassword) {
         context.issues.push({
           code: "custom",
           input: context.value.confirmPassword,
-          message: "password and confirm password not match!",
+          message: ErrorCode.PASSWORD_MISMATCH,
         });
       }
     })

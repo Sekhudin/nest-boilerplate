@@ -1,4 +1,5 @@
 import { StandardSchemaV1 } from "@standard-schema/spec";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { UnauthorizedException } from "src/shared/exceptions/auth/unauthorized.exception";
 import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
 import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
@@ -39,7 +40,7 @@ describe("validation schema helper", () => {
         fail("Expected ValidationException was not thrown");
       } catch (err: any) {
         expect(err).toBeInstanceOf(ValidationException);
-        expect(err.message).toMatch(/Validation failed/);
+        expect(err.message).toMatch(ErrorCode.VALIDATION_FAILED);
       }
     });
 
@@ -59,7 +60,7 @@ describe("validation schema helper", () => {
         fail("Expected ValidationException was not thrown");
       } catch (err: any) {
         expect(err).toBeInstanceOf(ValidationException);
-        expect(err.message).toMatch(/Validation failed/);
+        expect(err.message).toMatch(ErrorCode.VALIDATION_FAILED);
       }
     });
 

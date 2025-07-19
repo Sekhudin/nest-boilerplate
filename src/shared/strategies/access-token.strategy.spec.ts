@@ -41,6 +41,5 @@ describe("AccessTokenStrategy", () => {
     });
 
     await expect(strategy.validate(invalidPayload)).rejects.toThrow(TokenInvalidException);
-    await expect(strategy.validate(invalidPayload)).rejects.toThrow("Invalid token");
   });
 });

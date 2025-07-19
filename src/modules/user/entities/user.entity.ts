@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { AuthHistory } from "src/modules/auth/entities/auth-history.entity";
 import { UserAuth } from "src/modules/auth/entities/user-auth.entity";
 import { Otp } from "src/modules/otp/entities/otp.entity";
@@ -55,10 +56,10 @@ export class User {
 
   static get dto() {
     return z.object({
-      id: z.uuidv4(),
-      email: z.email(),
-      isActive: z.boolean(),
-      isEmailVerified: z.boolean(),
+      id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
+      email: z.email(ErrorCode.STRING_INVALID_EMAIL),
+      isActive: z.boolean(ErrorCode.BOOLEAN_INVALID),
+      isEmailVerified: z.boolean(ErrorCode.BOOLEAN_INVALID),
       get role() {
         return Role.dto;
       },
@@ -74,8 +75,8 @@ export class User {
       get otps() {
         return z.array(Otp.dto);
       },
-      timestamp: z.date(),
-      updatedAt: z.date(),
+      timestamp: z.date(ErrorCode.DATE_INVALID),
+      updatedAt: z.date(ErrorCode.DATE_INVALID),
     });
   }
 }

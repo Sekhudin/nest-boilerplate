@@ -31,12 +31,62 @@ export enum ErrorCode {
    *         VALIDATION
    ******************************/
   VALIDATION_FAILED = "VALIDATION_FAILED",
-  VALIDATION_REQUIRED_FIELD = "VALIDATION_REQUIRED_FIELD",
-  VALIDATION_INVALID_FORMAT = "VALIDATION_INVALID_FORMAT",
-  VALIDATION_TOO_SHORT = "VALIDATION_TOO_SHORT",
-  VALIDATION_TOO_LONG = "VALIDATION_TOO_LONG",
-  VALIDATION_OUT_OF_RANGE = "VALIDATION_OUT_OF_RANGE",
-  VALIDATION_VALUE_NOT_ALLOWED = "VALIDATION_VALUE_NOT_ALLOWED",
+
+  /******************************
+   *         VALIDATION COMMON
+   ******************************/
+  REQUIRED = "REQUIRED",
+
+  /******************************
+   *         VALIDATION STRING
+   ******************************/
+  STRING_INVALID = "STRING_INVALID",
+  STRING_EMPTY = "STRING_EMPTY",
+  STRING_TOO_SHORT = "STRING_TOO_SHORT",
+  STRING_TOO_LONG = "STRING_TOO_LONG",
+  STRING_INVALID_EMAIL = "STRING_INVALID_EMAIL",
+  STRING_INVALID_UUID = "STRING_INVALID_UUID",
+  STRING_INVALID_URL = "STRING_INVALID_URL",
+  STRING_NON_MATCHING = "STRING_NON_MATCHING",
+
+  /******************************
+   *         VALIDATION NUMBER
+   ******************************/
+  NUMBER_INVALID = "NUMBER_INVALID",
+  NUMBER_POSITIVE = "NUMBER_POSITIVE",
+  NUMBER_NEGATIVE = "NUMBER_NEGATIVE",
+  NUMBER_TOO_SMALL = "NUMBER_TOO_SMALL",
+  NUMBER_TOO_LARGE = "NUMBER_TOO_LARGE",
+
+  /******************************
+   *         VALIDATION BOOLEAN
+   ******************************/
+  BOOLEAN_INVALID = "BOOLEAN_INVALID",
+
+  /******************************
+   *         VALIDATION ARRAY
+   ******************************/
+  ARRAY_TOO_SHORT = "ARRAY_TOO_SHORT",
+  ARRAY_TOO_LONG = "ARRAY_TOO_LONG",
+  ARRAY_INVALID = "ARRAY_INVALID",
+
+  /******************************
+   *         VALIDATION ENUM
+   ******************************/
+  ENUM_INVALID = "ENUM_INVALID",
+
+  /******************************
+   *         VALIDATION DATE
+   ******************************/
+  DATE_INVALID = "DATE_INVALID",
+  DATE_TOO_EARLY = "DATE_TOO_EARLY",
+  DATE_TOO_LATE = "DATE_TOO_LATE",
+
+  /******************************
+   *         VALIDATION PASSWORD
+   ******************************/
+  PASSWORD_WEAK = "PASSWORD_WEAK",
+  PASSWORD_MISMATCH = "PASSWORD_MISMATCH",
 
   /******************************
    *          RESOURCE

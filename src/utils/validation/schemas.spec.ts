@@ -1,4 +1,5 @@
 import z from "zod/v4";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import * as zr from "./schemas";
 
 describe("Reusable zod schemas", () => {
@@ -19,9 +20,7 @@ describe("Reusable zod schemas", () => {
     expect(result.success).toBe(false);
 
     if (result.error) {
-      expect(z.treeifyError(result.error).errors[0]).toBe(
-        "Password must be at least 8 characters, include uppercase, lowercase, number, and symbol.",
-      );
+      expect(z.treeifyError(result.error).errors[0]).toBe(ErrorCode.PASSWORD_WEAK);
     }
   });
 });

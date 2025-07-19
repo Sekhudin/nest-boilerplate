@@ -1,3 +1,4 @@
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { TokenInvalidException } from "src/shared/exceptions/auth/token-invalid.exception";
 import { Claims } from "./claims.dto";
 
@@ -36,7 +37,7 @@ describe("Claims", () => {
       validate(claims);
     } catch (err: any) {
       expect(err).toBeInstanceOf(TokenInvalidException);
-      expect(err.message).toMatch(/Invalid token/i);
+      expect(err.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
     }
   });
 
@@ -48,7 +49,7 @@ describe("Claims", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(TokenInvalidException);
-      expect(err.message).toMatch(/Invalid token/i);
+      expect(err.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
     }
   });
 
@@ -60,7 +61,7 @@ describe("Claims", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(TokenInvalidException);
-      expect(err.message).toMatch(/Invalid token/i);
+      expect(err.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
     }
   });
 
@@ -72,7 +73,7 @@ describe("Claims", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(TokenInvalidException);
-      expect(err.message).toMatch(/Invalid token/i);
+      expect(err.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
     }
   });
 
@@ -84,7 +85,7 @@ describe("Claims", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(TokenInvalidException);
-      expect(err.message).toMatch(/Invalid token/i);
+      expect(err.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
     }
   });
 
@@ -94,7 +95,7 @@ describe("Claims", () => {
       validate(claims);
     } catch (err: any) {
       expect(err).toBeInstanceOf(TokenInvalidException);
-      expect(err.message).toMatch(/Invalid token/i);
+      expect(err.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
     }
   });
 });

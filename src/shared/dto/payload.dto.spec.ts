@@ -1,3 +1,4 @@
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
 import { Payload } from "./payload.dto";
 
@@ -26,7 +27,7 @@ describe("Payload", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(SystemInternalErrorException);
-      expect(err.message).toMatch(/An internal server error occurred/i);
+      expect(err.message).toMatch(ErrorCode.SYSTEM_INTERNAL_ERROR);
     }
   });
 
@@ -38,7 +39,7 @@ describe("Payload", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(SystemInternalErrorException);
-      expect(err.message).toMatch(/An internal server error occurred/i);
+      expect(err.message).toMatch(ErrorCode.SYSTEM_INTERNAL_ERROR);
     }
   });
 
@@ -48,7 +49,7 @@ describe("Payload", () => {
       validate(payload);
     } catch (err: any) {
       expect(err).toBeInstanceOf(SystemInternalErrorException);
-      expect(err.message).toMatch(/An internal server error occurred/i);
+      expect(err.message).toMatch(ErrorCode.SYSTEM_INTERNAL_ERROR);
     }
   });
 
@@ -60,7 +61,7 @@ describe("Payload", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(SystemInternalErrorException);
-      expect(err.message).toMatch(/An internal server error occurred/i);
+      expect(err.message).toMatch(ErrorCode.SYSTEM_INTERNAL_ERROR);
     }
   });
 
@@ -72,7 +73,7 @@ describe("Payload", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(SystemInternalErrorException);
-      expect(err.message).toMatch(/An internal server error occurred/i);
+      expect(err.message).toMatch(ErrorCode.SYSTEM_INTERNAL_ERROR);
     }
   });
 });

@@ -1,3 +1,4 @@
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { TokenInvalidException } from "src/shared/exceptions/auth/token-invalid.exception";
 import { AccessTokenGuard } from "./access-token.guard";
 
@@ -24,7 +25,7 @@ describe("AccessTokenGuard", () => {
     try {
       guard.handleRequest(null, null);
     } catch (e: any) {
-      expect(e.message).toMatch(/Invalid token/);
+      expect(e.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
     }
   });
 });

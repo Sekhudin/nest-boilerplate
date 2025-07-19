@@ -24,6 +24,20 @@ describe("JsonLogFormatter", () => {
     expect(formatter.path).toBe("/direct");
   });
 
+  describe("transform", () => {
+    it("should transform the value to Logform.TransformableInfo", () => {
+      const value = { method: "GET", path: "/test" };
+      const result = JsonLogFormatter.transform(value);
+      expect(result).toBeInstanceOf(JsonLogFormatter);
+      expect(result).toMatchObject(value);
+    });
+
+    it("should handle transform with empty object", () => {
+      const result = JsonLogFormatter.transform({});
+      expect(result).toBeInstanceOf(JsonLogFormatter);
+    });
+  });
+
   describe("http", () => {
     it("should set queryParams to null when query is empty", () => {
       const result = JsonLogFormatter.http({
@@ -114,20 +128,6 @@ describe("JsonLogFormatter", () => {
     });
   });
 
-  describe("transform", () => {
-    it("should transform the value to Logform.TransformableInfo", () => {
-      const value = { method: "GET", path: "/test" };
-      const result = JsonLogFormatter.transform(value);
-      expect(result).toBeInstanceOf(JsonLogFormatter);
-      expect(result).toMatchObject(value);
-    });
-
-    it("should handle transform with empty object", () => {
-      const result = JsonLogFormatter.transform({});
-      expect(result).toBeInstanceOf(JsonLogFormatter);
-    });
-  });
-
   describe("httpError", () => {
     it("should create a correct http error log format", () => {
       const exception = new HttpException({ message: "Forbidden" }, HttpStatus.FORBIDDEN);
@@ -157,6 +157,18 @@ describe("JsonLogFormatter", () => {
 
       expect(result).toMatchObject({
         body: null,
+      });
+    });
+
+    it("should set queryParams to null when queryParams is undefined or empty", () => {
+      const exception = new HttpException({ message: "Forbidden" }, HttpStatus.FORBIDDEN);
+      const result = JsonLogFormatter.httpError({
+        req: { ...mockRequest, query: {} } as Request,
+        exception,
+      });
+
+      expect(result).toMatchObject({
+        queryParams: null,
       });
     });
   });
@@ -191,6 +203,19 @@ describe("JsonLogFormatter", () => {
 
       expect(result).toMatchObject({
         body: null,
+      });
+    });
+
+    it("should set queryParams to null when queryParams is undefined or empty", () => {
+      const exception = new HttpException({ message: "Forbidden" }, HttpStatus.FORBIDDEN);
+      const result = JsonLogFormatter.unknownError({
+        req: { ...mockRequest, query: {} } as Request,
+        exception,
+        statusCode: 500,
+      });
+
+      expect(result).toMatchObject({
+        queryParams: null,
       });
     });
   });

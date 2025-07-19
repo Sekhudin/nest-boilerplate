@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { User } from "src/modules/user/entities/user.entity";
 import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
@@ -40,19 +41,19 @@ export class AuthHistory {
 
   static get dto() {
     return z.object({
-      id: z.uuidv4(),
+      id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
       get user() {
         return User.dto;
       },
-      ipAddress: z.string(),
-      userAgentString: z.string().trim(),
-      device: z.string(),
-      browserName: z.string(),
-      browserVersion: z.string(),
-      osName: z.string(),
-      osVersion: z.string(),
-      action: z.enum(["SIGNUP", "SIGN_IN", "SIGNOUT", "REFRESH"]),
-      timestamp: z.date(),
+      ipAddress: z.string(ErrorCode.STRING_INVALID),
+      userAgentString: z.string(ErrorCode.STRING_INVALID).trim(),
+      device: z.string(ErrorCode.STRING_INVALID),
+      browserName: z.string(ErrorCode.STRING_INVALID),
+      browserVersion: z.string(ErrorCode.STRING_INVALID),
+      osName: z.string(ErrorCode.STRING_INVALID),
+      osVersion: z.string(ErrorCode.STRING_INVALID),
+      action: z.enum(["SIGNUP", "SIGN_IN", "SIGNOUT", "REFRESH"], ErrorCode.ENUM_INVALID),
+      timestamp: z.date(ErrorCode.STRING_INVALID),
     });
   }
 }

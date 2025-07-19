@@ -25,18 +25,21 @@ export class AllExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       const statusCode = exception.getStatus();
-      if (!appConfig.isProduction && statusCode < 500) {
+      if (appConfig.isProduction && statusCode < 500) {
         this.logger.ws.warn("HTTP_EXCEPTION", JsonLogFormatter.httpError({ req, exception }));
       }
 
-      if (statusCode >= 500) {
+      if (appConfig.isProduction && statusCode >= 500) {
         this.logger.ws.error("HTTP_EXCEPTION", JsonLogFormatter.httpError({ req, exception }));
       }
       httpAdapter.reply(res, exception.getResponse(), statusCode);
     } else {
       const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       const body = new SystemInternalErrorException().getResponse();
-      this.logger.ws.error("UNKNOWN_EXCEPTION", JsonLogFormatter.unknownError({ req, statusCode, exception }));
+      if (appConfig.isProduction) {
+        this.logger.ws.error("UNKNOWN_EXCEPTION", JsonLogFormatter.unknownError({ req, statusCode, exception }));
+      }
+
       httpAdapter.reply(res, body, statusCode);
     }
   }

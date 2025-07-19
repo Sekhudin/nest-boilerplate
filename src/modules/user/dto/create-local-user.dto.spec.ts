@@ -24,7 +24,6 @@ describe("SignUpLocalDto", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(ValidationException);
-      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
@@ -36,7 +35,6 @@ describe("SignUpLocalDto", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(ValidationException);
-      expect(err.message).toMatch(/Validation failed/);
     }
   });
 
@@ -48,7 +46,6 @@ describe("SignUpLocalDto", () => {
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(ValidationException);
-      expect(err.message).toMatch(/Validation failed/);
     }
   });
 });

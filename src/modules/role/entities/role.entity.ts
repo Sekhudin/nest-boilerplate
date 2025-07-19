@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { User } from "src/modules/user/entities/user.entity";
 import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
@@ -22,13 +23,13 @@ export class Role {
 
   static get dto() {
     return z.object({
-      id: z.uuidv4(),
-      name: z.string().min(1).toUpperCase(),
-      description: z.string().toLowerCase(),
+      id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
+      name: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_EMPTY).toUpperCase(),
+      description: z.string(ErrorCode.STRING_INVALID).toLowerCase(),
       get users() {
         return z.array(User.dto);
       },
-      timestamp: z.date(),
+      timestamp: z.date(ErrorCode.DATE_INVALID),
     });
   }
 }
