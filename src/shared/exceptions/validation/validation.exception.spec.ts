@@ -1,18 +1,17 @@
 import { HttpStatus } from "@nestjs/common";
-import { ERROR_MESSAGES } from "src/shared/constants/error-messages.constant";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { ValidationException } from "./validation.exception";
 
 describe("ValidationException", () => {
   it("should create with custom errors", () => {
-    const errors = { email: [ErrorCode.VALIDATION_INVALID_FORMAT] };
+    const errors = { email: [ErrorCode.VALIDATION_FAILED] };
     const exception = new ValidationException(errors);
 
     expect(exception.getStatus()).toBe(HttpStatus.BAD_REQUEST);
-    expect(exception.message).toBe(ERROR_MESSAGES[ErrorCode.VALIDATION_FAILED]);
+    expect(exception.message).toBe(ErrorCode.VALIDATION_FAILED);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.BAD_REQUEST,
-      message: ERROR_MESSAGES[ErrorCode.VALIDATION_FAILED],
+      message: ErrorCode.VALIDATION_FAILED,
       errors,
     });
   });
@@ -21,10 +20,10 @@ describe("ValidationException", () => {
     const exception = new ValidationException();
 
     expect(exception.getStatus()).toBe(HttpStatus.BAD_REQUEST);
-    expect(exception.message).toBe(ERROR_MESSAGES[ErrorCode.VALIDATION_FAILED]);
+    expect(exception.message).toBe(ErrorCode.VALIDATION_FAILED);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.BAD_REQUEST,
-      message: ERROR_MESSAGES[ErrorCode.VALIDATION_FAILED],
+      message: ErrorCode.VALIDATION_FAILED,
       errors: {
         validation: [ErrorCode.VALIDATION_FAILED],
       },

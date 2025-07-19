@@ -1,5 +1,4 @@
 import { HttpStatus } from "@nestjs/common";
-import { ERROR_MESSAGES } from "src/shared/constants/error-messages.constant";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { SystemInternalErrorException } from "./system-internal-error.exception";
 import { SystemServiceUnavailableException } from "./system-service-unavailable.exception";
@@ -12,7 +11,7 @@ describe("System Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: ERROR_MESSAGES[ErrorCode.SYSTEM_INTERNAL_ERROR],
+      message: ErrorCode.SYSTEM_INTERNAL_ERROR,
       errors: {
         system: [ErrorCode.SYSTEM_INTERNAL_ERROR],
       },
@@ -24,7 +23,7 @@ describe("System Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.SERVICE_UNAVAILABLE);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.SERVICE_UNAVAILABLE,
-      message: ERROR_MESSAGES[ErrorCode.SYSTEM_SERVICE_UNAVAILABLE],
+      message: ErrorCode.SYSTEM_SERVICE_UNAVAILABLE,
       errors: {
         system: [ErrorCode.SYSTEM_SERVICE_UNAVAILABLE],
       },
@@ -36,7 +35,7 @@ describe("System Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.GATEWAY_TIMEOUT);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.GATEWAY_TIMEOUT,
-      message: ERROR_MESSAGES[ErrorCode.SYSTEM_TIMEOUT],
+      message: ErrorCode.SYSTEM_TIMEOUT,
       errors: {
         system: [ErrorCode.SYSTEM_TIMEOUT],
       },
@@ -48,7 +47,7 @@ describe("System Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: ERROR_MESSAGES[ErrorCode.SYSTEM_UNKNOWN_ERROR],
+      message: ErrorCode.SYSTEM_UNKNOWN_ERROR,
       errors: {
         system: [ErrorCode.SYSTEM_UNKNOWN_ERROR],
       },

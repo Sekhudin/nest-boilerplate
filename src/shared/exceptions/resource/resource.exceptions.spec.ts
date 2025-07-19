@@ -1,5 +1,4 @@
 import { HttpStatus } from "@nestjs/common";
-import { ERROR_MESSAGES } from "src/shared/constants/error-messages.constant";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { ResourceConflictException } from "./resource-conflict.exception";
 import { ResourceLockedException } from "./resource-locked.exception";
@@ -11,7 +10,7 @@ describe("Resource Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.NOT_FOUND);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.NOT_FOUND,
-      message: ERROR_MESSAGES[ErrorCode.RESOURCE_NOT_FOUND],
+      message: ErrorCode.RESOURCE_NOT_FOUND,
       errors: { resource: [ErrorCode.RESOURCE_NOT_FOUND] },
     });
   });
@@ -21,7 +20,7 @@ describe("Resource Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.CONFLICT);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.CONFLICT,
-      message: ERROR_MESSAGES[ErrorCode.RESOURCE_CONFLICT],
+      message: ErrorCode.RESOURCE_CONFLICT,
       errors: { resource: [ErrorCode.RESOURCE_CONFLICT] },
     });
   });
@@ -31,7 +30,7 @@ describe("Resource Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.LOCKED);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.LOCKED,
-      message: ERROR_MESSAGES[ErrorCode.RESOURCE_LOCKED],
+      message: ErrorCode.RESOURCE_LOCKED,
       errors: { resource: [ErrorCode.RESOURCE_LOCKED] },
     });
   });

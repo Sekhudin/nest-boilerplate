@@ -1,5 +1,4 @@
 import { HttpStatus } from "@nestjs/common";
-import { ERROR_MESSAGES } from "src/shared/constants/error-messages.constant";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { UserAlreadyExistsException } from "./user-already-exists.exception";
 import { UserEmailAlreadyUsedException } from "./user-email-already-used.exception";
@@ -13,7 +12,7 @@ describe("User Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.NOT_FOUND);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.NOT_FOUND,
-      message: ERROR_MESSAGES[ErrorCode.USER_NOT_FOUND],
+      message: ErrorCode.USER_NOT_FOUND,
       errors: {
         user: [ErrorCode.USER_NOT_FOUND],
       },
@@ -26,7 +25,7 @@ describe("User Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.CONFLICT);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.CONFLICT,
-      message: ERROR_MESSAGES[ErrorCode.USER_ALREADY_EXISTS],
+      message: ErrorCode.USER_ALREADY_EXISTS,
       errors: {
         user: [ErrorCode.USER_ALREADY_EXISTS],
       },
@@ -39,7 +38,7 @@ describe("User Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.CONFLICT);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.CONFLICT,
-      message: ERROR_MESSAGES[ErrorCode.USER_EMAIL_ALREADY_USED],
+      message: ErrorCode.USER_EMAIL_ALREADY_USED,
       errors: {
         email: [ErrorCode.USER_EMAIL_ALREADY_USED],
       },
@@ -52,7 +51,7 @@ describe("User Exceptions", () => {
     expect(exception.getStatus()).toBe(HttpStatus.FORBIDDEN);
     expect(exception.getResponse()).toEqual({
       statusCode: HttpStatus.FORBIDDEN,
-      message: ERROR_MESSAGES[ErrorCode.USER_INACTIVE],
+      message: ErrorCode.USER_INACTIVE,
       errors: {
         user: [ErrorCode.USER_INACTIVE],
       },

@@ -1,4 +1,3 @@
-import { ERROR_MESSAGES } from "src/shared/constants/error-messages.constant";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { OtpEmailNotVerifiedException } from "./otp-email-not-verified.exception";
 import { OtpExpiredException } from "./otp-expired.exception";
@@ -12,7 +11,7 @@ describe("OTP Exceptions", () => {
     expect(exception.getStatus()).toBe(400);
     expect(exception.getResponse()).toEqual({
       statusCode: 400,
-      message: ERROR_MESSAGES[ErrorCode.OTP_INVALID],
+      message: ErrorCode.OTP_INVALID,
       errors: {
         otp: [ErrorCode.OTP_INVALID],
       },
@@ -24,7 +23,7 @@ describe("OTP Exceptions", () => {
     expect(exception.getStatus()).toBe(400);
     expect(exception.getResponse()).toEqual({
       statusCode: 400,
-      message: ERROR_MESSAGES[ErrorCode.OTP_EXPIRED],
+      message: ErrorCode.OTP_EXPIRED,
       errors: {
         otp: [ErrorCode.OTP_EXPIRED],
       },
@@ -36,7 +35,7 @@ describe("OTP Exceptions", () => {
     expect(exception.getStatus()).toBe(400);
     expect(exception.getResponse()).toEqual({
       statusCode: 400,
-      message: ERROR_MESSAGES[ErrorCode.OTP_EMAIL_NOT_VERIFIED],
+      message: ErrorCode.OTP_EMAIL_NOT_VERIFIED,
       errors: {
         otp: [ErrorCode.OTP_EMAIL_NOT_VERIFIED],
       },
@@ -48,7 +47,7 @@ describe("OTP Exceptions", () => {
     expect(exception.getStatus()).toBe(400);
     expect(exception.getResponse()).toEqual({
       statusCode: 400,
-      message: ERROR_MESSAGES[ErrorCode.OTP_MAGIC_LINK_INVALID],
+      message: ErrorCode.OTP_MAGIC_LINK_INVALID,
       errors: {
         magicLink: [ErrorCode.OTP_MAGIC_LINK_INVALID],
       },
@@ -60,7 +59,7 @@ describe("OTP Exceptions", () => {
     expect(exception.getStatus()).toBe(400);
     expect(exception.getResponse()).toEqual({
       statusCode: 400,
-      message: ERROR_MESSAGES[ErrorCode.OTP_MAGIC_LINK_EXPIRED],
+      message: ErrorCode.OTP_MAGIC_LINK_EXPIRED,
       errors: {
         magicLink: [ErrorCode.OTP_MAGIC_LINK_EXPIRED],
       },
