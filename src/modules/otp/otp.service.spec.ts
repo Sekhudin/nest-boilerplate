@@ -21,8 +21,8 @@ import { getFreshOtpMailerServiceMock } from "test/mocks/services/otp-mailer.ser
 import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
 import { getFreshGeneratedOtpMock } from "test/mocks/utils/generated-otp.mock";
 import { getFreshUserAgentMock } from "test/mocks/utils/user-agent.mock";
-import { OtpVerifyLinkDto } from "./dto/otp-verify-link.dto";
-import { OtpVerifyDto } from "./dto/otp-verify.dto";
+import { OtpVerifyLinkDto } from "./dto/requests/otp-verify-link.dto";
+import { OtpVerifyDto } from "./dto/requests/otp-verify.dto";
 import { OtpRepository } from "./otp.repository";
 import { OtpService } from "./otp.service";
 

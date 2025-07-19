@@ -4,7 +4,7 @@ import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshAuthServiceMock } from "test/mocks/services/auth.service.mock";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { SignUpLocalDto } from "./dto/sign-up-local.dto";
+import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
 
 let mailerConfigMock: ReturnType<typeof getFreshMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({

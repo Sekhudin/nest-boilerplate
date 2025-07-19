@@ -4,7 +4,7 @@ import { BaseService } from "src/shared/base/base.service";
 import { UserEmailAlreadyUsedException } from "src/shared/exceptions/user/user-email-already-used.exception";
 import { RoleService } from "src/modules/role/role.service";
 import { User } from "./entities/user.entity";
-import { CreateLocalUserDto } from "./dto/create-local-user.dto";
+import { CreateLocalUserDto } from "./dto/requests/create-local-user.dto";
 import { UserRepository } from "./user.repository";
 
 @Injectable()

@@ -15,7 +15,7 @@ import { UserAuth } from "src/modules/auth/entities/user-auth.entity";
 import { Otp } from "src/modules/otp/entities/otp.entity";
 import { Role } from "src/modules/role/entities/role.entity";
 import { Token } from "src/modules/token/entities/token.entity";
-import { z, zr } from "src/utils/validation";
+import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 
 @Entity(databaseConfig.TABLES.USER)

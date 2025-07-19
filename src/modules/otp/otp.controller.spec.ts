@@ -2,8 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshOtpMock } from "test/mocks/entities/otp.entity.mock copy";
 import { getFreshOtpServiceMock } from "test/mocks/services/otp.service.mock";
-import { OtpVerifyLinkDto } from "./dto/otp-verify-link.dto";
-import { OtpVerifyDto } from "./dto/otp-verify.dto";
+import { OtpVerifyLinkDto } from "./dto/requests/otp-verify-link.dto";
+import { OtpVerifyDto } from "./dto/requests/otp-verify.dto";
 import { OtpController } from "./otp.controller";
 import { OtpService } from "./otp.service";
 

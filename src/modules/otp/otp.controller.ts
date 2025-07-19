@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common";
-import { OtpVerifyLinkDto } from "./dto/otp-verify-link.dto";
-import { OtpVerifyDto } from "./dto/otp-verify.dto";
+import { OtpVerifyLinkDto } from "./dto/requests/otp-verify-link.dto";
+import { OtpVerifyDto } from "./dto/requests/otp-verify.dto";
 import { OtpService } from "./otp.service";
 
 @Controller("otp")

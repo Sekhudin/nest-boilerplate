@@ -4,7 +4,8 @@ import { BaseService } from "src/shared/base/base.service";
 import { OtpService } from "src/modules/otp/otp.service";
 import { UserService } from "src/modules/user/user.service";
 import { UserAuthService } from "./services/user-auth.service";
-import { SignUpLocalDto } from "./dto/sign-up-local.dto";
+import { SignInLocalDto } from "./dto/requests/sign-in-local.dto";
+import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
 
 @Injectable()
 export class AuthService extends BaseService {
@@ -25,4 +26,6 @@ export class AuthService extends BaseService {
       return genratedOtp;
     });
   }
+
+  async signInLocal(signInLocalDto: SignInLocalDto) {}
 }

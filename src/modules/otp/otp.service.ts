@@ -14,8 +14,8 @@ import { OtpMagicLinkExpiredException } from "src/shared/exceptions/otp/otp-magi
 import { OtpMagicLinkInvalidException } from "src/shared/exceptions/otp/otp-magic-link-invalid.exception";
 import { User } from "src/modules/user/entities/user.entity";
 import { Otp } from "./entities/otp.entity";
-import { OtpVerifyLinkDto } from "./dto/otp-verify-link.dto";
-import { OtpVerifyDto } from "./dto/otp-verify.dto";
+import { OtpVerifyLinkDto } from "./dto/requests/otp-verify-link.dto";
+import { OtpVerifyDto } from "./dto/requests/otp-verify.dto";
 import { OtpRepository } from "./otp.repository";
 
 @Injectable()

@@ -5,7 +5,7 @@ import { getFreshUserMock } from "test/mocks/entities/user.entity.mock";
 import { getFreshUserRepositoryMock } from "test/mocks/repositories/user.repository.mock";
 import { getFreshRoleServiceMock } from "test/mocks/services/role.service.mock";
 import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
-import { CreateLocalUserDto } from "./dto/create-local-user.dto";
+import { CreateLocalUserDto } from "./dto/requests/create-local-user.dto";
 import { UserRepository } from "./user.repository";
 import { UserService } from "./user.service";
 

@@ -13,7 +13,7 @@ import { getFreshDataSourceMock } from "test/mocks/utils/datasource.mock";
 import { UserAuthService } from "./services/user-auth.service";
 import { UserAuth } from "./entities/user-auth.entity";
 import { AuthService } from "./auth.service";
-import { SignUpLocalDto } from "./dto/sign-up-local.dto";
+import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
 
 let mailerConfigMock: ReturnType<typeof getFreshMailerConfigMock>;
 jest.mock("src/config/mailer.config", () => ({
