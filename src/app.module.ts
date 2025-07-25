@@ -16,6 +16,7 @@ import { JwtTokenModule } from "./shared/modules/global/jwt-token/jwt-token.modu
 import { LoggerModule } from "./shared/modules/global/logger/logger.module";
 import { MagicLinkModule } from "./shared/modules/global/magic-link/magic-link.module";
 import { MailerModule } from "./shared/modules/global/mailer/mailer.module";
+import { MetaModule } from "./shared/modules/global/meta/meta.module";
 import { OtpGeneratorModule } from "./shared/modules/global/otp-generator/otp-generator.module";
 import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.module";
 
@@ -39,6 +40,7 @@ import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.mod
     ThrottlerModule,
     OtpGeneratorModule,
     MagicLinkModule,
+    MetaModule,
   ],
 })
 export class AppModule implements NestModule {
