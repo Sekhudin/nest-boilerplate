@@ -1,14 +1,15 @@
 import { Request } from "express";
 import { Test, TestingModule } from "@nestjs/testing";
 import { Claims } from "src/shared/dto/claims.dto";
+import { getFreshAsyncStorageServiceMock } from "test/mocks/services/async-storage.service.mock";
 import { AsyncStorageService } from "./async-storage.service";
 import { ContextService } from "./context.service";
 
 describe("ContextService", () => {
   let service: ContextService;
-  let mockAsyncStorageService: Partial<AsyncStorageService>;
+  const asyncStorageServiceMock = getFreshAsyncStorageServiceMock();
 
-  const mockUser: Claims = {
+  const claimsMock: Claims = {
     sub: "user-id-1",
     username: "john.doe",
     email: "john@example.com",
@@ -21,7 +22,7 @@ describe("ContextService", () => {
     aud: ["my-app"],
   };
 
-  const mockRequest: Partial<Request> = {
+  const requestMock = {
     requestId: "req-123",
     deviceId: "dev-456",
     userAgent: {
@@ -31,20 +32,16 @@ describe("ContextService", () => {
       os: { name: "Android", version: "13" },
       userAgent: "Mozilla/5.0 (Linux; Android 13; ...)",
     },
-    user: mockUser,
-  };
+    user: claimsMock,
+  } as Request;
 
   beforeEach(async () => {
-    mockAsyncStorageService = {
-      getRequest: jest.fn().mockReturnValue(mockRequest),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ContextService,
         {
           provide: AsyncStorageService,
-          useValue: mockAsyncStorageService,
+          useValue: asyncStorageServiceMock,
         },
       ],
     }).compile();
@@ -52,32 +49,89 @@ describe("ContextService", () => {
     service = module.get<ContextService>(ContextService);
   });
 
-  it("should return requestId", () => {
-    expect(service.getRequestId()).toBe("req-123");
+  describe("getRequestId", () => {
+    beforeEach(() => {
+      asyncStorageServiceMock.getRequest.mockReset();
+    });
+    it("should return requestId", () => {
+      asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
+      expect(service.getRequestId()).toBe("req-123");
+    });
   });
 
-  it("should return deviceId", () => {
-    expect(service.getDeviceId()).toBe("dev-456");
+  describe("getDeviceId", () => {
+    beforeEach(() => {
+      asyncStorageServiceMock.getRequest.mockReset();
+    });
+    it("should return deviceId", () => {
+      asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
+      expect(service.getDeviceId()).toBe("dev-456");
+    });
   });
 
-  it("should return userAgent", () => {
-    expect(service.getUserAgent()).toEqual(mockRequest.userAgent);
+  describe("getUserAgent", () => {
+    beforeEach(() => {
+      asyncStorageServiceMock.getRequest.mockReset();
+    });
+    it("should return userAgent", () => {
+      asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
+      expect(service.getUserAgent()).toEqual(requestMock.userAgent);
+    });
+
+    it("should return userAgent.device", () => {
+      asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
+      expect(service.getUserAgent().device).toBe("android");
+    });
   });
 
-  it("should return userAgent.device", () => {
-    expect(service.getUserAgent().device).toBe("android");
+  describe("getUser", () => {
+    beforeEach(() => {
+      asyncStorageServiceMock.getRequest.mockReset();
+    });
+    it("should return user object (claims)", () => {
+      asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
+      expect(service.getUser()).toEqual(claimsMock);
+      expect(service.getUser()?.username).toBe("john.doe");
+      expect(service.getUser()?.roles).toContain("USER");
+    });
+
+    it("should return null if user is not present", () => {
+      requestMock.user = undefined;
+      asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
+
+      expect(service.getUser()).toBeNull();
+    });
   });
 
-  it("should return user object (claims)", () => {
-    expect(service.getUser()).toEqual(mockUser);
-    expect(service.getUser()?.username).toBe("john.doe");
-    expect(service.getUser()?.roles).toContain("USER");
+  describe("getExecutionTime", () => {
+    beforeEach(() => {
+      asyncStorageServiceMock.get.mockReset();
+    });
+    it("should return executionTime", () => {
+      asyncStorageServiceMock.get.mockReturnValue("2ms");
+
+      const result = service.getExecutionTime();
+
+      expect(asyncStorageServiceMock.get).toHaveBeenCalledWith("executionTime");
+      expect(result).toBe("2ms");
+    });
+
+    it("should return executionTime", () => {
+      asyncStorageServiceMock.get.mockReturnValue(null);
+
+      const result = service.getExecutionTime();
+
+      expect(asyncStorageServiceMock.get).toHaveBeenCalledWith("executionTime");
+      expect(result).toBe(null);
+    });
   });
 
-  it("should return null if user is not present", () => {
-    const mockRequestWithoutUser = { ...mockRequest, user: undefined };
-    (mockAsyncStorageService.getRequest as jest.Mock).mockReturnValue(mockRequestWithoutUser);
+  describe("getTimestamp", () => {
+    it("should return timestamp", () => {
+      const result = service.getTimestamp();
 
-    expect(service.getUser()).toBeNull();
+      expect(result).toBeDefined();
+      expect(typeof result).toBe("string");
+    });
   });
 });

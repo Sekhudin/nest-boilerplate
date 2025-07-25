@@ -1,13 +1,15 @@
 import { Request } from "express";
 import { of } from "rxjs";
 import { CallHandler, ExecutionContext } from "@nestjs/common";
-import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { Claims } from "src/shared/dto/claims.dto";
+import { getFreshAsyncStorageServiceMock } from "test/mocks/services/async-storage.service.mock";
+import { getFreshLoggerServiceMock } from "test/mocks/services/logger.service.mock";
 import { HttpInterceptor } from "./http.interceptor";
 
 describe("HttpInterceptor", () => {
   let interceptor: HttpInterceptor;
-  let logger: LoggerService;
+  const loggerServiceMock = getFreshLoggerServiceMock();
+  const asyncStorageServiceMock = getFreshAsyncStorageServiceMock();
 
   const mockUser: Claims = {
     sub: "user-id-1",
@@ -41,25 +43,29 @@ describe("HttpInterceptor", () => {
   };
 
   beforeEach(() => {
-    logger = { ws: { http: jest.fn() } } as any;
-    interceptor = new HttpInterceptor(logger);
+    interceptor = new HttpInterceptor(asyncStorageServiceMock, loggerServiceMock);
   });
 
-  it("should log HTTP request", async () => {
-    const mockContext = {
-      switchToHttp: () => ({
-        getRequest: () => mockRequest,
-        getResponse: () => ({ statusCode: 200 }),
-      }),
-    } as unknown as ExecutionContext;
+  describe("intercept", () => {
+    beforeEach(() => {});
 
-    const mockHandler: CallHandler = {
-      handle: () => of("response"),
-    };
+    it("should log HTTP request", async () => {
+      const mockContext = {
+        switchToHttp: () => ({
+          getRequest: () => mockRequest,
+          getResponse: () => ({ statusCode: 200 }),
+        }),
+      } as unknown as ExecutionContext;
 
-    const result = await interceptor.intercept(mockContext, mockHandler);
-    result.subscribe(() => {
-      expect(logger.ws.http).toHaveBeenCalled();
+      const mockHandler: CallHandler = {
+        handle: () => of("response"),
+      };
+
+      const result = await interceptor.intercept(mockContext, mockHandler);
+      result.subscribe(() => {
+        expect(asyncStorageServiceMock.set).toHaveBeenCalled();
+        expect(loggerServiceMock.ws.http).toHaveBeenCalled();
+      });
     });
   });
 });

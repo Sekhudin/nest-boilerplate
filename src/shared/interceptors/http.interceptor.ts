@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
 import { Observable, tap } from "rxjs";
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
+import { AsyncStorageService } from "src/shared/modules/global/context/async-storage.service";
 import { LoggerService } from "src/shared/modules/global/logger/logger.service";
 import { JsonLogFormatter } from "src/shared/classes/json-log-formatter";
 
 @Injectable()
 export class HttpInterceptor implements NestInterceptor {
-  constructor(private readonly logger: LoggerService) {}
+  constructor(
+    private readonly asyncStorageService: AsyncStorageService,
+    private readonly logger: LoggerService,
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest<Request>();
@@ -16,6 +20,7 @@ export class HttpInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const endTime = Date.now();
+        this.asyncStorageService.set("executionTime", `${startTime - endTime}ms`);
         this.logger.ws.http("HTTP_REQUEST", JsonLogFormatter.http({ req, startTime, endTime, statusCode }));
       }),
     );

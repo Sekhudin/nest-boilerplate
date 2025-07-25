@@ -22,6 +22,14 @@ export class ContextService {
   }
 
   getUser() {
-    return this.req.user || null;
+    return this.req.user ?? null;
+  }
+
+  getExecutionTime() {
+    return this.asyncStorageService.get<string>("executionTime");
+  }
+
+  getTimestamp() {
+    return new Date().toISOString();
   }
 }
