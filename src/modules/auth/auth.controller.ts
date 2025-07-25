@@ -13,5 +13,7 @@ export class AuthController {
   }
 
   @Post("signin")
-  signin(@Body() signInLocalDto: SignInLocalDto) {}
+  signin(@Body() signInLocalDto: SignInLocalDto) {
+    return true;
+  }
 }

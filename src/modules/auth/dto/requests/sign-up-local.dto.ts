@@ -10,7 +10,7 @@ const signUpLocal = schema(
     })
     .extend({
       password: zr.password(),
-      confirmPassword: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_TOO_SHORT),
+      confirmPassword: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_EMPTY),
     })
     .check((context) => {
       if (context.value.password !== context.value.confirmPassword) {

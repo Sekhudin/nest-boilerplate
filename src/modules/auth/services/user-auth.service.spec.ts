@@ -50,12 +50,14 @@ describe("UserAuthService", () => {
       userAuthRepositoryMock.create.mockReturnValue(userAuthMock);
       authProviderServiceMock.findOrCreateLocalAuthProvider.mockResolvedValue(authProviderMock);
       cryptoServiceMock.hashPassword.mockResolvedValue("Hashed@StrongPassword123");
+      userAuthRepositoryMock.save.mockResolvedValue(userAuthMock);
 
       const result = await service.createLocalUserAuth(userMock, password);
 
       expect(userAuthRepositoryMock.create).toHaveBeenCalledWith({ user: userMock });
       expect(authProviderServiceMock.findOrCreateLocalAuthProvider).toHaveBeenCalled();
       expect(cryptoServiceMock.hashPassword).toHaveBeenCalledWith(password);
+      expect(userAuthRepositoryMock.save).toHaveBeenCalledWith(userAuthMock);
       expect(result).toBe(userAuthMock);
     });
 
@@ -66,12 +68,14 @@ describe("UserAuthService", () => {
       userAuthRepositoryMock.create.mockReturnValue(userAuthMock);
       authProviderServiceMock.findOrCreateLocalAuthProvider.mockResolvedValue(authProviderMock);
       cryptoServiceMock.hashPassword.mockResolvedValue("Hashed@StrongPassword123");
+      userAuthRepositoryMock.save.mockResolvedValue(userAuthMock);
 
       const result = await service.createLocalUserAuth(userMock, password, entityManagerMock);
 
       expect(userAuthRepositoryMock.create).toHaveBeenCalledWith({ user: userMock });
       expect(authProviderServiceMock.findOrCreateLocalAuthProvider).toHaveBeenCalled();
       expect(cryptoServiceMock.hashPassword).toHaveBeenCalledWith(password);
+      expect(userAuthRepositoryMock.save).toHaveBeenCalledWith(userAuthMock);
       expect(result).toBe(userAuthMock);
     });
   });

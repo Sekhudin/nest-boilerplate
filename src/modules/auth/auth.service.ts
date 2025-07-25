@@ -1,4 +1,3 @@
-import { DataSource } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/shared/base/base.service";
 import { OtpService } from "src/modules/otp/otp.service";
@@ -11,7 +10,6 @@ export class AuthService extends BaseService {
     private readonly userService: UserService,
     private readonly userAuthService: UserAuthService,
     private readonly otpService: OtpService,
-    private readonly datasource: DataSource,
   ) {
     super();
   }
