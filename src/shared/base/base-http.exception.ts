@@ -1,4 +1,5 @@
-import { BaseHttpExceptionBody, HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus } from "@nestjs/common";
+import { BaseHttpExceptionBody } from "src/types/nestjs-common";
 
 export abstract class BaseHttpException extends HttpException {
   protected constructor(statusCode: HttpStatus, message: string, errors?: Record<string, string[]>) {

@@ -1,4 +1,5 @@
 import "@nestjs/common";
+import type { BaseHttpExceptionBody } from "@nestjs/common";
 
 declare module "@nestjs/common" {
   type BaseHttpExceptionBody = {
@@ -7,3 +8,5 @@ declare module "@nestjs/common" {
     errors?: Record<string, string[]>;
   };
 }
+
+export type { BaseHttpExceptionBody };
