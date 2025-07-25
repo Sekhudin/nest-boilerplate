@@ -14,8 +14,8 @@ import { OtpMagicLinkExpiredException } from "src/shared/exceptions/otp/otp-magi
 import { OtpMagicLinkInvalidException } from "src/shared/exceptions/otp/otp-magic-link-invalid.exception";
 import { User } from "src/modules/user/entities/user.entity";
 import { Otp } from "./entities/otp.entity";
-import { OtpVerifyLinkDto } from "./dto/requests/otp-verify-link.dto";
-import { OtpVerifyDto } from "./dto/requests/otp-verify.dto";
+import { VerifyLinkDto } from "./dto/requests/verify-link.dto";
+import { VerifyOtpDto } from "./dto/requests/verify-otp.dto";
 import { OtpRepository } from "./otp.repository";
 
 @Injectable()
@@ -58,9 +58,13 @@ export class OtpService extends BaseService {
     return generatedOtp;
   }
 
-  async verify(otpVerifyDto: OtpVerifyDto) {
-    const foundOtp = await this.otpRepository
-      .findOneByOrFail({ token: otpVerifyDto.token, isUsed: false })
+  async findValidOtpOrThrow(verifyOtpDto: VerifyOtpDto, entityManager?: EntityManager) {
+    const repository = this.getRepository(Otp, this.otpRepository, entityManager);
+    const foundOtp = await repository
+      .findOneOrFail({
+        where: { token: verifyOtpDto.token, purpose: verifyOtpDto.purpose, isUsed: false },
+        relations: { user: true },
+      })
       .catch(() => {
         throw new OtpInvalidTokenException();
       });
@@ -69,25 +73,31 @@ export class OtpService extends BaseService {
       throw new OtpExpiredException();
     }
 
-    const isValidOtp = await this.cryptoService.verifyOtp(otpVerifyDto.otpCode, foundOtp.hashOtp);
+    const isValidOtp = await this.cryptoService.verifyOtp(verifyOtpDto.otpCode, foundOtp.hashOtp);
     if (!isValidOtp) throw new OtpInvalidException();
-
-    foundOtp.isUsed = true;
-    return await this.otpRepository.save(foundOtp);
+    return foundOtp;
   }
 
-  async verifyLink(otpVerifyLinkDto: OtpVerifyLinkDto) {
-    const foundOtp = await this.otpRepository
-      .findOneByOrFail({ token: otpVerifyLinkDto.token, isUsed: false })
+  async findValidLinkOrThrow(verifyLinkDto: VerifyLinkDto, entityManager?: EntityManager) {
+    const repository = this.getRepository(Otp, this.otpRepository, entityManager);
+    const foundLink = await repository
+      .findOneOrFail({
+        where: { token: verifyLinkDto.token, purpose: verifyLinkDto.purpose, isUsed: false },
+        relations: { user: true },
+      })
       .catch(() => {
         throw new OtpMagicLinkInvalidException();
       });
 
-    if (this.otpGeneratorService.isOtpExpired(foundOtp.expiresAt)) {
+    if (this.otpGeneratorService.isOtpExpired(foundLink.expiresAt)) {
       throw new OtpMagicLinkExpiredException();
     }
+    return foundLink;
+  }
 
-    foundOtp.isUsed = true;
-    return await this.otpRepository.save(foundOtp);
+  markOtpIsUsed(otp: Otp, entityManager?: EntityManager) {
+    const repository = this.getRepository(Otp, this.otpRepository, entityManager);
+    otp.isUsed = true;
+    return repository.save(otp);
   }
 }

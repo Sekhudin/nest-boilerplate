@@ -21,8 +21,8 @@ import { getFreshOtpMailerServiceMock } from "test/mocks/services/otp-mailer.ser
 import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
 import { getFreshGeneratedOtpMock } from "test/mocks/utils/generated-otp.mock";
 import { getFreshUserAgentMock } from "test/mocks/utils/user-agent.mock";
-import { OtpVerifyLinkDto } from "./dto/requests/otp-verify-link.dto";
-import { OtpVerifyDto } from "./dto/requests/otp-verify.dto";
+import { VerifyLinkDto } from "./dto/requests/verify-link.dto";
+import { VerifyOtpDto } from "./dto/requests/verify-otp.dto";
 import { OtpRepository } from "./otp.repository";
 import { OtpService } from "./otp.service";
 
@@ -146,124 +146,190 @@ describe("OtpService", () => {
     });
   });
 
-  describe("verify", () => {
+  describe("findValidOtpOrThrow", () => {
     const otpMock = getFreshOtpMock();
-    const otpVerifyDtoMock: OtpVerifyDto = {
+    const verifyOtpDto: VerifyOtpDto = {
       otpCode: "123456",
       token: "otp-token",
       purpose: "EMAIL_VERIFICATION",
     };
 
     beforeEach(() => {
-      otpRepositoryMock.findOneByOrFail.mockReset();
+      otpRepositoryMock.findOneOrFail.mockReset();
       otpGeneratorServiceMock.isOtpExpired.mockReset();
       cryptoServiceMock.verifyOtp.mockReset();
-      otpRepositoryMock.save.mockReset();
     });
 
-    it("should mark OTP as used and return saved OTP if everything is valid", async () => {
-      otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
+    it("should return saved OTP if everything is valid", async () => {
+      otpRepositoryMock.findOneOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(false);
       cryptoServiceMock.verifyOtp.mockResolvedValue(true);
-      otpRepositoryMock.save.mockResolvedValue(otpMock);
 
-      const result = await service.verify(otpVerifyDtoMock);
+      const result = await service.findValidOtpOrThrow(verifyOtpDto);
 
-      expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({ token: otpVerifyDtoMock.token, isUsed: false });
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: verifyOtpDto.token, purpose: verifyOtpDto.purpose, isUsed: false },
+        relations: { user: true },
+      });
       expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
-      expect(cryptoServiceMock.verifyOtp).toHaveBeenCalledWith(otpVerifyDtoMock.otpCode, otpMock.hashOtp);
-      expect(otpRepositoryMock.save).toHaveBeenCalledWith(otpMock);
+      expect(cryptoServiceMock.verifyOtp).toHaveBeenCalledWith(verifyOtpDto.otpCode, otpMock.hashOtp);
       expect(result).toBe(otpMock);
     });
 
     it("should throw OtpInvalidTokenException if token is not found", async () => {
-      otpRepositoryMock.findOneByOrFail.mockRejectedValue(new OtpInvalidTokenException());
+      otpRepositoryMock.findOneOrFail.mockRejectedValue(new OtpInvalidTokenException());
 
-      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new OtpInvalidTokenException());
-      expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({ token: otpVerifyDtoMock.token, isUsed: false });
-      expect(otpGeneratorServiceMock.isOtpExpired).not.toHaveBeenCalledWith(otpMock.expiresAt);
-      expect(cryptoServiceMock.verifyOtp).not.toHaveBeenCalledWith(otpVerifyDtoMock.otpCode, otpMock.hashOtp);
-      expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
+      await expect(service.findValidOtpOrThrow(verifyOtpDto)).rejects.toThrow(new OtpInvalidTokenException());
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: verifyOtpDto.token, purpose: verifyOtpDto.purpose, isUsed: false },
+        relations: { user: true },
+      });
+      expect(otpGeneratorServiceMock.isOtpExpired).not.toHaveBeenCalled();
+      expect(cryptoServiceMock.verifyOtp).not.toHaveBeenCalled();
     });
 
     it("should throw OtpExpiredException if OTP is expired", async () => {
-      otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
+      otpRepositoryMock.findOneOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(true);
 
-      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new OtpExpiredException());
-      expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({ token: otpVerifyDtoMock.token, isUsed: false });
+      await expect(service.findValidOtpOrThrow(verifyOtpDto)).rejects.toThrow(new OtpExpiredException());
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: verifyOtpDto.token, purpose: verifyOtpDto.purpose, isUsed: false },
+        relations: { user: true },
+      });
       expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
-      expect(cryptoServiceMock.verifyOtp).not.toHaveBeenCalledWith(otpVerifyDtoMock.otpCode, otpMock.hashOtp);
-      expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
+      expect(cryptoServiceMock.verifyOtp).not.toHaveBeenCalledWith(verifyOtpDto.otpCode, otpMock.hashOtp);
     });
 
     it("should throw OtpInvalidException if OTP code is incorrect", async () => {
-      otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
+      otpRepositoryMock.findOneOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(false);
       cryptoServiceMock.verifyOtp.mockResolvedValue(false);
 
-      await expect(service.verify(otpVerifyDtoMock)).rejects.toThrow(new OtpInvalidException());
-      expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({ token: otpVerifyDtoMock.token, isUsed: false });
+      await expect(service.findValidOtpOrThrow(verifyOtpDto)).rejects.toThrow(new OtpInvalidException());
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: verifyOtpDto.token, purpose: verifyOtpDto.purpose, isUsed: false },
+        relations: { user: true },
+      });
       expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
-      expect(cryptoServiceMock.verifyOtp).toHaveBeenCalledWith(otpVerifyDtoMock.otpCode, otpMock.hashOtp);
-      expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
+      expect(cryptoServiceMock.verifyOtp).toHaveBeenCalledWith(verifyOtpDto.otpCode, otpMock.hashOtp);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManagerMock = getFreshEntityManagerMock();
+      entityManagerMock.getRepository.mockReturnValue(otpRepositoryMock);
+      otpRepositoryMock.findOneOrFail.mockResolvedValue(otpMock);
+      otpGeneratorServiceMock.isOtpExpired.mockReturnValue(false);
+      cryptoServiceMock.verifyOtp.mockResolvedValue(true);
+
+      const result = await service.findValidOtpOrThrow(verifyOtpDto, entityManagerMock);
+
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: verifyOtpDto.token, purpose: verifyOtpDto.purpose, isUsed: false },
+        relations: { user: true },
+      });
+      expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
+      expect(cryptoServiceMock.verifyOtp).toHaveBeenCalledWith(verifyOtpDto.otpCode, otpMock.hashOtp);
+      expect(result).toBe(otpMock);
     });
   });
 
-  describe("verifyLink", () => {
+  describe("findValidLinkOrThrow", () => {
     const otpMock = getFreshOtpMock();
-    const otpVerifyLinkDtoMock: OtpVerifyLinkDto = {
+    const otpVerifyLinkDtoMock: VerifyLinkDto = {
       token: "otp-token",
       purpose: "EMAIL_VERIFICATION",
     };
 
     beforeEach(() => {
-      otpRepositoryMock.findOneByOrFail.mockReset();
+      otpRepositoryMock.findOneOrFail.mockReset();
       otpGeneratorServiceMock.isOtpExpired.mockReset();
-      otpRepositoryMock.save.mockReset();
     });
-    it("should mark OTP as used and return saved OTP", async () => {
-      otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
+    it("should return saved OTP if everithing is valid", async () => {
+      otpRepositoryMock.findOneOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(false);
-      otpRepositoryMock.save.mockResolvedValue(otpMock);
 
-      const result = await service.verifyLink(otpVerifyLinkDtoMock);
+      const result = await service.findValidLinkOrThrow(otpVerifyLinkDtoMock);
 
-      expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({
-        token: otpVerifyLinkDtoMock.token,
-        isUsed: false,
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: otpVerifyLinkDtoMock.token, purpose: otpVerifyLinkDtoMock.purpose, isUsed: false },
+        relations: { user: true },
       });
 
       expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
-      expect(otpRepositoryMock.save).toHaveBeenCalledWith(otpMock);
       expect(result).toBe(otpMock);
     });
 
     it("should throw OtpMagicLinkInvalidException if link is invalid", async () => {
-      otpRepositoryMock.findOneByOrFail.mockRejectedValue(new OtpMagicLinkInvalidException());
+      otpRepositoryMock.findOneOrFail.mockRejectedValue(new OtpMagicLinkInvalidException());
 
-      await expect(service.verifyLink(otpVerifyLinkDtoMock)).rejects.toThrow(new OtpMagicLinkInvalidException());
+      await expect(service.findValidLinkOrThrow(otpVerifyLinkDtoMock)).rejects.toThrow(
+        new OtpMagicLinkInvalidException(),
+      );
 
-      expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({
-        token: otpVerifyLinkDtoMock.token,
-        isUsed: false,
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: otpVerifyLinkDtoMock.token, purpose: otpVerifyLinkDtoMock.purpose, isUsed: false },
+        relations: { user: true },
       });
       expect(otpGeneratorServiceMock.isOtpExpired).not.toHaveBeenCalledWith(otpMock.expiresAt);
-      expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
     });
 
     it("should throw OtpMagicLinkExpiredException if magic-link is expired", async () => {
-      otpRepositoryMock.findOneByOrFail.mockResolvedValue(otpMock);
+      otpRepositoryMock.findOneOrFail.mockResolvedValue(otpMock);
       otpGeneratorServiceMock.isOtpExpired.mockReturnValue(true);
 
-      await expect(service.verifyLink(otpVerifyLinkDtoMock)).rejects.toThrow(new OtpMagicLinkExpiredException());
+      await expect(service.findValidLinkOrThrow(otpVerifyLinkDtoMock)).rejects.toThrow(
+        new OtpMagicLinkExpiredException(),
+      );
 
-      expect(otpRepositoryMock.findOneByOrFail).toHaveBeenCalledWith({
-        token: otpVerifyLinkDtoMock.token,
-        isUsed: false,
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: otpVerifyLinkDtoMock.token, purpose: otpVerifyLinkDtoMock.purpose, isUsed: false },
+        relations: { user: true },
       });
       expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
-      expect(otpRepositoryMock.save).not.toHaveBeenCalledWith(otpMock);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManagerMock = getFreshEntityManagerMock();
+      entityManagerMock.getRepository.mockReturnValue(otpRepositoryMock);
+      otpRepositoryMock.findOneOrFail.mockResolvedValue(otpMock);
+      otpGeneratorServiceMock.isOtpExpired.mockReturnValue(false);
+
+      const result = await service.findValidLinkOrThrow(otpVerifyLinkDtoMock, entityManagerMock);
+
+      expect(otpRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { token: otpVerifyLinkDtoMock.token, purpose: otpVerifyLinkDtoMock.purpose, isUsed: false },
+        relations: { user: true },
+      });
+      expect(otpGeneratorServiceMock.isOtpExpired).toHaveBeenCalledWith(otpMock.expiresAt);
+      expect(result).toBe(otpMock);
+    });
+  });
+
+  describe("markOtpIsUsed", () => {
+    const otpMock = getFreshOtpMock();
+
+    beforeEach(() => {
+      otpRepositoryMock.save.mockReset();
+    });
+
+    it("should return otp with isUsed status true", async () => {
+      otpRepositoryMock.save.mockResolvedValue(otpMock);
+
+      const result = await service.markOtpIsUsed(otpMock);
+
+      expect(otpRepositoryMock.save).toHaveBeenCalledWith(otpMock);
+      expect(result.isUsed).toBe(true);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManagerMock = getFreshEntityManagerMock();
+      entityManagerMock.getRepository.mockReturnValue(otpRepositoryMock);
+      otpRepositoryMock.save.mockResolvedValue(otpMock);
+
+      const result = await service.markOtpIsUsed(otpMock, entityManagerMock);
+      expect(otpRepositoryMock.save).toHaveBeenCalledWith(otpMock);
+      expect(result.isUsed).toBe(true);
     });
   });
 });
