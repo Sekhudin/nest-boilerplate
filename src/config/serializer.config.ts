@@ -14,7 +14,7 @@ class SerializerConfig extends BaseConfig {
 
   get classSerializerInterceptorOptions(): ClassSerializerInterceptorOptions {
     return {
-      strategy: "excludeAll",
+      strategy: "exposeAll",
       excludePrefixes: ["_"],
       enableCircularCheck: false,
       excludeExtraneousValues: true,

@@ -4,7 +4,7 @@ declare global {
     (value: unknown): void;
   }
 
-  type AsyncStorageKey = "req" | "res" | "executionTime";
+  type AsyncStorageKey = "req" | "res" | "requestStartTime";
   type AsyncStorageStore = Map<AsyncStorageKey, unknown>;
 
   type MetaPayload = Record<string, string | number | boolean | null | undefined>;

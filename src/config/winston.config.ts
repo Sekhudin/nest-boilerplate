@@ -36,6 +36,7 @@ class WinstonConfig extends BaseConfig {
     "token",
     "accessToken",
     "refreshToken",
+    "otpCode",
     "email",
     "phone",
     "cvv",

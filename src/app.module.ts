@@ -45,6 +45,6 @@ import { ThrottlerModule } from "./shared/modules/global/throttler/throttler.mod
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ContextMiddleware).forRoutes("*path");
+    consumer.apply(ContextMiddleware).forRoutes("*");
   }
 }
