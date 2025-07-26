@@ -27,9 +27,10 @@ export class MetaService {
   }
 
   build(): Metadata {
+    const { startTime, endTime } = this.contextService.getExecutionTime();
     return {
       requestId: this.contextService.getRequestId(),
-      executionTime: this.contextService.getExecutionTime(),
+      executionTime: `${endTime - startTime}ms`,
       timestamp: this.contextService.getTimestamp(),
       ...this.metadata,
     };
