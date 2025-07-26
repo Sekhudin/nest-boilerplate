@@ -1,15 +1,21 @@
 import { Body, Controller, Post } from "@nestjs/common";
+import { MetaService } from "src/shared/modules/global/meta/meta.service";
 import { SignInLocalDto } from "./dto/requests/sign-in-local.dto";
 import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
+import { SignUpLocalOtpResponse } from "./dto/responses/sign-up-local-otp.response";
 import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly signUpLocalUseCase: SignUpLocalUseCase) {}
+  constructor(
+    private readonly signUpLocalUseCase: SignUpLocalUseCase,
+    private readonly metaservice: MetaService,
+  ) {}
 
   @Post("signup")
-  signup(@Body() signUpLocalDto: SignUpLocalDto) {
-    return this.signUpLocalUseCase.execute(signUpLocalDto);
+  async signup(@Body() signUpLocalDto: SignUpLocalDto) {
+    const data = await this.signUpLocalUseCase.execute(signUpLocalDto);
+    return SignUpLocalOtpResponse.from(data, this.metaservice.build());
   }
 
   @Post("signin")

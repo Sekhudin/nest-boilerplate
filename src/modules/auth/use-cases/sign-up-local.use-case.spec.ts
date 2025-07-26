@@ -1,16 +1,15 @@
 import { DataSource } from "typeorm";
-import { mockDeep } from "jest-mock-extended";
-import { GeneratedOtp } from "otplib";
 import { Test, TestingModule } from "@nestjs/testing";
 import { SignUpLocalDto } from "src/modules/auth/dto/requests/sign-up-local.dto";
-import { UserAuth } from "src/modules/auth/entities/user-auth.entity";
 import { UserAuthService } from "src/modules/auth/services/user-auth.service";
 import { OtpService } from "src/modules/otp/otp.service";
-import { Role } from "src/modules/role/entities/role.entity";
 import { RoleService } from "src/modules/role/role.service";
-import { User } from "src/modules/user/entities/user.entity";
 import { UserService } from "src/modules/user/user.service";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
+import { getFreshOtpMock } from "test/mocks/entities/otp.entity.mock copy";
+import { getFreshRoleMock } from "test/mocks/entities/role.entity.mock";
+import { getFreshUserAuthMock } from "test/mocks/entities/user-auth.entity.mock";
+import { getFreshUserMock } from "test/mocks/entities/user.entity.mock";
 import { getFreshOtpServiceMock } from "test/mocks/services/otp.service.mock";
 import { getFreshRoleServiceMock } from "test/mocks/services/role.service.mock";
 import { getFreshUserAuthServiceMock } from "test/mocks/services/user-auth.service.mock";
@@ -67,10 +66,10 @@ describe("SignUpLocalUseCase", () => {
         confirmPassword: "@SecurePassword1",
       };
 
-      const userMock = mockDeep<User>();
-      const roleMock = mockDeep<Role>();
-      const userAuthMock = mockDeep<UserAuth>();
-      const generatedOtp = mockDeep<GeneratedOtp>();
+      const userMock = getFreshUserMock();
+      const roleMock = getFreshRoleMock();
+      const userAuthMock = getFreshUserAuthMock();
+      const otpMock = getFreshOtpMock();
 
       userAuthMock.user = userMock;
       const entityManager = dataSourceMock.createEntityManager();
@@ -78,7 +77,7 @@ describe("SignUpLocalUseCase", () => {
       roleServiceMock.findOrCreateDefaultRole.mockResolvedValue(roleMock);
       userServiceMock.createLocalUser.mockResolvedValue(userMock);
       userAuthServiceMock.createLocalUserAuth.mockResolvedValue(userAuthMock);
-      otpServiceMock.sendOtpForLocalSignup.mockResolvedValue(generatedOtp);
+      otpServiceMock.sendOtpForLocalSignup.mockResolvedValue(otpMock);
 
       const result = await useCase.execute(dto);
 
@@ -90,7 +89,7 @@ describe("SignUpLocalUseCase", () => {
         entityManager,
       );
       expect(otpServiceMock.sendOtpForLocalSignup).toHaveBeenCalledWith(userMock, entityManager);
-      expect(result).toBe(generatedOtp);
+      expect(result).toBe(otpMock);
     });
   });
 });

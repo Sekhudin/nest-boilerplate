@@ -1,15 +1,15 @@
 import { DataSource } from "typeorm";
-import { GeneratedOtp } from "otplib";
 import { Injectable } from "@nestjs/common";
 import { BaseUseCase } from "src/shared/base/base.use-case";
 import { SignUpLocalDto } from "src/modules/auth/dto/requests/sign-up-local.dto";
 import { UserAuthService } from "src/modules/auth/services/user-auth.service";
+import { Otp } from "src/modules/otp/entities/otp.entity";
 import { OtpService } from "src/modules/otp/otp.service";
 import { RoleService } from "src/modules/role/role.service";
 import { UserService } from "src/modules/user/user.service";
 
 @Injectable()
-export class SignUpLocalUseCase implements BaseUseCase<SignUpLocalDto, GeneratedOtp> {
+export class SignUpLocalUseCase implements BaseUseCase<SignUpLocalDto, Otp> {
   constructor(
     private readonly roleService: RoleService,
     private readonly userService: UserService,
@@ -18,7 +18,7 @@ export class SignUpLocalUseCase implements BaseUseCase<SignUpLocalDto, Generated
     private readonly dataSource: DataSource,
   ) {}
 
-  execute(inputDto: SignUpLocalDto): Promise<GeneratedOtp> {
+  execute(inputDto: SignUpLocalDto): Promise<Otp> {
     return this.dataSource.transaction(async (entityManager) => {
       const role = await this.roleService.findOrCreateDefaultRole();
       const user = await this.userService.createLocalUser(inputDto, role, entityManager);
