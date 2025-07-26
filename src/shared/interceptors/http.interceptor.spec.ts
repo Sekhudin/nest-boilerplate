@@ -2,14 +2,14 @@ import { Request } from "express";
 import { of } from "rxjs";
 import { CallHandler, ExecutionContext } from "@nestjs/common";
 import { Claims } from "src/shared/dto/claims.dto";
-import { getFreshAsyncStorageServiceMock } from "test/mocks/services/async-storage.service.mock";
+import { getFreshContextServiceMock } from "test/mocks/services/context.service.mock";
 import { getFreshLoggerServiceMock } from "test/mocks/services/logger.service.mock";
 import { HttpInterceptor } from "./http.interceptor";
 
 describe("HttpInterceptor", () => {
   let interceptor: HttpInterceptor;
   const loggerServiceMock = getFreshLoggerServiceMock();
-  const asyncStorageServiceMock = getFreshAsyncStorageServiceMock();
+  const contextServiceMock = getFreshContextServiceMock();
 
   const mockUser: Claims = {
     sub: "user-id-1",
@@ -43,13 +43,16 @@ describe("HttpInterceptor", () => {
   };
 
   beforeEach(() => {
-    interceptor = new HttpInterceptor(asyncStorageServiceMock, loggerServiceMock);
+    interceptor = new HttpInterceptor(contextServiceMock, loggerServiceMock);
   });
 
   describe("intercept", () => {
-    beforeEach(() => {});
+    beforeEach(() => {
+      contextServiceMock.getExecutionTime.mockReset();
+    });
 
     it("should log HTTP request", async () => {
+      contextServiceMock.getExecutionTime.mockReturnValue({ startTime: Date.now(), endTime: Date.now() });
       const mockContext = {
         switchToHttp: () => ({
           getRequest: () => mockRequest,
@@ -63,7 +66,7 @@ describe("HttpInterceptor", () => {
 
       const result = await interceptor.intercept(mockContext, mockHandler);
       result.subscribe(() => {
-        expect(asyncStorageServiceMock.set).toHaveBeenCalled();
+        expect(contextServiceMock.getExecutionTime).toHaveBeenCalled();
         expect(loggerServiceMock.ws.http).toHaveBeenCalled();
       });
     });

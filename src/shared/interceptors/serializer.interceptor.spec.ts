@@ -2,8 +2,15 @@ import { Expose } from "class-transformer";
 import { of } from "rxjs";
 import { CallHandler, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { serializerConfig } from "src/config/serializer.config";
+import { getFreshSerializerConfigMock } from "test/mocks/config/serializer.config.mock";
 import { SerializerInterceptor } from "./serializer.interceptor";
+
+let serializerConfigMock: ReturnType<typeof getFreshSerializerConfigMock>;
+jest.mock("src/config/serializer.config", () => ({
+  get serializerConfig() {
+    return serializerConfigMock;
+  },
+}));
 
 describe("SerializerInterceptor", () => {
   let interceptor: SerializerInterceptor;
@@ -20,6 +27,7 @@ describe("SerializerInterceptor", () => {
 
   beforeEach(() => {
     reflector = new Reflector();
+    serializerConfigMock = getFreshSerializerConfigMock();
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(undefined);
     interceptor = new SerializerInterceptor(reflector);
 
@@ -51,7 +59,7 @@ describe("SerializerInterceptor", () => {
     });
 
     interceptor.intercept(context, callHandler).subscribe((result) => {
-      expect(reflector.getAllAndOverride).toHaveBeenCalledWith(serializerConfig.SERIALIZER_OPTIONS_META_KEY, [
+      expect(reflector.getAllAndOverride).toHaveBeenCalledWith(serializerConfigMock.SERIALIZER_OPTIONS_META_KEY, [
         context.getHandler(),
         context.getClass(),
       ]);
