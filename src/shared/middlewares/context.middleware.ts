@@ -8,7 +8,7 @@ import { UserAgent } from "src/utils/ua";
 @Injectable()
 export class ContextMiddleware implements NestMiddleware<Request, Response> {
   constructor(
-    private readonly asyncStorage: AsyncStorageService,
+    private readonly asyncStorageService: AsyncStorageService,
     private readonly cookie: CookieService,
   ) {}
 
@@ -16,8 +16,9 @@ export class ContextMiddleware implements NestMiddleware<Request, Response> {
     const store = new Map<AsyncStorageKey, unknown>();
     store.set("req", req);
     store.set("res", res);
+    store.set("requestStartTime", Date.now());
 
-    this.asyncStorage.run(store, () => {
+    this.asyncStorageService.run(store, () => {
       const userAgent = UserAgent.parse(req);
       const deviceId = this.cookie.getDeviceId();
       req.requestId = randomUUID();
