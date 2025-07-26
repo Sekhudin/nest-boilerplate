@@ -7,14 +7,14 @@ interface DummyItem {
 
 class DummyCollectionResponse extends BaseCollectionResponse<DummyItem> {
   constructor(
-    public items: DummyItem[],
+    public data: DummyItem[],
     public meta?: Metadata,
   ) {
     super();
   }
 
-  static override from(items: DummyItem[], meta?: Metadata): DummyCollectionResponse {
-    return new DummyCollectionResponse(items, meta);
+  static override from(data: DummyItem[], meta?: Metadata): DummyCollectionResponse {
+    return new DummyCollectionResponse(data, meta);
   }
 }
 
@@ -28,8 +28,8 @@ describe("BaseCollectionResponse", () => {
   });
 
   describe("DummyCollectionResponse subclass", () => {
-    it("should return an instance with items and meta", () => {
-      const items: DummyItem[] = [
+    it("should return an instance with data and meta", () => {
+      const data: DummyItem[] = [
         { id: 1, name: "Alpha" },
         { id: 2, name: "Beta" },
       ];
@@ -39,18 +39,18 @@ describe("BaseCollectionResponse", () => {
         executionTime: "10ms",
       };
 
-      const result = DummyCollectionResponse.from(items, meta);
+      const result = DummyCollectionResponse.from(data, meta);
 
       expect(result).toBeInstanceOf(DummyCollectionResponse);
-      expect(result.items).toEqual(items);
+      expect(result.data).toEqual(data);
       expect(result.meta).toEqual(meta);
     });
 
-    it("should return an instance with items and no meta if omitted", () => {
-      const items: DummyItem[] = [{ id: 3, name: "Gamma" }];
-      const result = DummyCollectionResponse.from(items);
+    it("should return an instance with data and no meta if omitted", () => {
+      const data: DummyItem[] = [{ id: 3, name: "Gamma" }];
+      const result = DummyCollectionResponse.from(data);
 
-      expect(result.items).toEqual(items);
+      expect(result.data).toEqual(data);
       expect(result.meta).toBeUndefined();
     });
   });
