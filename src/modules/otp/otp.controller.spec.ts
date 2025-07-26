@@ -1,12 +1,14 @@
 import { mock } from "jest-mock-extended";
 import { Test, TestingModule } from "@nestjs/testing";
+import { MetaService } from "src/shared/modules/global/meta/meta.service";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshOtpMock } from "test/mocks/entities/otp.entity.mock copy";
-import { getFreshOtpServiceMock } from "test/mocks/services/otp.service.mock";
+import { getFreshMetaServiceMock } from "test/mocks/services/meta.service.mock";
+import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
 import { VerifyEmailLinkDto } from "./dto/requests/verify-email-link.dto";
 import { VerifyEmailOtpDto } from "./dto/requests/verify-email-otp.dto";
+import { OtpSingleResponse } from "./dto/responses/otp-single.response";
 import { OtpController } from "./otp.controller";
-import { OtpService } from "./otp.service";
 import { VerifyEmailLinkUseCase } from "./use-cases/verify-email-link.use-case";
 import { VerifyEmailOtpUseCase } from "./use-cases/verify-email-otp.use-case";
 
@@ -21,6 +23,8 @@ describe("OtpController", () => {
   let controller: OtpController;
   const verifyEmailOtpUseCaseMock = mock<VerifyEmailOtpUseCase>();
   const verifyEmailLinkUseCaseMock = mock<VerifyEmailLinkUseCase>();
+  const metaServiceMock = getFreshMetaServiceMock();
+  const otpSingleResponseSpy = jest.spyOn(OtpSingleResponse, "from");
 
   beforeEach(async () => {
     mailerConfigMock = getFreshMailerConfigMock();
@@ -29,6 +33,7 @@ describe("OtpController", () => {
       providers: [
         { provide: VerifyEmailOtpUseCase, useValue: verifyEmailOtpUseCaseMock },
         { provide: VerifyEmailLinkUseCase, useValue: verifyEmailLinkUseCaseMock },
+        { provide: MetaService, useValue: metaServiceMock },
       ],
     }).compile();
 
@@ -41,6 +46,8 @@ describe("OtpController", () => {
 
   describe("verify/email", () => {
     const otpMock = getFreshOtpMock();
+    const metadataMock = getFreshMetadataMock();
+    const resultMock = mock<OtpSingleResponse>();
     const verifyEmailOtpDtoMock: VerifyEmailOtpDto = {
       otpCode: "123456",
       token: "token-otp",
@@ -49,20 +56,27 @@ describe("OtpController", () => {
 
     beforeEach(() => {
       verifyEmailOtpUseCaseMock.execute.mockReset();
+      metaServiceMock.build.mockReset();
+      otpSingleResponseSpy.mockReset();
     });
 
     it("should call VerifyEmailOtpUseCase with dto and return result", async () => {
       verifyEmailOtpUseCaseMock.execute.mockResolvedValue(otpMock);
+      metaServiceMock.build.mockReturnValue(metadataMock);
+      otpSingleResponseSpy.mockReturnValue(resultMock);
 
       const result = await controller.verifyEmailOtp(verifyEmailOtpDtoMock);
 
       expect(verifyEmailOtpUseCaseMock.execute).toHaveBeenCalledWith(verifyEmailOtpDtoMock);
-      expect(result).toBe(otpMock);
+      expect(otpSingleResponseSpy).toHaveBeenCalledWith(otpMock, metadataMock);
+      expect(result).toBe(resultMock);
     });
   });
 
   describe("verify-link/email", () => {
     const otpMock = getFreshOtpMock();
+    const metadataMock = getFreshMetadataMock();
+    const resultMock = mock<OtpSingleResponse>();
     const otpVerifyEmailLinkDtoMock: VerifyEmailLinkDto = {
       token: "otp-token",
       purpose: "EMAIL_VERIFICATION",
@@ -70,15 +84,19 @@ describe("OtpController", () => {
 
     beforeEach(() => {
       verifyEmailLinkUseCaseMock.execute.mockReset();
+      otpSingleResponseSpy.mockReset();
     });
 
     it("should call otpService.verifyLink with dto and return result", async () => {
       verifyEmailLinkUseCaseMock.execute.mockResolvedValue(otpMock);
+      metaServiceMock.build.mockReturnValue(metadataMock);
+      otpSingleResponseSpy.mockReturnValue(resultMock);
 
       const result = await controller.verifyEmailLink(otpVerifyEmailLinkDtoMock);
 
       expect(verifyEmailLinkUseCaseMock.execute).toHaveBeenCalledWith(otpVerifyEmailLinkDtoMock);
-      expect(result).toBe(otpMock);
+      expect(otpSingleResponseSpy).toHaveBeenCalledWith(otpMock, metadataMock);
+      expect(result).toBe(resultMock);
     });
   });
 });
