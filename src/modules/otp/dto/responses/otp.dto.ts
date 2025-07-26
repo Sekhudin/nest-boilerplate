@@ -3,6 +3,9 @@ import { Otp } from "src/modules/otp/entities/otp.entity";
 import { User } from "src/modules/user/entities/user.entity";
 
 export class OtpDto implements Otp {
+  @Expose()
+  isUsed: boolean;
+
   @Exclude()
   token: string;
 
@@ -14,9 +17,6 @@ export class OtpDto implements Otp {
 
   @Exclude()
   purpose: "EMAIL_VERIFICATION" | "PASSWORD_RESET" | "SIGNIN";
-
-  @Expose()
-  isUsed: boolean;
 
   @Exclude()
   expiresAt: Date;

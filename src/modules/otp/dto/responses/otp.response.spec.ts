@@ -1,17 +1,17 @@
 import { plainToInstance } from "class-transformer";
 import { getFreshOtpDtoMock } from "test/mocks/dto/otp.dto.mock";
 import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
-import { OtpSingleResponse } from "./otp-single.response";
 import { OtpDto } from "./otp.dto";
+import { OtpResponse } from "./otp.response";
 
-describe("OtpSingleResponse", () => {
+describe("OtpResponse", () => {
   const otpDtoMock = getFreshOtpDtoMock();
   const metadataMock = getFreshMetadataMock();
 
   describe("constructor", () => {
     it("should assign values from input", () => {
       const input = { data: otpDtoMock, meta: metadataMock };
-      const response = new OtpSingleResponse(input);
+      const response = new OtpResponse(input);
 
       expect(response.data).toEqual(otpDtoMock);
       expect(response.meta).toEqual(metadataMock);
@@ -19,18 +19,18 @@ describe("OtpSingleResponse", () => {
   });
 
   describe("from", () => {
-    it("should return a new OtpSingleResponse with data and meta", () => {
-      const response = OtpSingleResponse.from(otpDtoMock, metadataMock);
+    it("should return a new OtpResponse with data and meta", () => {
+      const response = OtpResponse.from(otpDtoMock, metadataMock);
 
-      expect(response).toBeInstanceOf(OtpSingleResponse);
+      expect(response).toBeInstanceOf(OtpResponse);
       expect(response.data).toEqual(otpDtoMock);
       expect(response.meta).toEqual(metadataMock);
     });
 
     it("should work without meta", () => {
-      const response = OtpSingleResponse.from(otpDtoMock);
+      const response = OtpResponse.from(otpDtoMock);
 
-      expect(response).toBeInstanceOf(OtpSingleResponse);
+      expect(response).toBeInstanceOf(OtpResponse);
       expect(response.data).toEqual(otpDtoMock);
       expect(response.meta).toBeUndefined();
     });
@@ -38,12 +38,12 @@ describe("OtpSingleResponse", () => {
 
   describe("plainToInstance", () => {
     it('should transform "data" into an instance of OtpDto', () => {
-      const plain: OtpSingleResponse = {
+      const plain: OtpResponse = {
         data: otpDtoMock,
         meta: metadataMock,
       };
 
-      const result = plainToInstance(OtpSingleResponse, plain);
+      const result = plainToInstance(OtpResponse, plain);
 
       expect(result.data).toBeInstanceOf(OtpDto);
     });

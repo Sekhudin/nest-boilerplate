@@ -7,7 +7,7 @@ import { getFreshMetaServiceMock } from "test/mocks/services/meta.service.mock";
 import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
 import { VerifyEmailLinkDto } from "./dto/requests/verify-email-link.dto";
 import { VerifyEmailOtpDto } from "./dto/requests/verify-email-otp.dto";
-import { OtpSingleResponse } from "./dto/responses/otp-single.response";
+import { OtpResponse } from "./dto/responses/otp.response";
 import { OtpController } from "./otp.controller";
 import { VerifyEmailLinkUseCase } from "./use-cases/verify-email-link.use-case";
 import { VerifyEmailOtpUseCase } from "./use-cases/verify-email-otp.use-case";
@@ -24,7 +24,7 @@ describe("OtpController", () => {
   const verifyEmailOtpUseCaseMock = mock<VerifyEmailOtpUseCase>();
   const verifyEmailLinkUseCaseMock = mock<VerifyEmailLinkUseCase>();
   const metaServiceMock = getFreshMetaServiceMock();
-  const otpSingleResponseSpy = jest.spyOn(OtpSingleResponse, "from");
+  const otpSingleResponseSpy = jest.spyOn(OtpResponse, "from");
 
   beforeEach(async () => {
     mailerConfigMock = getFreshMailerConfigMock();
@@ -47,7 +47,7 @@ describe("OtpController", () => {
   describe("verify/email", () => {
     const otpMock = getFreshOtpMock();
     const metadataMock = getFreshMetadataMock();
-    const resultMock = mock<OtpSingleResponse>();
+    const resultMock = mock<OtpResponse>();
     const verifyEmailOtpDtoMock: VerifyEmailOtpDto = {
       otpCode: "123456",
       token: "token-otp",
@@ -76,7 +76,7 @@ describe("OtpController", () => {
   describe("verify-link/email", () => {
     const otpMock = getFreshOtpMock();
     const metadataMock = getFreshMetadataMock();
-    const resultMock = mock<OtpSingleResponse>();
+    const resultMock = mock<OtpResponse>();
     const otpVerifyEmailLinkDtoMock: VerifyEmailLinkDto = {
       token: "otp-token",
       purpose: "EMAIL_VERIFICATION",

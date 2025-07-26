@@ -2,7 +2,7 @@ import { Expose, Type } from "class-transformer";
 import { BaseSingleResponse } from "src/shared/base/base-single.response";
 import { OtpDto } from "./otp.dto";
 
-export class OtpSingleResponse implements BaseSingleResponse<OtpDto> {
+export class OtpResponse implements BaseSingleResponse<OtpDto> {
   @Expose()
   @Type(() => OtpDto)
   data: OtpDto;
@@ -10,11 +10,11 @@ export class OtpSingleResponse implements BaseSingleResponse<OtpDto> {
   @Expose()
   meta?: Metadata | undefined;
 
-  constructor(value: OtpSingleResponse) {
+  constructor(value: OtpResponse) {
     Object.assign(this, value);
   }
 
-  static from(data: OtpDto, meta?: Metadata): OtpSingleResponse {
-    return new OtpSingleResponse({ data, meta });
+  static from(data: OtpDto, meta?: Metadata): OtpResponse {
+    return new OtpResponse({ data, meta });
   }
 }

@@ -108,7 +108,7 @@ describe("OtpService", () => {
         ipAddress: userAgentMock.ip,
         os: userAgentMock.os.name,
       });
-      expect(result).toBe(generatedOtpMock);
+      expect(result).toBe(otpMock);
     });
 
     it("should create and send email verification OTP with EntityManager", async () => {
@@ -142,7 +142,7 @@ describe("OtpService", () => {
         ipAddress: userAgentMock.ip,
         os: userAgentMock.os.name,
       });
-      expect(result).toBe(generatedOtpMock);
+      expect(result).toBe(otpMock);
     });
   });
 

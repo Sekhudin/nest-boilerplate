@@ -55,7 +55,7 @@ export class OtpService extends BaseService {
     };
 
     await this.otpMailerService.sendEmailVerification(sendEmailVerificationContext);
-    return generatedOtp;
+    return otp;
   }
 
   async findValidOtpOrThrow(verifyOtpDto: VerifyOtpDto, entityManager?: EntityManager) {
