@@ -29,4 +29,8 @@ export class AsyncStorageService {
   getResponse() {
     return this.get<Response>("res") as Response;
   }
+
+  getRequestStartTime() {
+    return this.get<number>("requestStartTime") ?? Date.now();
+  }
 }

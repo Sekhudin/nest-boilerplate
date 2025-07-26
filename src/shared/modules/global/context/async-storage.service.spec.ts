@@ -68,13 +68,13 @@ describe("AsyncStorageService", () => {
 
   describe("getRequest", () => {
     it("should store and retrieve request object", (done) => {
-      const mockRequest = { url: "/test" } as Request;
+      const requestMock = { url: "/test" } as Request;
 
       const store = new Map();
-      store.set("req", mockRequest);
+      store.set("req", requestMock);
 
       service.run(store, () => {
-        expect(service.getRequest()).toBe(mockRequest);
+        expect(service.getRequest()).toBe(requestMock);
         done();
       });
     });
@@ -82,15 +82,42 @@ describe("AsyncStorageService", () => {
 
   describe("getResponse", () => {
     it("should store and retrieve response object", (done) => {
-      const mockResponse = { statusCode: 200 } as Response;
+      const responseMock = { statusCode: 200 } as Response;
 
       const store = new Map();
-      store.set("res", mockResponse);
+      store.set("res", responseMock);
 
       service.run(store, () => {
-        expect(service.getResponse()).toBe(mockResponse);
+        expect(service.getResponse()).toBe(responseMock);
         done();
       });
+    });
+  });
+
+  describe("getRequestStartTime", () => {
+    const dateNowSpy = jest.spyOn(Date, "now");
+    const requestStartTimeMock = Date.now();
+
+    beforeEach(() => {
+      dateNowSpy.mockReset();
+    });
+
+    it("should store and retrieve requestStartTime object", (done) => {
+      const store = new Map();
+      store.set("requestStartTime", requestStartTimeMock);
+
+      service.run(store, () => {
+        expect(service.getRequestStartTime()).toBe(requestStartTimeMock);
+        done();
+      });
+    });
+
+    it("should return requestStartTime default value", () => {
+      const requestStartTimeMock = Date.now();
+      dateNowSpy.mockReturnValue(requestStartTimeMock);
+
+      const result = service.getRequestStartTime();
+      expect(result).toBe(requestStartTimeMock);
     });
   });
 });

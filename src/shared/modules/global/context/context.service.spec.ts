@@ -104,25 +104,22 @@ describe("ContextService", () => {
   });
 
   describe("getExecutionTime", () => {
+    const requestStartTimeMock = Date.now();
+    const endTimeMock = Date.now();
+    const dateNowSpy = jest.spyOn(Date, "now");
+    const resultMock = { startTime: requestStartTimeMock, endTime: endTimeMock };
     beforeEach(() => {
-      asyncStorageServiceMock.get.mockReset();
+      asyncStorageServiceMock.getRequestStartTime.mockReset();
+      dateNowSpy.mockReset();
     });
     it("should return executionTime", () => {
-      asyncStorageServiceMock.get.mockReturnValue("2ms");
+      asyncStorageServiceMock.getRequestStartTime.mockReturnValue(requestStartTimeMock);
+      dateNowSpy.mockReturnValue(endTimeMock);
 
       const result = service.getExecutionTime();
 
-      expect(asyncStorageServiceMock.get).toHaveBeenCalledWith("executionTime");
-      expect(result).toBe("2ms");
-    });
-
-    it("should return executionTime", () => {
-      asyncStorageServiceMock.get.mockReturnValue(null);
-
-      const result = service.getExecutionTime();
-
-      expect(asyncStorageServiceMock.get).toHaveBeenCalledWith("executionTime");
-      expect(result).toBe(null);
+      expect(asyncStorageServiceMock.getRequestStartTime).toHaveBeenCalled();
+      expect(result).toStrictEqual(resultMock);
     });
   });
 

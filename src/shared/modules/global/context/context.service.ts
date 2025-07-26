@@ -26,7 +26,9 @@ export class ContextService {
   }
 
   getExecutionTime() {
-    return this.asyncStorageService.get<string>("executionTime");
+    const startTime = this.asyncStorageService.getRequestStartTime();
+    const endTime = Date.now();
+    return { startTime, endTime };
   }
 
   getTimestamp() {
