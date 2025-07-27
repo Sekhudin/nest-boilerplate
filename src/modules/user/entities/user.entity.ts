@@ -10,11 +10,11 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ErrorCode } from "src/shared/enums/error-code.enum";
-import { AuthHistory } from "src/modules/auth/entities/auth-history.entity";
-import { UserAuth } from "src/modules/auth/entities/user-auth.entity";
+import { AuthHistory } from "src/modules/auth-history/entities/auth-history.entity";
 import { Otp } from "src/modules/otp/entities/otp.entity";
 import { Role } from "src/modules/role/entities/role.entity";
 import { Token } from "src/modules/token/entities/token.entity";
+import { UserAuth } from "src/modules/user-auth/entities/user-auth.entity";
 import { z } from "src/utils/validation";
 import { databaseConfig } from "src/config/database.config";
 
@@ -55,26 +55,20 @@ export class User {
   updatedAt: Date;
 
   static get dto() {
+    return User.plainDto.extend({
+      role: Role.plainDto,
+      authMethod: UserAuth.plainDto,
+      tokens: z.array(AuthHistory.plainDto),
+      otps: z.array(Otp.plainDto),
+    });
+  }
+
+  static get plainDto() {
     return z.object({
       id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
       email: z.email(ErrorCode.STRING_INVALID_EMAIL),
       isActive: z.boolean(ErrorCode.BOOLEAN_INVALID),
       isEmailVerified: z.boolean(ErrorCode.BOOLEAN_INVALID),
-      get role() {
-        return Role.dto;
-      },
-      get authMethod() {
-        return UserAuth.dto;
-      },
-      get authHistories() {
-        return z.array(AuthHistory.dto);
-      },
-      get tokens() {
-        return z.array(Token.dto);
-      },
-      get otps() {
-        return z.array(Otp.dto);
-      },
       timestamp: z.date(ErrorCode.DATE_INVALID),
       updatedAt: z.date(ErrorCode.DATE_INVALID),
     });

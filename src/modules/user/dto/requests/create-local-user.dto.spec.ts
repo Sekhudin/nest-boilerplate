@@ -1,18 +1,29 @@
 import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
+import { Role } from "src/modules/role/entities/role.entity";
 import { CreateLocalUserDto } from "./create-local-user.dto";
 
 describe("SignUpLocalDto", () => {
+  let roleMock: Partial<Role>;
   const validate = CreateLocalUserDto.schema.validate;
 
-  it("should pass with a valid password", () => {
+  beforeEach(() => {
+    roleMock = {
+      id: "4a1e3f6b-8e52-4f8d-9a32-3e4b5a1c2d90",
+      name: "USER",
+      description: "role mock",
+      timestamp: new Date(),
+    };
+  });
+
+  it("should pass with a valid value", () => {
     const result = validate({
       email: "user@example.com",
-      password: "StrongP@ss1",
+      role: roleMock,
     });
 
     expect(result).toEqual({
       email: "user@example.com",
-      password: "StrongP@ss1",
+      role: roleMock,
     });
   });
 
@@ -20,29 +31,18 @@ describe("SignUpLocalDto", () => {
     try {
       validate({
         email: "invalid-email",
-        password: "StrongP@ss1",
+        role: roleMock,
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(ValidationException);
     }
   });
 
-  it("should throw ValidationException if password is too weak (no uppercase)", () => {
+  it("should throw ValidationException if role is invalid", () => {
     try {
       validate({
         email: "user@example.com",
-        password: "weakpass1!",
-      });
-    } catch (err: any) {
-      expect(err).toBeInstanceOf(ValidationException);
-    }
-  });
-
-  it("should throw ValidationException if password is too short", () => {
-    try {
-      validate({
-        email: "user@example.com",
-        password: "Sh0!",
+        role: {},
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(ValidationException);

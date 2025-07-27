@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getFreshAuthConfigMock } from "test/mocks/config/auth.config.mock";
 import { getFreshRoleMock } from "test/mocks/entities/role.entity.mock";
 import { getFreshRoleRepositoryMock } from "test/mocks/repositories/role.repository.mock";
+import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
 import { RoleRepository } from "./role.repository";
 import { RoleService } from "./role.service";
 
@@ -49,6 +50,17 @@ describe("RoleService", () => {
       expect(roleRepositoryMock.findOneBy).toHaveBeenCalledWith({ name: authConfigMock.DEFAULT_ROLE });
       expect(roleRepositoryMock.create).toHaveBeenCalled();
       expect(roleRepositoryMock.save).toHaveBeenCalledWith(roleMock);
+      expect(result).toEqual(roleMock);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManagerMock = getFreshEntityManagerMock();
+
+      entityManagerMock.getRepository.mockReturnValue(roleRepositoryMock);
+      roleRepositoryMock.findOneBy.mockResolvedValue(roleMock);
+
+      const result = await service.findOrCreateDefaultRole(entityManagerMock);
+      expect(roleRepositoryMock.findOneBy).toHaveBeenCalled();
       expect(result).toEqual(roleMock);
     });
   });

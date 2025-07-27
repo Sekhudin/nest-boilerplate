@@ -28,15 +28,18 @@ export class Token {
   createdAt: Date;
 
   static get dto() {
+    return Token.plainDto.extend({
+      user: User.plainDto,
+    });
+  }
+
+  static get plainDto() {
     return z.object({
       id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
       token: z.string(ErrorCode.STRING_INVALID).max(512, ErrorCode.STRING_TOO_LONG),
       ipAddress: z.string(ErrorCode.STRING_INVALID),
       userAgentString: z.string(ErrorCode.STRING_INVALID),
       revoked: z.boolean(ErrorCode.BOOLEAN_INVALID),
-      get user() {
-        return User.dto;
-      },
       createdAt: z.date(ErrorCode.DATE_INVALID),
     });
   }

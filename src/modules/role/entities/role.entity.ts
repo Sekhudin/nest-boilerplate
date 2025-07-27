@@ -22,13 +22,16 @@ export class Role {
   timestamp: Date;
 
   static get dto() {
+    return Role.plainDto.extend({
+      users: z.array(User.plainDto),
+    });
+  }
+
+  static get plainDto() {
     return z.object({
       id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
       name: z.string(ErrorCode.STRING_INVALID).min(1, ErrorCode.STRING_EMPTY).toUpperCase(),
       description: z.string(ErrorCode.STRING_INVALID).toLowerCase(),
-      get users() {
-        return z.array(User.dto);
-      },
       timestamp: z.date(ErrorCode.DATE_INVALID),
     });
   }

@@ -1,6 +1,8 @@
+import { EntityManager } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/shared/base/base.service";
 import { authConfig } from "src/config/auth.config";
+import { Role } from "./entities/role.entity";
 import { RoleRepository } from "./role.repository";
 
 @Injectable()
@@ -9,14 +11,12 @@ export class RoleService extends BaseService {
     super();
   }
 
-  async findOrCreateDefaultRole() {
-    const existingRole = await this.roleRepository.findOneBy({ name: authConfig.DEFAULT_ROLE });
+  async findOrCreateDefaultRole(entityManager?: EntityManager) {
+    const repository = this.getRepository(Role, this.roleRepository, entityManager);
+    const existingRole = await repository.findOneBy({ name: authConfig.DEFAULT_ROLE });
     if (existingRole) return existingRole;
 
-    const role = this.roleRepository.create();
-    role.name = authConfig.DEFAULT_ROLE;
-    role.description = "Default Role";
-
-    return await this.roleRepository.save(role);
+    const role = repository.create({ name: authConfig.DEFAULT_ROLE, description: "default role" });
+    return await repository.save(role);
   }
 }

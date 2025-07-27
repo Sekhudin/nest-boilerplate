@@ -29,7 +29,7 @@ describe("UserService", () => {
     const userMock = getFreshUserMock();
     const createLocalUserDto: CreateLocalUserDto = {
       email: "test@example.com",
-      password: "securePass123",
+      role: roleMock,
     };
 
     beforeEach(() => {
@@ -44,7 +44,7 @@ describe("UserService", () => {
       userRepositoryMock.create.mockReturnValue(userMock);
       userRepositoryMock.save.mockResolvedValue(userMock);
 
-      const result = await service.createLocalUser(createLocalUserDto, roleMock);
+      const result = await service.createLocalUser(createLocalUserDto);
 
       expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({ email: createLocalUserDto.email });
       expect(userRepositoryMock.create).toHaveBeenCalledWith(createLocalUserDto);
@@ -57,9 +57,7 @@ describe("UserService", () => {
 
       userRepositoryMock.findOneBy.mockResolvedValue(existingUserMock);
 
-      await expect(service.createLocalUser(createLocalUserDto, roleMock)).rejects.toThrow(
-        UserEmailAlreadyUsedException,
-      );
+      await expect(service.createLocalUser(createLocalUserDto)).rejects.toThrow(UserEmailAlreadyUsedException);
       expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({ email: createLocalUserDto.email });
     });
 
@@ -71,7 +69,7 @@ describe("UserService", () => {
       userRepositoryMock.create.mockReturnValue(userMock);
       userRepositoryMock.save.mockResolvedValue(userMock);
 
-      const result = await service.createLocalUser(createLocalUserDto, roleMock, entityManagerMock);
+      const result = await service.createLocalUser(createLocalUserDto, entityManagerMock);
 
       expect(result).toEqual(userMock);
     });

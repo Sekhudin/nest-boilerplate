@@ -28,11 +28,14 @@ export class Otp {
   createdAt: Date;
 
   static get dto() {
+    return Otp.plainDto.extend({
+      user: User.plainDto,
+    });
+  }
+
+  static get plainDto() {
     return z.object({
       token: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
-      get user() {
-        return User.dto;
-      },
       hashOtp: z.string(ErrorCode.STRING_INVALID),
       purpose: z.enum(["EMAIL_VERIFICATION", "PASSWORD_RESET", "SIGNIN"], ErrorCode.ENUM_INVALID),
       isUsed: z.boolean(ErrorCode.BOOLEAN_INVALID),
