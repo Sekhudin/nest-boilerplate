@@ -8,7 +8,9 @@ import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
 import { AuthController } from "./auth.controller";
 import { SignInLocalDto } from "./dto/requests/sign-in-local.dto";
 import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
+import { SignInTokenResponse } from "./dto/responses/sign-in-token.response";
 import { SignUpLocalOtpResponse } from "./dto/responses/sign-up-local-otp.response";
+import { SignInLocalUseCase } from "./use-cases/sign-in-local.use-case";
 import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 let mailerConfigMock: ReturnType<typeof getFreshMailerConfigMock>;
@@ -21,6 +23,7 @@ jest.mock("src/config/mailer.config", () => ({
 describe("AuthController", () => {
   let controller: AuthController;
   const signUpLocalUseCaseMock = mock<SignUpLocalUseCase>();
+  const signInLocalUseCaseMock = mock<SignInLocalUseCase>();
   const metaServiceMock = getFreshMetaServiceMock();
 
   beforeEach(async () => {
@@ -29,6 +32,7 @@ describe("AuthController", () => {
       controllers: [AuthController],
       providers: [
         { provide: SignUpLocalUseCase, useValue: signUpLocalUseCaseMock },
+        { provide: SignInLocalUseCase, useValue: signInLocalUseCaseMock },
         { provide: MetaService, useValue: metaServiceMock },
       ],
     }).compile();
@@ -45,42 +49,44 @@ describe("AuthController", () => {
     const otpMock = getFreshOtpMock();
     const metadataMock = getFreshMetadataMock();
     const signUpLocalOtpResponseMock = jest.spyOn(SignUpLocalOtpResponse, "from");
+    const signUpLocalDtoMock: SignUpLocalDto = {
+      email: "test@example.com",
+      password: "@Password123",
+      confirmPassword: "@Password123",
+    };
 
     beforeEach(() => {
       signUpLocalUseCaseMock.execute.mockReset();
       metaServiceMock.build.mockReset();
       signUpLocalOtpResponseMock.mockReset();
     });
-
     it("should call signUpLocalUseCaseMock.execute with signUpLocalDto and return result", async () => {
-      const signUpLocalDto: SignUpLocalDto = {
-        email: "test@example.com",
-        password: "@Password123",
-        confirmPassword: "@Password123",
-      };
-
       signUpLocalUseCaseMock.execute.mockResolvedValue(otpMock);
       metaServiceMock.build.mockReturnValue(metadataMock);
       signUpLocalOtpResponseMock.mockReturnValue(resultMock);
 
-      const result = await controller.signup(signUpLocalDto);
+      const result = await controller.signup(signUpLocalDtoMock);
 
-      expect(signUpLocalUseCaseMock.execute).toHaveBeenCalledWith(signUpLocalDto);
+      expect(signUpLocalUseCaseMock.execute).toHaveBeenCalledWith(signUpLocalDtoMock);
       expect(signUpLocalOtpResponseMock).toHaveBeenCalledWith(otpMock, metadataMock);
       expect(result).toEqual(resultMock);
     });
   });
 
   describe("signin", () => {
-    beforeEach(() => {});
+    const resultMock = mock<SignInTokenResponse>();
+    const metadataMock = getFreshMetadataMock();
+    const signInLocalDtoMock: SignInLocalDto = {
+      email: "test@example.com",
+      password: "@Password123",
+    };
 
+    beforeEach(() => {
+      signInLocalUseCaseMock.execute.mockReset();
+      metaServiceMock.build.mockReset();
+    });
     it("should call signInLocalUseCaseMock.execute with dto and return result ", async () => {
-      const signInLocalDto: SignInLocalDto = {
-        email: "test@example.com",
-        password: "@Password123",
-      };
-
-      const result = controller.signin(signInLocalDto);
+      const result = await controller.signin(signInLocalDtoMock);
 
       expect(result).toBe(true);
     });

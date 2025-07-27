@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { AuthProvider } from "src/modules/auth/entities/auth-provider.entity";
+import { AuthProvider } from "./entities/auth-provider.entity";
 import { AuthProviderRepository } from "./auth-provider.repository";
 
 describe("AuthProviderRepository", () => {

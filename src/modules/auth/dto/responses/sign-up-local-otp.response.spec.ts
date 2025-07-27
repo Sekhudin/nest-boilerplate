@@ -5,33 +5,33 @@ import { SignUpLocalOtpDto } from "./sign-up-local-otp.dto";
 import { SignUpLocalOtpResponse } from "./sign-up-local-otp.response";
 
 describe("SignUpLocalOtpResponse", () => {
-  const otpDtoMock = getFreshOtpDtoMock();
+  const dataMock = getFreshOtpDtoMock();
   const metadataMock = getFreshMetadataMock();
 
   describe("constructor", () => {
     it("should assign values from input", () => {
-      const input = { data: otpDtoMock, meta: metadataMock };
+      const input = { data: dataMock, meta: metadataMock };
       const response = new SignUpLocalOtpResponse(input);
 
-      expect(response.data).toEqual(otpDtoMock);
+      expect(response.data).toEqual(dataMock);
       expect(response.meta).toEqual(metadataMock);
     });
   });
 
   describe("from", () => {
     it("should return a new SignUpLocalOtpResponse with data and meta", () => {
-      const response = SignUpLocalOtpResponse.from(otpDtoMock, metadataMock);
+      const response = SignUpLocalOtpResponse.from(dataMock, metadataMock);
 
       expect(response).toBeInstanceOf(SignUpLocalOtpResponse);
-      expect(response.data).toEqual(otpDtoMock);
+      expect(response.data).toEqual(dataMock);
       expect(response.meta).toEqual(metadataMock);
     });
 
     it("should work without meta", () => {
-      const response = SignUpLocalOtpResponse.from(otpDtoMock);
+      const response = SignUpLocalOtpResponse.from(dataMock);
 
       expect(response).toBeInstanceOf(SignUpLocalOtpResponse);
-      expect(response.data).toEqual(otpDtoMock);
+      expect(response.data).toEqual(dataMock);
       expect(response.meta).toBeUndefined();
     });
   });
@@ -39,7 +39,7 @@ describe("SignUpLocalOtpResponse", () => {
   describe("plainToInstance", () => {
     it('should transform "data" into an instance of SignUpLocalOtpDto', () => {
       const plain: SignUpLocalOtpResponse = {
-        data: otpDtoMock,
+        data: dataMock,
         meta: metadataMock,
       };
 

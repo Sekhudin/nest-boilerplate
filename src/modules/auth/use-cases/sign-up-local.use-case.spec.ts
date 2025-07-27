@@ -1,15 +1,18 @@
 import { DataSource } from "typeorm";
 import { Test, TestingModule } from "@nestjs/testing";
+import { AuthProviderService } from "src/modules/auth-provider/auth-provider.service";
 import { SignUpLocalDto } from "src/modules/auth/dto/requests/sign-up-local.dto";
-import { UserAuthService } from "src/modules/auth/services/user-auth.service";
 import { OtpService } from "src/modules/otp/otp.service";
 import { RoleService } from "src/modules/role/role.service";
+import { UserAuthService } from "src/modules/user-auth/user-auth.service";
 import { UserService } from "src/modules/user/user.service";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
+import { getFreshAuthProviderMock } from "test/mocks/entities/auth-provider.entity.mock";
 import { getFreshOtpMock } from "test/mocks/entities/otp.entity.mock copy";
 import { getFreshRoleMock } from "test/mocks/entities/role.entity.mock";
 import { getFreshUserAuthMock } from "test/mocks/entities/user-auth.entity.mock";
 import { getFreshUserMock } from "test/mocks/entities/user.entity.mock";
+import { getFreshAuthProviderServiceMock } from "test/mocks/services/auth-provider.service.mock";
 import { getFreshOtpServiceMock } from "test/mocks/services/otp.service.mock";
 import { getFreshRoleServiceMock } from "test/mocks/services/role.service.mock";
 import { getFreshUserAuthServiceMock } from "test/mocks/services/user-auth.service.mock";
@@ -30,6 +33,7 @@ describe("SignUpLocalUseCase", () => {
   const userServiceMock = getFreshUserServiceMock();
   const userAuthServiceMock = getFreshUserAuthServiceMock();
   const otpServiceMock = getFreshOtpServiceMock();
+  const authProviderServiceMock = getFreshAuthProviderServiceMock();
   const dataSourceMock = getFreshDataSourceMock();
 
   beforeEach(async () => {
@@ -41,6 +45,7 @@ describe("SignUpLocalUseCase", () => {
         { provide: UserService, useValue: userServiceMock },
         { provide: UserAuthService, useValue: userAuthServiceMock },
         { provide: OtpService, useValue: otpServiceMock },
+        { provide: AuthProviderService, useValue: authProviderServiceMock },
         { provide: DataSource, useValue: dataSourceMock },
       ],
     }).compile();
@@ -56,6 +61,7 @@ describe("SignUpLocalUseCase", () => {
     beforeEach(() => {
       roleServiceMock.findOrCreateDefaultRole.mockReset();
       userServiceMock.createLocalUser.mockReset();
+      authProviderServiceMock.findOrCreateLocalAuthProvider.mockReset();
       userAuthServiceMock.createLocalUserAuth.mockReset();
       otpServiceMock.sendOtpForLocalSignup.mockReset();
     });
@@ -68,6 +74,7 @@ describe("SignUpLocalUseCase", () => {
 
       const userMock = getFreshUserMock();
       const roleMock = getFreshRoleMock();
+      const authProviderMock = getFreshAuthProviderMock();
       const userAuthMock = getFreshUserAuthMock();
       const otpMock = getFreshOtpMock();
 
@@ -76,16 +83,18 @@ describe("SignUpLocalUseCase", () => {
 
       roleServiceMock.findOrCreateDefaultRole.mockResolvedValue(roleMock);
       userServiceMock.createLocalUser.mockResolvedValue(userMock);
+      authProviderServiceMock.findOrCreateLocalAuthProvider.mockResolvedValue(authProviderMock);
       userAuthServiceMock.createLocalUserAuth.mockResolvedValue(userAuthMock);
       otpServiceMock.sendOtpForLocalSignup.mockResolvedValue(otpMock);
 
       const result = await useCase.execute(dto);
 
       expect(dataSourceMock.transaction).toHaveBeenCalled();
-      expect(userServiceMock.createLocalUser).toHaveBeenCalledWith(dto, roleMock, entityManager);
+      expect(roleServiceMock.findOrCreateDefaultRole).toHaveBeenCalledWith(entityManager);
+      expect(userServiceMock.createLocalUser).toHaveBeenCalledWith({ email: dto.email, role: roleMock }, entityManager);
+      expect(authProviderServiceMock.findOrCreateLocalAuthProvider).toHaveBeenCalledWith(entityManager);
       expect(userAuthServiceMock.createLocalUserAuth).toHaveBeenCalledWith(
-        userAuthMock.user,
-        dto.password,
+        { user: userMock, provider: authProviderMock, password: dto.password },
         entityManager,
       );
       expect(otpServiceMock.sendOtpForLocalSignup).toHaveBeenCalledWith(userMock, entityManager);

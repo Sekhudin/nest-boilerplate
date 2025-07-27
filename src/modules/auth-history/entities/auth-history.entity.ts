@@ -40,11 +40,14 @@ export class AuthHistory {
   timestamp: Date;
 
   static get dto() {
+    return AuthHistory.plainDto.extend({
+      user: User.plainDto,
+    });
+  }
+
+  static get plainDto() {
     return z.object({
       id: z.uuidv4(ErrorCode.STRING_INVALID_UUID),
-      get user() {
-        return User.dto;
-      },
       ipAddress: z.string(ErrorCode.STRING_INVALID),
       userAgentString: z.string(ErrorCode.STRING_INVALID).trim(),
       device: z.string(ErrorCode.STRING_INVALID),

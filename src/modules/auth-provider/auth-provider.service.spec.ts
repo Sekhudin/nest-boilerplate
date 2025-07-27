@@ -1,7 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getFreshAuthProviderMock } from "test/mocks/entities/auth-provider.entity.mock";
 import { getFreshAuthProviderRepositoryMock } from "test/mocks/repositories/auth-provider.repository.mock";
-import { AuthProviderRepository } from "../repositories/auth-provider.repository";
+import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
+import { AuthProviderRepository } from "./auth-provider.repository";
 import { AuthProviderService } from "./auth-provider.service";
 
 describe("AuthProviderService", () => {
@@ -49,6 +50,18 @@ describe("AuthProviderService", () => {
       expect(authProviderRepositoryMock.findOneBy).toHaveBeenCalledWith({ name: "LOCAL" });
       expect(authProviderRepositoryMock.create).toHaveBeenCalledWith({ name: "LOCAL" });
       expect(authProviderRepositoryMock.save).toHaveBeenCalledWith(authProviderMock);
+      expect(result).toBe(authProviderMock);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManagerMock = getFreshEntityManagerMock();
+
+      entityManagerMock.getRepository.mockReturnValue(authProviderRepositoryMock);
+      authProviderRepositoryMock.findOneBy.mockResolvedValue(authProviderMock);
+
+      const result = await service.findOrCreateLocalAuthProvider();
+
+      expect(authProviderRepositoryMock.findOneBy).toHaveBeenCalledWith({ name: "LOCAL" });
       expect(result).toBe(authProviderMock);
     });
   });

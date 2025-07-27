@@ -1,20 +1,18 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { CryptoService } from "src/shared/modules/global/crypto/crypto.service";
-import { UserAuthRepository } from "src/modules/auth/repositories/user-auth.repository";
 import { getFreshAuthProviderMock } from "test/mocks/entities/auth-provider.entity.mock";
 import { getFreshUserAuthMock } from "test/mocks/entities/user-auth.entity.mock";
 import { getFreshUserMock } from "test/mocks/entities/user.entity.mock";
 import { getFreshUserAuthRepositoryMock } from "test/mocks/repositories/user-auth.repository.mock";
-import { getFreshAuthProviderServiceMock } from "test/mocks/services/auth-provider.service.mock";
 import { getFreshCryptoServiceMock } from "test/mocks/services/crypto.service.mock";
 import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
-import { AuthProviderService } from "./auth-provider.service";
+import { CreateLocalUserAuthDto } from "./dto/requests/create-local-user-auth.dto";
+import { UserAuthRepository } from "./user-auth.repository";
 import { UserAuthService } from "./user-auth.service";
 
 describe("UserAuthService", () => {
   let service: UserAuthService;
   const cryptoServiceMock = getFreshCryptoServiceMock();
-  const authProviderServiceMock = getFreshAuthProviderServiceMock();
   const userAuthRepositoryMock = getFreshUserAuthRepositoryMock();
 
   beforeEach(async () => {
@@ -22,7 +20,6 @@ describe("UserAuthService", () => {
       providers: [
         UserAuthService,
         { provide: CryptoService, useValue: cryptoServiceMock },
-        { provide: AuthProviderService, useValue: authProviderServiceMock },
         { provide: UserAuthRepository, useValue: userAuthRepositoryMock },
       ],
     }).compile();
@@ -35,28 +32,29 @@ describe("UserAuthService", () => {
   });
 
   describe("createLocalUserAuth", () => {
-    const password = "@StrongPassword123";
     const userMock = getFreshUserMock();
     const userAuthMock = getFreshUserAuthMock();
     const authProviderMock = getFreshAuthProviderMock();
+    const createLocalUserAuthDtoMock: CreateLocalUserAuthDto = {
+      user: userMock,
+      password: "@StrongPassword123",
+      provider: authProviderMock,
+    };
 
     beforeEach(() => {
       userAuthRepositoryMock.create.mockReset();
-      authProviderServiceMock.findOrCreateLocalAuthProvider.mockReset();
       cryptoServiceMock.hashPassword.mockReset();
     });
 
     it("should create user-auth with default repository and return the created user-auth", async () => {
       userAuthRepositoryMock.create.mockReturnValue(userAuthMock);
-      authProviderServiceMock.findOrCreateLocalAuthProvider.mockResolvedValue(authProviderMock);
       cryptoServiceMock.hashPassword.mockResolvedValue("Hashed@StrongPassword123");
       userAuthRepositoryMock.save.mockResolvedValue(userAuthMock);
 
-      const result = await service.createLocalUserAuth(userMock, password);
+      const result = await service.createLocalUserAuth(createLocalUserAuthDtoMock);
 
-      expect(userAuthRepositoryMock.create).toHaveBeenCalledWith({ user: userMock });
-      expect(authProviderServiceMock.findOrCreateLocalAuthProvider).toHaveBeenCalled();
-      expect(cryptoServiceMock.hashPassword).toHaveBeenCalledWith(password);
+      expect(userAuthRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, provider: authProviderMock });
+      expect(cryptoServiceMock.hashPassword).toHaveBeenCalledWith(createLocalUserAuthDtoMock.password);
       expect(userAuthRepositoryMock.save).toHaveBeenCalledWith(userAuthMock);
       expect(result).toBe(userAuthMock);
     });
@@ -66,15 +64,13 @@ describe("UserAuthService", () => {
 
       entityManagerMock.getRepository.mockReturnValue(userAuthRepositoryMock);
       userAuthRepositoryMock.create.mockReturnValue(userAuthMock);
-      authProviderServiceMock.findOrCreateLocalAuthProvider.mockResolvedValue(authProviderMock);
       cryptoServiceMock.hashPassword.mockResolvedValue("Hashed@StrongPassword123");
       userAuthRepositoryMock.save.mockResolvedValue(userAuthMock);
 
-      const result = await service.createLocalUserAuth(userMock, password, entityManagerMock);
+      const result = await service.createLocalUserAuth(createLocalUserAuthDtoMock, entityManagerMock);
 
-      expect(userAuthRepositoryMock.create).toHaveBeenCalledWith({ user: userMock });
-      expect(authProviderServiceMock.findOrCreateLocalAuthProvider).toHaveBeenCalled();
-      expect(cryptoServiceMock.hashPassword).toHaveBeenCalledWith(password);
+      expect(userAuthRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, provider: authProviderMock });
+      expect(cryptoServiceMock.hashPassword).toHaveBeenCalledWith(createLocalUserAuthDtoMock.password);
       expect(userAuthRepositoryMock.save).toHaveBeenCalledWith(userAuthMock);
       expect(result).toBe(userAuthMock);
     });
