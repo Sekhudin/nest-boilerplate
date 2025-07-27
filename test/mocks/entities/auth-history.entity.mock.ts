@@ -1,5 +1,5 @@
 import { mockDeep } from "jest-mock-extended/lib/Mock";
-import { AuthHistory } from "src/modules/auth/entities/auth-history.entity";
+import { AuthHistory } from "src/modules/auth-history/entities/auth-history.entity";
 
 export const getFreshAuthHistoryMock = () => {
   const entity = mockDeep<AuthHistory>();
