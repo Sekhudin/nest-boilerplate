@@ -67,6 +67,12 @@ describe("ContextService", () => {
       asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
       expect(service.getDeviceId()).toBe("dev-456");
     });
+
+    it("should return empty string", () => {
+      requestMock.deviceId = null;
+      asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
+      expect(service.getDeviceId()).toBe("");
+    });
   });
 
   describe("getUserAgent", () => {

@@ -16,6 +16,9 @@ export class Token {
   ipAddress: string;
 
   @Column()
+  deviceId: string;
+
+  @Column()
   userAgentString: string;
 
   @Column({ default: false })

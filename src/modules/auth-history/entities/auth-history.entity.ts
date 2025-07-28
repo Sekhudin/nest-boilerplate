@@ -18,6 +18,9 @@ export class AuthHistory {
   @Column({ type: "text" })
   userAgentString: string;
 
+  @Column()
+  deviceId: string;
+
   @Column({ type: "varchar", length: 100 })
   device: string;
 

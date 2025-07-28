@@ -9,7 +9,7 @@ import { UserAgent } from "src/utils/ua";
 export class ContextMiddleware implements NestMiddleware<Request, Response> {
   constructor(
     private readonly asyncStorageService: AsyncStorageService,
-    private readonly cookie: CookieService,
+    private readonly cookieService: CookieService,
   ) {}
 
   use(req: Request, res: Response, next: NextFunction) {
@@ -20,11 +20,11 @@ export class ContextMiddleware implements NestMiddleware<Request, Response> {
 
     this.asyncStorageService.run(store, () => {
       const userAgent = UserAgent.parse(req);
-      const deviceId = this.cookie.getDeviceId();
+      const deviceId = this.cookieService.getDeviceId();
       req.requestId = randomUUID();
       req.deviceId = deviceId || null;
       req.userAgent = userAgent;
-      this.cookie.setDeviceId();
+      this.cookieService.setDeviceId();
       next();
     });
   }

@@ -21,6 +21,7 @@ export class AuthHistoryService extends BaseService {
     const newRecord = repository.create({ user, action: "SIGNUP" });
     newRecord.ipAddress = userAgent.ip;
     newRecord.userAgentString = userAgent.userAgent;
+    newRecord.deviceId = this.contextService.getDeviceId();
     newRecord.device = userAgent.device;
     newRecord.osName = userAgent.os.name;
     newRecord.osVersion = userAgent.os.version;

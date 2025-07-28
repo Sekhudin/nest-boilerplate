@@ -38,18 +38,21 @@ describe("AuthHistoryService", () => {
     beforeEach(() => {
       contextServiceMock.getUserAgent.mockReset();
       authHistoryRepositoryMock.create.mockReset();
+      contextServiceMock.getDeviceId.mockReset();
       authHistoryRepositoryMock.save.mockReset();
     });
 
     it("should create new record with action is signup", async () => {
       contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
       authHistoryRepositoryMock.create.mockReturnValue(authHistoryMock);
+      contextServiceMock.getDeviceId.mockReturnValue("deviceId-123");
       authHistoryRepositoryMock.save.mockResolvedValue(authHistoryMock);
 
       const result = await service.recordSignUp(userMock);
 
       expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
       expect(authHistoryRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, action: "SIGNUP" });
+      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
       expect(authHistoryRepositoryMock.save).toHaveBeenCalledWith(authHistoryMock);
       expect(result).toBe(authHistoryMock);
     });
@@ -60,12 +63,14 @@ describe("AuthHistoryService", () => {
       entityManager.getRepository.mockReturnValue(authHistoryRepositoryMock);
       contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
       authHistoryRepositoryMock.create.mockReturnValue(authHistoryMock);
+      contextServiceMock.getDeviceId.mockReturnValue("deviceId-123");
       authHistoryRepositoryMock.save.mockResolvedValue(authHistoryMock);
 
       const result = await service.recordSignUp(userMock, entityManager);
 
       expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
       expect(authHistoryRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, action: "SIGNUP" });
+      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
       expect(authHistoryRepositoryMock.save).toHaveBeenCalledWith(authHistoryMock);
       expect(result).toBe(authHistoryMock);
     });

@@ -1,6 +1,6 @@
 import { Exclude, Expose } from "class-transformer";
 
-export class SignInTokenDto {
+export class SignInTokenDto implements AuthenticationToken {
   @Expose()
   accessToken: string;
 

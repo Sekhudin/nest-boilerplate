@@ -7,6 +7,11 @@ declare global {
   type AsyncStorageKey = "req" | "res" | "requestStartTime";
   type AsyncStorageStore = Map<AsyncStorageKey, unknown>;
 
+  interface AuthenticationToken {
+    refreshToken: string;
+    accessToken: string;
+  }
+
   type MetaPayload = Record<string, string | number | boolean | null | undefined>;
 
   interface OptionalMetadata {

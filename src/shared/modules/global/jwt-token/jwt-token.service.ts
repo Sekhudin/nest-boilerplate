@@ -16,7 +16,7 @@ export class JwtTokenService {
     return this.jwtService.signAsync(Payload.schema.validate(payload), jwtAccessConfig.signOptions);
   }
 
-  async signToken(payload: Payload) {
+  async signToken(payload: Payload): Promise<AuthenticationToken> {
     const [refreshToken, accessToken] = await Promise.all([
       this.signRefreshToken(payload),
       this.signAccessToken(payload),
