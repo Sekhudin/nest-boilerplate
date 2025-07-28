@@ -1,5 +1,5 @@
 import { EncryptionOptions } from "crypto";
-import argon, { HashOtpOptions, HashPasswordOptions } from "argon2";
+import argon, { HashAuthTokenOptions, HashOtpOptions, HashPasswordOptions } from "argon2";
 import { BaseConfig } from "./base.config";
 
 class CryptoConfig extends BaseConfig {
@@ -23,6 +23,14 @@ class CryptoConfig extends BaseConfig {
   }
 
   get hashOtpOptions(): HashOtpOptions {
+    return {
+      salt: Buffer.from(this.env.HASH_OTP_SALT),
+      secret: Buffer.from(this.env.HASH_OTP_SALT),
+      type: argon.argon2id,
+    };
+  }
+
+  get hashAuthTokenOptions(): HashAuthTokenOptions {
     return {
       salt: Buffer.from(this.env.HASH_OTP_SALT),
       secret: Buffer.from(this.env.HASH_OTP_SALT),

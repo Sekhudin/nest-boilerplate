@@ -32,6 +32,8 @@ const environmentSchema = z.object({
   HASH_PASSWORD_SALT: zr.secret("HASH_PASSWORD_SALT", 16),
   HASH_OTP_SECRET: zr.secret("HASH_OTP_SECRET", 32),
   HASH_OTP_SALT: zr.secret("HASH_OTP_SALT", 16),
+  HASH_AUTH_TOKEN_SECRET: zr.secret("HASH_AUTH_TOKEN_SECRET", 32),
+  HASH_AUTH_TOKEN_SALT: zr.secret("HASH_AUTH_TOKEN_SALT", 16),
   ENCRYPTION_KEY: zr.secret("ENCRYPTION_KEY", 32),
   ENCRYPTION_ALGO: zr.encryptalgo(),
   AUTHENTICATOR_SECRET: zr.secret("AUTHENTICATOR_SECRET", 32),

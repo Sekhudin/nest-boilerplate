@@ -32,6 +32,8 @@ describe("environment", () => {
     HASH_PASSWORD_SALT: "s".repeat(16),
     HASH_OTP_SECRET: "o".repeat(32),
     HASH_OTP_SALT: "p".repeat(16),
+    HASH_AUTH_TOKEN_SECRET: "q".repeat(32),
+    HASH_AUTH_TOKEN_SALT: "r".repeat(16),
     ENCRYPTION_KEY: "e".repeat(32),
     ENCRYPTION_ALGO: "aes-256-cbc",
     AUTHENTICATOR_SECRET: "a".repeat(32),

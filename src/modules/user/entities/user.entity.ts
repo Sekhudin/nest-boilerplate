@@ -3,7 +3,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -32,8 +33,9 @@ export class User {
   @Column({ default: false })
   isEmailVerified: boolean;
 
-  @ManyToOne(() => Role)
-  role: Role;
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable({ name: databaseConfig.JOIN_TABLES.USER_ROLE })
+  role: Role[];
 
   @OneToOne(() => UserAuth, (userAuth) => userAuth.user)
   @JoinColumn()
@@ -56,7 +58,7 @@ export class User {
 
   static get dto() {
     return User.plainDto.extend({
-      role: Role.plainDto,
+      role: z.array(Role.plainDto),
       authMethod: UserAuth.plainDto,
       tokens: z.array(AuthHistory.plainDto),
       otps: z.array(Otp.plainDto),

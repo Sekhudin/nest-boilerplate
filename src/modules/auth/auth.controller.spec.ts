@@ -1,8 +1,10 @@
 import { mock } from "jest-mock-extended";
 import { Test, TestingModule } from "@nestjs/testing";
+import { CookieService } from "src/shared/modules/global/context/cookie.service";
 import { MetaService } from "src/shared/modules/global/meta/meta.service";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshOtpMock } from "test/mocks/entities/otp.entity.mock copy";
+import { getFreshCookieServiceMock } from "test/mocks/services/cookie.service.mock";
 import { getFreshMetaServiceMock } from "test/mocks/services/meta.service.mock";
 import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
 import { AuthController } from "./auth.controller";
@@ -22,6 +24,7 @@ jest.mock("src/config/mailer.config", () => ({
 
 describe("AuthController", () => {
   let controller: AuthController;
+  const cookieServiceMock = getFreshCookieServiceMock();
   const signUpLocalUseCaseMock = mock<SignUpLocalUseCase>();
   const signInLocalUseCaseMock = mock<SignInLocalUseCase>();
   const metaServiceMock = getFreshMetaServiceMock();
@@ -31,6 +34,7 @@ describe("AuthController", () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
+        { provide: CookieService, useValue: cookieServiceMock },
         { provide: SignUpLocalUseCase, useValue: signUpLocalUseCaseMock },
         { provide: SignInLocalUseCase, useValue: signInLocalUseCaseMock },
         { provide: MetaService, useValue: metaServiceMock },
@@ -65,7 +69,7 @@ describe("AuthController", () => {
       metaServiceMock.build.mockReturnValue(metadataMock);
       signUpLocalOtpResponseMock.mockReturnValue(resultMock);
 
-      const result = await controller.signup(signUpLocalDtoMock);
+      const result = await controller.signupLocal(signUpLocalDtoMock);
 
       expect(signUpLocalUseCaseMock.execute).toHaveBeenCalledWith(signUpLocalDtoMock);
       expect(signUpLocalOtpResponseMock).toHaveBeenCalledWith(otpMock, metadataMock);
@@ -75,7 +79,9 @@ describe("AuthController", () => {
 
   describe("signin", () => {
     const resultMock = mock<SignInTokenResponse>();
+    const authenticationTokenMock = mock<AuthenticationToken>();
     const metadataMock = getFreshMetadataMock();
+    const signInTokenResponseMock = jest.spyOn(SignInTokenResponse, "from");
     const signInLocalDtoMock: SignInLocalDto = {
       email: "test@example.com",
       password: "@Password123",
@@ -84,11 +90,19 @@ describe("AuthController", () => {
     beforeEach(() => {
       signInLocalUseCaseMock.execute.mockReset();
       metaServiceMock.build.mockReset();
+      signInTokenResponseMock.mockReset();
     });
     it("should call signInLocalUseCaseMock.execute with dto and return result ", async () => {
-      const result = await controller.signin(signInLocalDtoMock);
+      signInLocalUseCaseMock.execute.mockResolvedValue(authenticationTokenMock);
+      metaServiceMock.build.mockReturnValue(metadataMock);
+      signInTokenResponseMock.mockReturnValue(resultMock);
 
-      expect(result).toBe(true);
+      const result = await controller.signinLocal(signInLocalDtoMock);
+
+      expect(signInLocalUseCaseMock.execute).toHaveBeenCalledWith(signInLocalDtoMock);
+      expect(cookieServiceMock.setRefreshToken).toHaveBeenCalledWith(authenticationTokenMock.refreshToken);
+      expect(signInTokenResponseMock).toHaveBeenCalledWith(authenticationTokenMock, metadataMock);
+      expect(result).toEqual(resultMock);
     });
   });
 });

@@ -23,7 +23,7 @@ export class SignUpLocalUseCase implements BaseUseCase<SignUpLocalDto, Otp> {
   execute({ email, password }: SignUpLocalDto): Promise<Otp> {
     return this.dataSource.transaction(async (entityManager) => {
       const role = await this.roleService.findOrCreateDefaultRole(entityManager);
-      const user = await this.userService.createLocalUser({ email, role }, entityManager);
+      const user = await this.userService.createLocalUser({ email, role: [role] }, entityManager);
       const provider = await this.authProviderService.findOrCreateLocalAuthProvider(entityManager);
       const authUser = await this.userAuthService.createLocalUserAuth({ user, provider, password }, entityManager);
       const generatedOtp = await this.otpService.sendOtpForLocalSignup(authUser.user, entityManager);

@@ -18,12 +18,12 @@ describe("SignUpLocalDto", () => {
   it("should pass with a valid value", () => {
     const result = validate({
       email: "user@example.com",
-      role: roleMock,
+      role: [roleMock],
     });
 
     expect(result).toEqual({
       email: "user@example.com",
-      role: roleMock,
+      role: [roleMock],
     });
   });
 
@@ -31,7 +31,7 @@ describe("SignUpLocalDto", () => {
     try {
       validate({
         email: "invalid-email",
-        role: roleMock,
+        role: [roleMock],
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(ValidationException);
@@ -42,7 +42,7 @@ describe("SignUpLocalDto", () => {
     try {
       validate({
         email: "user@example.com",
-        role: {},
+        role: [{}],
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(ValidationException);

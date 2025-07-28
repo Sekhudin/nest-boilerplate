@@ -17,6 +17,10 @@ class DatabaseConfig extends BaseConfig {
     AUTH_HISTORY: "auth_history",
   } as const;
 
+  readonly JOIN_TABLES = {
+    USER_ROLE: "user_roles",
+  };
+
   get typeOrmModuleOptions(): TypeOrmModuleOptions {
     return {
       type: this.env.DB_TYPE as "postgres",

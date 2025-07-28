@@ -5,9 +5,8 @@ import { Payload } from "./payload.dto";
 describe("Payload", () => {
   const validate = Payload.schema.validate;
 
-  const validPayload = {
+  const validPayload: Payload = {
     sub: "user-id-123",
-    username: "johndoe",
     email: "john@example.com",
     roles: ["USER", "ADMIN"],
     provider: "LOCAL",

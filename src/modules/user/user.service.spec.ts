@@ -1,5 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { UserAuthenticationFailedException } from "src/shared/exceptions/user/user-authentication-failed.exception";
 import { UserEmailAlreadyUsedException } from "src/shared/exceptions/user/user-email-already-used.exception";
+import { UserEmailNotVerifiedException } from "src/shared/exceptions/user/user-email-not-verified.exception";
+import { UserInactiveException } from "src/shared/exceptions/user/user-inactive.exception";
 import { getFreshRoleMock } from "test/mocks/entities/role.entity.mock";
 import { getFreshUserMock } from "test/mocks/entities/user.entity.mock";
 import { getFreshUserRepositoryMock } from "test/mocks/repositories/user.repository.mock";
@@ -11,6 +14,7 @@ import { UserService } from "./user.service";
 describe("UserService", () => {
   let service: UserService;
   const userRepositoryMock = getFreshUserRepositoryMock();
+  ("");
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,7 +33,7 @@ describe("UserService", () => {
     const userMock = getFreshUserMock();
     const createLocalUserDto: CreateLocalUserDto = {
       email: "test@example.com",
-      role: roleMock,
+      role: [roleMock],
     };
 
     beforeEach(() => {
@@ -103,6 +107,82 @@ describe("UserService", () => {
       expect(userRepositoryMock.save).toHaveBeenCalledWith(userMock);
       expect(result).toBe(userMock);
       expect(result.isEmailVerified).toBe(true);
+    });
+  });
+
+  describe("findRegisteredUserOrThrow", () => {
+    const userMock = getFreshUserMock();
+
+    beforeEach(() => {});
+
+    it("should return registered user", async () => {
+      userMock.email = "example@mail.com";
+      userMock.isActive = true;
+      userMock.isEmailVerified = true;
+      userRepositoryMock.findOneOrFail.mockResolvedValue(userMock);
+
+      const result = await service.findRegisteredUserOrThrow(userMock.email);
+
+      expect(userRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { email: userMock.email },
+        relations: { authMethod: true, role: true },
+      });
+      expect(result).toBe(userMock);
+    });
+
+    it("should throw UserAuthenticationFailedException if invalid credentials", async () => {
+      userRepositoryMock.findOneOrFail.mockRejectedValue(new UserAuthenticationFailedException());
+      await expect(service.findRegisteredUserOrThrow(userMock.email)).rejects.toThrow(
+        UserAuthenticationFailedException,
+      );
+      expect(userRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { email: userMock.email },
+        relations: { authMethod: true, role: true },
+      });
+    });
+
+    it("should throw UserInactiveException if user.isActive have false value", async () => {
+      userMock.email = "example@mail.com";
+      userMock.isActive = false;
+      userMock.isEmailVerified = true;
+      userRepositoryMock.findOneOrFail.mockResolvedValue(userMock);
+
+      await expect(service.findRegisteredUserOrThrow(userMock.email)).rejects.toThrow(UserInactiveException);
+      expect(userRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { email: userMock.email },
+        relations: { authMethod: true, role: true },
+      });
+    });
+
+    it("should throw UserEmailNotVerifiedException if user.isEmailVerified have false value", async () => {
+      userMock.email = "example@mail.com";
+      userMock.isActive = true;
+      userMock.isEmailVerified = false;
+      userRepositoryMock.findOneOrFail.mockResolvedValue(userMock);
+
+      await expect(service.findRegisteredUserOrThrow(userMock.email)).rejects.toThrow(UserEmailNotVerifiedException);
+      expect(userRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { email: userMock.email },
+        relations: { authMethod: true, role: true },
+      });
+    });
+
+    it("should ue entityManager if provided", async () => {
+      const entityManagerMock = getFreshEntityManagerMock();
+
+      userMock.email = "example@mail.com";
+      userMock.isActive = true;
+      userMock.isEmailVerified = true;
+      entityManagerMock.getRepository.mockReturnValue(userRepositoryMock);
+      userRepositoryMock.findOneOrFail.mockResolvedValue(userMock);
+
+      const result = await service.findRegisteredUserOrThrow(userMock.email, entityManagerMock);
+
+      expect(userRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { email: userMock.email },
+        relations: { authMethod: true, role: true },
+      });
+      expect(result).toBe(userMock);
     });
   });
 });

@@ -5,4 +5,6 @@ declare module "argon2" {
   interface HashPasswordOptions extends Options {}
 
   interface HashOtpOptions extends Options {}
+
+  interface HashAuthTokenOptions extends Options {}
 }

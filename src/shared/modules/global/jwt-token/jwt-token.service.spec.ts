@@ -30,7 +30,6 @@ describe("JwtTokenService", () => {
 
   const validPayload: Payload = {
     sub: "user-123",
-    username: "testuser",
     email: "test@example.com",
     roles: ["user"],
     provider: "local",

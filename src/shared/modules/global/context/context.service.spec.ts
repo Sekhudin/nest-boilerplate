@@ -11,7 +11,6 @@ describe("ContextService", () => {
 
   const claimsMock: Claims = {
     sub: "user-id-1",
-    username: "john.doe",
     email: "john@example.com",
     roles: ["USER"],
     provider: "google",
@@ -97,7 +96,6 @@ describe("ContextService", () => {
     it("should return user object (claims)", () => {
       asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
       expect(service.getUser()).toEqual(claimsMock);
-      expect(service.getUser()?.username).toBe("john.doe");
       expect(service.getUser()?.roles).toContain("USER");
     });
 

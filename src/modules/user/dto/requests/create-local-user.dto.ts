@@ -15,5 +15,5 @@ export class CreateLocalUserDto extends Schema(createLocalUser) {
   email: string;
 
   @ApiProperty()
-  role: Role;
+  role: Role[];
 }

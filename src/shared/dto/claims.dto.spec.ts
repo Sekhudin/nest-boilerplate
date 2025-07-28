@@ -14,7 +14,6 @@ describe("Claims", () => {
 
   const validPayload = {
     sub: "user-id-123",
-    username: "johndoe",
     email: "john@example.com",
     roles: ["USER"],
     provider: "LOCAL",

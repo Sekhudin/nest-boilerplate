@@ -21,6 +21,14 @@ export class CryptoService {
     return await argon.verify(hash, plain, { secret: cryptoConfig.hashOtpOptions.secret });
   }
 
+  async hashAuthToken(plain: string) {
+    return await argon.hash(plain, cryptoConfig.hashAuthTokenOptions);
+  }
+
+  async verifyAuthToken(plain: string, hash: string) {
+    return await argon.verify(hash, plain, { secret: cryptoConfig.hashAuthTokenOptions.secret });
+  }
+
   encrypt(plain: string): string {
     const { algorithm, key } = cryptoConfig.encryptionOptions;
     const iv = crypto.randomBytes(16);
