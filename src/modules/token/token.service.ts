@@ -20,6 +20,7 @@ export class TokenService extends BaseService {
     super();
   }
 
+  /** Tambahkan logic disini satu user satu device satu token */
   async createAuthenticationToken({ user, provider }: CreateAuthenticationTokenDto, entityManager?: EntityManager) {
     const repository = this.getRepository(Token, this.tokenRepository, entityManager);
     const payload: Payload = {
