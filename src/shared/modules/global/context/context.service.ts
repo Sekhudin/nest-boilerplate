@@ -14,7 +14,7 @@ export class ContextService {
   }
 
   getDeviceId() {
-    return this.req.deviceId ?? "";
+    return this.req.deviceId;
   }
 
   getUserAgent() {

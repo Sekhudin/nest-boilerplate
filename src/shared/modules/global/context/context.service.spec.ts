@@ -68,7 +68,7 @@ describe("ContextService", () => {
     });
 
     it("should return empty string", () => {
-      requestMock.deviceId = null;
+      requestMock.deviceId = "";
       asyncStorageServiceMock.getRequest.mockReturnValue(requestMock);
       expect(service.getDeviceId()).toBe("");
     });

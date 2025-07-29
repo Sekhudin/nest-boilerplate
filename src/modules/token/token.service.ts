@@ -20,13 +20,13 @@ export class TokenService extends BaseService {
     super();
   }
 
-  /** Tambahkan logic disini satu user satu device satu token */
   async createAuthenticationToken({ user, provider }: CreateAuthenticationTokenDto, entityManager?: EntityManager) {
     const repository = this.getRepository(Token, this.tokenRepository, entityManager);
+    const deviceId = this.contextService.getDeviceId();
     const payload: Payload = {
       sub: user.id,
       email: user.email,
-      deviceId: this.contextService.getDeviceId(),
+      deviceId,
       provider: provider.name,
       roles: user.role.map(({ name }) => name),
     };
@@ -34,8 +34,8 @@ export class TokenService extends BaseService {
     const authenticationToken = await this.jwtTokenService.signToken(payload);
     const newToken = repository.create({ user, revoked: false });
     const userAgent = this.contextService.getUserAgent();
-    newToken.deviceId = this.contextService.getDeviceId();
     newToken.token = await this.cryptoService.hashAuthToken(authenticationToken.refreshToken);
+    newToken.deviceId = deviceId;
     newToken.ipAddress = userAgent.ip;
     newToken.userAgentString = userAgent.userAgent;
     await repository.save(newToken);

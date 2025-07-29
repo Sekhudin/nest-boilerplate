@@ -6,7 +6,7 @@ import type { UserAgent } from "src/utils/ua";
 declare module "express" {
   interface Request {
     requestId: string;
-    deviceId: string | null;
+    deviceId: string;
     userAgent: UserAgent;
     user?: Claims;
   }

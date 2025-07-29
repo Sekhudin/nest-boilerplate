@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { CookieOptions } from "express";
 import { Injectable } from "@nestjs/common";
 import { cookieConfig } from "src/config/cookie.config";
@@ -18,7 +17,7 @@ export class CookieService {
   }
 
   get(key: string) {
-    return (this.req.cookies[key] as string) ?? "";
+    return (this.req.cookies?.[key] as string) ?? "";
   }
 
   set(key: string, value: unknown, options?: CookieOptions) {
@@ -29,14 +28,16 @@ export class CookieService {
     this.res.clearCookie(key, options);
   }
 
+  hasDeviceId() {
+    return !!this.getDeviceId();
+  }
+
   getDeviceId() {
     return this.get(cookieConfig.COOKIE_NAME.DEVICE_ID);
   }
 
-  setDeviceId() {
-    if (!this.getDeviceId()) {
-      this.set(cookieConfig.COOKIE_NAME.DEVICE_ID, randomUUID(), { maxAge: undefined });
-    }
+  setDeviceId(deviceId: string) {
+    this.set(cookieConfig.COOKIE_NAME.DEVICE_ID, deviceId, { maxAge: undefined });
   }
 
   clearDeviceId() {
@@ -48,7 +49,6 @@ export class CookieService {
   }
 
   setRefreshToken(value: string) {
-    this.setDeviceId();
     return this.set(jwtRefreshConfig.COOKIE_NAME, value, jwtRefreshConfig.cookieOptions);
   }
 

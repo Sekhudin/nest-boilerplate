@@ -1,7 +1,11 @@
+import { NextFunction, Request, Response } from "express";
+import { mock, mockFn } from "jest-mock-extended";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AsyncStorageService } from "src/shared/modules/global/context/async-storage.service";
 import { CookieService } from "src/shared/modules/global/context/cookie.service";
 import { cookieConfig } from "src/config/cookie.config";
+import { getFreshAsyncStorageServiceMock } from "test/mocks/services/async-storage.service.mock";
+import { getFreshCookieServiceMock } from "test/mocks/services/cookie.service.mock";
 import { ContextMiddleware } from "./context.middleware";
 
 jest.mock("src/utils/ua", () => ({
@@ -12,63 +16,72 @@ jest.mock("src/utils/ua", () => ({
 
 describe("ContextMiddleware", () => {
   let middleware: ContextMiddleware;
-  let mockAsyncStorage: AsyncStorageService;
-  let mockCookie: CookieService;
-  let mockReq: any;
-  let mockRes: any;
-  let next: jest.Mock;
+
+  const asyncStorageServiceMock = getFreshAsyncStorageServiceMock();
+  const cookieServiceMock = getFreshCookieServiceMock();
+  const nextMock = mockFn<NextFunction>();
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ContextMiddleware,
-        {
-          provide: AsyncStorageService,
-          useValue: {
-            run: jest.fn((store, callback) => callback()),
-          },
-        },
-        {
-          provide: CookieService,
-          useValue: {
-            getDeviceId: jest.fn().mockReturnValue("dev-123"),
-            setDeviceId: jest.fn(),
-          },
-        },
+        { provide: AsyncStorageService, useValue: asyncStorageServiceMock },
+        { provide: CookieService, useValue: cookieServiceMock },
       ],
     }).compile();
 
     middleware = module.get(ContextMiddleware);
-    mockAsyncStorage = module.get(AsyncStorageService);
-    mockCookie = module.get(CookieService);
+  });
 
-    mockReq = {
-      cookies: { [cookieConfig.COOKIE_NAME.DEVICE_ID]: "dev-123" },
+  it("should assign context values if deviceId exists", () => {
+    const req = mock<Request>();
+    const res = mock<Response>();
+
+    req.cookies = {
+      [cookieConfig.COOKIE_NAME.DEVICE_ID]: "dev-123",
     };
-    mockRes = {};
-    next = jest.fn();
+
+    cookieServiceMock.hasDeviceId.mockReturnValue(true);
+    cookieServiceMock.getDeviceId.mockReturnValue("dev-123");
+
+    asyncStorageServiceMock.run.mockImplementation((store, callback) => {
+      callback();
+    });
+
+    middleware.use(req, res, nextMock);
+
+    expect(req.requestId).toBeDefined();
+    expect(req.deviceId).toBe("dev-123");
+    expect(req.userAgent).toEqual({ device: "mock-device" });
+
+    expect(cookieServiceMock.getDeviceId).toHaveBeenCalled();
+    expect(cookieServiceMock.setDeviceId).not.toHaveBeenCalled();
+    expect(asyncStorageServiceMock.run).toHaveBeenCalled();
+    expect(nextMock).toHaveBeenCalled();
   });
 
-  it("should set requestId, deviceId, userAgent and call services", () => {
-    middleware.use(mockReq, mockRes, next);
+  it("should generate and set deviceId if not exists", () => {
+    const req = mock<Request>();
+    const res = mock<Response>();
 
-    expect(mockReq.requestId).toBeDefined();
-    expect(mockReq.deviceId).toBe("dev-123");
-    expect(mockReq.userAgent).toEqual({ device: "mock-device" });
+    req.cookies = {};
 
-    expect(mockCookie.getDeviceId).toHaveBeenCalled();
-    expect(mockCookie.setDeviceId).toHaveBeenCalled();
-    expect(mockAsyncStorage.run).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalled();
-  });
+    cookieServiceMock.hasDeviceId.mockReturnValue(false);
 
-  it("should fallback deviceId to null if cookie service returns falsy", () => {
-    jest.spyOn(mockCookie, "getDeviceId").mockReturnValue("");
+    asyncStorageServiceMock.run.mockImplementation((store, callback) => {
+      callback();
+    });
 
-    middleware.use(mockReq, mockRes, next);
+    middleware.use(req, res, nextMock);
 
-    expect(mockReq.deviceId).toBeNull();
-    expect(mockCookie.setDeviceId).toHaveBeenCalled();
-    expect(next).toHaveBeenCalled();
+    expect(req.requestId).toBeDefined();
+    expect(req.deviceId).toBeDefined();
+    expect(typeof req.deviceId).toBe("string");
+    expect(req.userAgent).toEqual({ device: "mock-device" });
+
+    expect(cookieServiceMock.setDeviceId).toHaveBeenCalledWith(req.deviceId);
+    expect(nextMock).toHaveBeenCalled();
   });
 });
