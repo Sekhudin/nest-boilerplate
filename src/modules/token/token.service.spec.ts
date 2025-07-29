@@ -11,7 +11,7 @@ import { getFreshCryptoServiceMock } from "test/mocks/services/crypto.service.mo
 import { getFreshJwtTokenServiceMock } from "test/mocks/services/jwt-token-service.service.mock";
 import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
 import { getFreshUserAgentMock } from "test/mocks/utils/user-agent.mock";
-import { CreateAuthenticationTokenDto } from "./dto/create-authentication-token.dto";
+import { UpsertAuthenticationTokenDto } from "./dto/upsert-authentication-token.dto";
 import { TokenRepository } from "./token.repository";
 import { TokenService } from "./token.service";
 
@@ -37,12 +37,12 @@ describe("TokenService", () => {
   });
 
   it("should be defined", () => {
-    expect(true).toBeDefined();
+    expect(service).toBeDefined();
   });
 
-  describe("createAuthenticationToken", () => {
+  describe("upsertAuthenticationToken", () => {
     const roleMock = getFreshRoleMock();
-    const dtoMock = mock<CreateAuthenticationTokenDto>();
+    const dtoMock = mock<UpsertAuthenticationTokenDto>();
     const authenticationTokenMock = mock<AuthenticationToken>();
     const tokenMock = getFreshTokenMock();
     const userAgentMock = getFreshUserAgentMock();
@@ -52,62 +52,79 @@ describe("TokenService", () => {
       dtoMock.user.role = [roleMock];
       jwtTokenServiceMock.signToken.mockReset();
       tokenRepositoryMock.create.mockReset();
+      tokenRepositoryMock.save.mockReset();
+      tokenRepositoryMock.findOne.mockReset();
       contextServiceMock.getUserAgent.mockReset();
       contextServiceMock.getDeviceId.mockReset();
       cryptoServiceMock.hashAuthToken.mockReset();
-      tokenRepositoryMock.save.mockReset();
     });
 
-    it("should return authentication token", async () => {
+    it("should create and return a new authentication token when no existing token found", async () => {
       jwtTokenServiceMock.signToken.mockResolvedValue(authenticationTokenMock);
+      tokenRepositoryMock.findOne.mockResolvedValue(null);
       tokenRepositoryMock.create.mockReturnValue(tokenMock);
       contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
       contextServiceMock.getDeviceId.mockReturnValue("device-01");
       cryptoServiceMock.hashAuthToken.mockResolvedValue("hashed-token");
       tokenRepositoryMock.save.mockResolvedValue(tokenMock);
 
-      const result = await service.createAuthenticationToken(dtoMock);
+      const result = await service.upsertAuthenticationToken(dtoMock);
+
+      expect(tokenRepositoryMock.findOne).toHaveBeenCalledWith({
+        where: { user: { id: dtoMock.user.id }, deviceId: "device-01" },
+        relations: { user: true },
+      });
 
       expect(jwtTokenServiceMock.signToken).toHaveBeenCalledWith({
         sub: dtoMock.user.id,
         email: dtoMock.user.email,
-        deviceId: contextServiceMock.getDeviceId(),
+        deviceId: "device-01",
         provider: dtoMock.provider.name,
-        roles: dtoMock.user.role.map(({ name }) => name),
+        roles: [roleMock.name],
       });
-      expect(tokenRepositoryMock.create).toHaveBeenCalledWith({ user: dtoMock.user, revoked: false });
-      expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
-      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
+
+      expect(tokenRepositoryMock.create).toHaveBeenCalledWith({ user: dtoMock.user });
       expect(cryptoServiceMock.hashAuthToken).toHaveBeenCalledWith(authenticationTokenMock.refreshToken);
+      expect(tokenRepositoryMock.save).toHaveBeenCalledWith(tokenMock);
+
+      expect(result).toBe(authenticationTokenMock);
+    });
+
+    it("should reuse existing token if found", async () => {
+      jwtTokenServiceMock.signToken.mockResolvedValue(authenticationTokenMock);
+      tokenRepositoryMock.findOne.mockResolvedValue(tokenMock); // Existing token found
+      contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
+      contextServiceMock.getDeviceId.mockReturnValue("device-01");
+      cryptoServiceMock.hashAuthToken.mockResolvedValue("hashed-token");
+      tokenRepositoryMock.save.mockResolvedValue(tokenMock);
+
+      const result = await service.upsertAuthenticationToken(dtoMock);
+
+      expect(tokenRepositoryMock.findOne).toHaveBeenCalledWith({
+        where: { user: { id: dtoMock.user.id }, deviceId: "device-01" },
+        relations: { user: true },
+      });
+
+      expect(tokenRepositoryMock.create).not.toHaveBeenCalled(); // Should reuse token
       expect(tokenRepositoryMock.save).toHaveBeenCalledWith(tokenMock);
       expect(result).toBe(authenticationTokenMock);
     });
 
     it("should use entityManager if provided", async () => {
       const entityManagerMock = getFreshEntityManagerMock();
-
       entityManagerMock.getRepository.mockReturnValue(tokenRepositoryMock);
+
       jwtTokenServiceMock.signToken.mockResolvedValue(authenticationTokenMock);
+      tokenRepositoryMock.findOne.mockResolvedValue(null);
       tokenRepositoryMock.create.mockReturnValue(tokenMock);
       contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
       contextServiceMock.getDeviceId.mockReturnValue("device-01");
       cryptoServiceMock.hashAuthToken.mockResolvedValue("hashed-token");
       tokenRepositoryMock.save.mockResolvedValue(tokenMock);
 
-      const result = await service.createAuthenticationToken(dtoMock, entityManagerMock);
+      const result = await service.upsertAuthenticationToken(dtoMock, entityManagerMock);
 
-      expect(jwtTokenServiceMock.signToken).toHaveBeenCalledWith({
-        sub: dtoMock.user.id,
-        email: dtoMock.user.email,
-        deviceId: contextServiceMock.getDeviceId(),
-        provider: dtoMock.provider.name,
-        roles: dtoMock.user.role.map(({ name }) => name),
-      });
-      expect(tokenRepositoryMock.create).toHaveBeenCalledWith({ user: dtoMock.user, revoked: false });
-      expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
-      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
-      expect(cryptoServiceMock.hashAuthToken).toHaveBeenCalledWith(authenticationTokenMock.refreshToken);
-      expect(tokenRepositoryMock.save).toHaveBeenCalledWith(tokenMock);
+      expect(entityManagerMock.getRepository).toHaveBeenCalledWith(expect.any(Function));
       expect(result).toBe(authenticationTokenMock);
     });
   });

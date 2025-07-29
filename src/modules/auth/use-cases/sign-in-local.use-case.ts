@@ -21,7 +21,7 @@ export class SignInLocalUseCase implements BaseUseCase<SignInLocalDto, Authentic
     return this.dataSource.transaction(async (entityManager) => {
       const user = await this.userService.findRegisteredUserOrThrow(email, entityManager);
       const authMethod = await this.userAuthService.findValidLocalUserAuthOrThrow({ user, password }, entityManager);
-      const authenticationToken = await this.tokenService.createAuthenticationToken(
+      const authenticationToken = await this.tokenService.upsertAuthenticationToken(
         { user, provider: authMethod.provider },
         entityManager,
       );

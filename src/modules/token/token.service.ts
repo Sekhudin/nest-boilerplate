@@ -6,7 +6,7 @@ import { CryptoService } from "src/shared/modules/global/crypto/crypto.service";
 import { JwtTokenService } from "src/shared/modules/global/jwt-token/jwt-token.service";
 import { Payload } from "src/shared/dto/payload.dto";
 import { Token } from "./entities/token.entity";
-import { CreateAuthenticationTokenDto } from "./dto/create-authentication-token.dto";
+import { UpsertAuthenticationTokenDto } from "./dto/upsert-authentication-token.dto";
 import { TokenRepository } from "./token.repository";
 
 @Injectable()
@@ -20,9 +20,16 @@ export class TokenService extends BaseService {
     super();
   }
 
-  async createAuthenticationToken({ user, provider }: CreateAuthenticationTokenDto, entityManager?: EntityManager) {
+  async upsertAuthenticationToken({ user, provider }: UpsertAuthenticationTokenDto, entityManager?: EntityManager) {
     const repository = this.getRepository(Token, this.tokenRepository, entityManager);
+
     const deviceId = this.contextService.getDeviceId();
+    const userAgent = this.contextService.getUserAgent();
+    const existingToken = await repository.findOne({
+      where: { user: { id: user.id }, deviceId },
+      relations: { user: true },
+    });
+
     const payload: Payload = {
       sub: user.id,
       email: user.email,
@@ -32,13 +39,15 @@ export class TokenService extends BaseService {
     };
 
     const authenticationToken = await this.jwtTokenService.signToken(payload);
-    const newToken = repository.create({ user, revoked: false });
-    const userAgent = this.contextService.getUserAgent();
-    newToken.token = await this.cryptoService.hashAuthToken(authenticationToken.refreshToken);
-    newToken.deviceId = deviceId;
-    newToken.ipAddress = userAgent.ip;
-    newToken.userAgentString = userAgent.userAgent;
-    await repository.save(newToken);
+    const hashedToken = await this.cryptoService.hashAuthToken(authenticationToken.refreshToken);
+    const token: Token = existingToken ?? repository.create({ user });
+    token.revoked = false;
+    token.token = hashedToken;
+    token.deviceId = deviceId;
+    token.ipAddress = userAgent.ip;
+    token.userAgentString = userAgent.userAgent;
+
+    await repository.save(token);
     return authenticationToken;
   }
 }

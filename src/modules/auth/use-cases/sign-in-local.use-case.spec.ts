@@ -53,7 +53,7 @@ describe("SignInLocalUseCase", () => {
     beforeEach(() => {
       userServiceMock.findRegisteredUserOrThrow.mockReset();
       userAuthServiceMock.findValidLocalUserAuthOrThrow.mockReset();
-      tokenServiceMock.createAuthenticationToken.mockReset();
+      tokenServiceMock.upsertAuthenticationToken.mockReset();
       authHistoryServiceMock.recordSignIn.mockReset();
     });
 
@@ -65,7 +65,7 @@ describe("SignInLocalUseCase", () => {
 
       userServiceMock.findRegisteredUserOrThrow.mockResolvedValue(userMock);
       userAuthServiceMock.findValidLocalUserAuthOrThrow.mockResolvedValue(userAuthMock);
-      tokenServiceMock.createAuthenticationToken.mockResolvedValue(authenticationTokenMock);
+      tokenServiceMock.upsertAuthenticationToken.mockResolvedValue(authenticationTokenMock);
       authHistoryServiceMock.recordSignIn.mockResolvedValue(authHistoryMock);
 
       const result = await useCase.execute(dto);
@@ -77,7 +77,7 @@ describe("SignInLocalUseCase", () => {
         entityManager,
       );
 
-      expect(tokenServiceMock.createAuthenticationToken).toHaveBeenCalledWith(
+      expect(tokenServiceMock.upsertAuthenticationToken).toHaveBeenCalledWith(
         { user: userMock, provider: userAuthMock.provider },
         entityManager,
       );

@@ -1,12 +1,12 @@
 import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
 import { AuthProvider } from "src/modules/auth-provider/entities/auth-provider.entity";
 import { User } from "src/modules/user/entities/user.entity";
-import { CreateAuthenticationTokenDto } from "./create-authentication-token.dto";
+import { UpsertAuthenticationTokenDto } from "./upsert-authentication-token.dto";
 
-describe("CreateAuthenticationTokenDto", () => {
+describe("UpsertAuthenticationTokenDto", () => {
   let userMock: Partial<User>;
   let providerMock: Partial<AuthProvider>;
-  const validate = CreateAuthenticationTokenDto.schema.validate;
+  const validate = UpsertAuthenticationTokenDto.schema.validate;
 
   beforeEach(() => {
     userMock = {
