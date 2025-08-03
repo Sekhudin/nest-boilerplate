@@ -14,7 +14,6 @@ import { UserService } from "./user.service";
 describe("UserService", () => {
   let service: UserService;
   const userRepositoryMock = getFreshUserRepositoryMock();
-  ("");
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
