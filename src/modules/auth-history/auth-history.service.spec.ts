@@ -121,4 +121,96 @@ describe("AuthHistoryService", () => {
       expect(result).toBe(authHistoryMock);
     });
   });
+
+  describe("recordRefresh", () => {
+    const userMock = getFreshUserMock();
+    const userAgentMock = getFreshUserAgentMock();
+    const authHistoryMock = getFreshAuthHistoryMock();
+
+    beforeEach(() => {
+      contextServiceMock.getUserAgent.mockReset();
+      authHistoryRepositoryMock.create.mockReset();
+      contextServiceMock.getDeviceId.mockReset();
+      authHistoryRepositoryMock.save.mockReset();
+    });
+
+    it("should create new record with action is signup", async () => {
+      contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
+      authHistoryRepositoryMock.create.mockReturnValue(authHistoryMock);
+      contextServiceMock.getDeviceId.mockReturnValue("deviceId-123");
+      authHistoryRepositoryMock.save.mockResolvedValue(authHistoryMock);
+
+      const result = await service.recordRefresh(userMock);
+
+      expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, action: "REFRESH" });
+      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.save).toHaveBeenCalledWith(authHistoryMock);
+      expect(result).toBe(authHistoryMock);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManager = getFreshEntityManagerMock();
+
+      entityManager.getRepository.mockReturnValue(authHistoryRepositoryMock);
+      contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
+      authHistoryRepositoryMock.create.mockReturnValue(authHistoryMock);
+      contextServiceMock.getDeviceId.mockReturnValue("deviceId-123");
+      authHistoryRepositoryMock.save.mockResolvedValue(authHistoryMock);
+
+      const result = await service.recordRefresh(userMock, entityManager);
+
+      expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, action: "REFRESH" });
+      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.save).toHaveBeenCalledWith(authHistoryMock);
+      expect(result).toBe(authHistoryMock);
+    });
+  });
+
+  describe("recordSignOut", () => {
+    const userMock = getFreshUserMock();
+    const userAgentMock = getFreshUserAgentMock();
+    const authHistoryMock = getFreshAuthHistoryMock();
+
+    beforeEach(() => {
+      contextServiceMock.getUserAgent.mockReset();
+      authHistoryRepositoryMock.create.mockReset();
+      contextServiceMock.getDeviceId.mockReset();
+      authHistoryRepositoryMock.save.mockReset();
+    });
+
+    it("should create new record with action is signup", async () => {
+      contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
+      authHistoryRepositoryMock.create.mockReturnValue(authHistoryMock);
+      contextServiceMock.getDeviceId.mockReturnValue("deviceId-123");
+      authHistoryRepositoryMock.save.mockResolvedValue(authHistoryMock);
+
+      const result = await service.recordSignOut(userMock);
+
+      expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, action: "SIGNOUT" });
+      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.save).toHaveBeenCalledWith(authHistoryMock);
+      expect(result).toBe(authHistoryMock);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManager = getFreshEntityManagerMock();
+
+      entityManager.getRepository.mockReturnValue(authHistoryRepositoryMock);
+      contextServiceMock.getUserAgent.mockReturnValue(userAgentMock);
+      authHistoryRepositoryMock.create.mockReturnValue(authHistoryMock);
+      contextServiceMock.getDeviceId.mockReturnValue("deviceId-123");
+      authHistoryRepositoryMock.save.mockResolvedValue(authHistoryMock);
+
+      const result = await service.recordSignOut(userMock, entityManager);
+
+      expect(contextServiceMock.getUserAgent).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.create).toHaveBeenCalledWith({ user: userMock, action: "SIGNOUT" });
+      expect(contextServiceMock.getDeviceId).toHaveBeenCalled();
+      expect(authHistoryRepositoryMock.save).toHaveBeenCalledWith(authHistoryMock);
+      expect(result).toBe(authHistoryMock);
+    });
+  });
 });
