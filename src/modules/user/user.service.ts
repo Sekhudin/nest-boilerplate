@@ -26,6 +26,7 @@ export class UserService extends BaseService {
 
   markEmailIsVerified(user: User, entityManager?: EntityManager) {
     const repository = this.getRepository(User, this.userRepository, entityManager);
+    user.isActive = true;
     user.isEmailVerified = true;
     return repository.save(user);
   }

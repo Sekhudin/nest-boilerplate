@@ -1,19 +1,20 @@
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { Otp } from "src/modules/otp/entities/otp.entity";
-import { User } from "src/modules/user/entities/user.entity";
+import { UserDto } from "src/modules/user/dto/responses/user.dto";
 
 export class OtpDto implements Otp {
   @Expose()
   isUsed: boolean;
+
+  @Expose()
+  @Type(() => UserDto)
+  user: UserDto;
 
   @Exclude()
   token: string;
 
   @Exclude()
   hashOtp: string;
-
-  @Exclude()
-  user: User;
 
   @Exclude()
   purpose: "EMAIL_VERIFICATION" | "PASSWORD_RESET" | "SIGNIN";
