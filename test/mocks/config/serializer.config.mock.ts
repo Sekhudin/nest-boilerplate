@@ -1,11 +1,10 @@
-import { MockConfig, mockDeep } from "jest-mock-extended";
+import { MockConfig } from "jest-mock-extended";
 import { serializerConfig } from "src/config/serializer.config";
 
 type SerializerConfig = MockConfig<typeof serializerConfig>;
 export const getFreshSerializerConfigMock = () => {
-  const config = mockDeep<SerializerConfig>();
-
-  const configMock: Partial<SerializerConfig> = {
+  const config: SerializerConfig = {
+    environment: "test",
     isProduction: false,
     SERIALIZER_META_KEY: "META:SERIALIZER",
     SERIALIZER_OPTIONS_META_KEY: "META:SERIALIZER:OPTIONS",
@@ -16,8 +15,7 @@ export const getFreshSerializerConfigMock = () => {
       excludeExtraneousValues: true,
       enableImplicitConversion: true,
     },
+    setup(app) {},
   };
-
-  Object.assign(config, configMock);
   return config;
 };
