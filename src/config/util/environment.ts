@@ -23,7 +23,7 @@ const environmentSchema = z.object({
   DB_MIGRATION_TABLE: zr.string("DB_MIGRATION_TABLE"),
   JWT_ALGORITHM: zr.algorithm(),
   JWT_ISSUER: zr.string("JWT_ISSUER"),
-  JWT_AUDIENCE: zr.string("JWT_AUDIENCE"),
+  JWT_AUDIENCE: zr.split(),
   JWT_REFRESH_SECRET: zr.secret("JWT_REFRESH_SECRET", 32),
   JWT_REFRESH_EXPIRES_IN: zr.expirein(),
   JWT_ACCESS_SECRET: zr.secret("JWT_ACCESS_SECRET", 32),
