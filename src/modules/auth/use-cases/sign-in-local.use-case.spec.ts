@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import { mock } from "jest-mock-extended";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthHistoryService } from "src/modules/auth-history/auth-history.service";
+import { SignInLocalDto } from "src/modules/auth/dto/requests/sign-in-local.dto";
 import { TokenService } from "src/modules/token/token.service";
 import { UserAuthService } from "src/modules/user-auth/user-auth.service";
 import { UserService } from "src/modules/user/user.service";
@@ -13,7 +14,6 @@ import { getFreshTokenServiceMock } from "test/mocks/services/token.service.mock
 import { getFreshUserAuthServiceMock } from "test/mocks/services/user-auth.service.mock";
 import { getFreshUserServiceMock } from "test/mocks/services/user.service.mock";
 import { getFreshDataSourceMock } from "test/mocks/utils/datasource.mock";
-import { SignInLocalDto } from "../dto/requests/sign-in-local.dto";
 import { SignInLocalUseCase } from "./sign-in-local.use-case";
 
 describe("SignInLocalUseCase", () => {

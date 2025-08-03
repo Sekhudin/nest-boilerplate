@@ -10,8 +10,10 @@ import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
 import { AuthController } from "./auth.controller";
 import { SignInLocalDto } from "./dto/requests/sign-in-local.dto";
 import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
+import { RefreshTokenResponse } from "./dto/responses/refresh-token.response";
 import { SignInTokenResponse } from "./dto/responses/sign-in-token.response";
 import { SignUpLocalOtpResponse } from "./dto/responses/sign-up-local-otp.response";
+import { RefreshTokenUseCase } from "./use-cases/refresh-token.use-case";
 import { SignInLocalUseCase } from "./use-cases/sign-in-local.use-case";
 import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
@@ -27,6 +29,7 @@ describe("AuthController", () => {
   const cookieServiceMock = getFreshCookieServiceMock();
   const signUpLocalUseCaseMock = mock<SignUpLocalUseCase>();
   const signInLocalUseCaseMock = mock<SignInLocalUseCase>();
+  const refreshTokenUseCaseMock = mock<RefreshTokenUseCase>();
   const metaServiceMock = getFreshMetaServiceMock();
 
   beforeEach(async () => {
@@ -37,6 +40,7 @@ describe("AuthController", () => {
         { provide: CookieService, useValue: cookieServiceMock },
         { provide: SignUpLocalUseCase, useValue: signUpLocalUseCaseMock },
         { provide: SignInLocalUseCase, useValue: signInLocalUseCaseMock },
+        { provide: RefreshTokenUseCase, useValue: refreshTokenUseCaseMock },
         { provide: MetaService, useValue: metaServiceMock },
       ],
     }).compile();
@@ -102,6 +106,35 @@ describe("AuthController", () => {
       expect(signInLocalUseCaseMock.execute).toHaveBeenCalledWith(signInLocalDtoMock);
       expect(cookieServiceMock.setRefreshToken).toHaveBeenCalledWith(authenticationTokenMock.refreshToken);
       expect(signInTokenResponseMock).toHaveBeenCalledWith(authenticationTokenMock, metadataMock);
+      expect(result).toEqual(resultMock);
+    });
+  });
+
+  describe("refresh", () => {
+    const refreshTokenMock = "refresh-token";
+    const accessTokenMock = "access-token";
+    const resultMock = mock<RefreshTokenResponse>();
+    const metadataMock = getFreshMetadataMock();
+    const refreshTokenResponseMock = jest.spyOn(RefreshTokenResponse, "from");
+
+    beforeEach(() => {
+      cookieServiceMock.getRefreshToken.mockReset();
+      refreshTokenUseCaseMock.execute.mockReset();
+      metaServiceMock.build.mockReset();
+      refreshTokenResponseMock.mockReset();
+    });
+
+    it("should call refreshTokenUseCase.execute and return result", async () => {
+      cookieServiceMock.getRefreshToken.mockReturnValue(refreshTokenMock);
+      refreshTokenUseCaseMock.execute.mockResolvedValue(accessTokenMock);
+      metaServiceMock.build.mockReturnValue(metadataMock);
+      refreshTokenResponseMock.mockReturnValue(resultMock);
+
+      const result = await controller.refreshToken();
+
+      expect(cookieServiceMock.getRefreshToken).toHaveBeenCalled();
+      expect(refreshTokenUseCaseMock.execute).toHaveBeenCalledWith(refreshTokenMock);
+      expect(refreshTokenResponseMock).toHaveBeenCalledWith({ accessToken: accessTokenMock }, metadataMock);
       expect(result).toEqual(resultMock);
     });
   });

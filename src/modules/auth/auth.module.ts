@@ -7,12 +7,13 @@ import { TokenModule } from "src/modules/token/token.module";
 import { UserAuthModule } from "src/modules/user-auth/user-auth.module";
 import { UserModule } from "src/modules/user/user.module";
 import { AuthController } from "./auth.controller";
+import { RefreshTokenUseCase } from "./use-cases/refresh-token.use-case";
 import { SignInLocalUseCase } from "./use-cases/sign-in-local.use-case";
 import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 @Module({
   imports: [OtpModule, RoleModule, UserModule, UserAuthModule, AuthProviderModule, AuthHistoryModule, TokenModule],
   controllers: [AuthController],
-  providers: [SignUpLocalUseCase, SignInLocalUseCase],
+  providers: [SignUpLocalUseCase, SignInLocalUseCase, RefreshTokenUseCase],
 })
 export class AuthModule {}
