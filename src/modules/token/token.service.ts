@@ -5,6 +5,9 @@ import { ContextService } from "src/shared/modules/global/context/context.servic
 import { CryptoService } from "src/shared/modules/global/crypto/crypto.service";
 import { JwtTokenService } from "src/shared/modules/global/jwt-token/jwt-token.service";
 import { Payload } from "src/shared/dto/payload.dto";
+import { TokenInvalidException } from "src/shared/exceptions/auth/token-invalid.exception";
+import { UnauthorizedException } from "src/shared/exceptions/auth/unauthorized.exception";
+import { UserInactiveException } from "src/shared/exceptions/user/user-inactive.exception";
 import { Token } from "./entities/token.entity";
 import { UpsertAuthenticationTokenDto } from "./dto/upsert-authentication-token.dto";
 import { TokenRepository } from "./token.repository";
@@ -32,7 +35,6 @@ export class TokenService extends BaseService {
 
     const payload: Payload = {
       sub: user.id,
-      email: user.email,
       deviceId,
       provider: provider.name,
       roles: user.role.map(({ name }) => name),
@@ -49,5 +51,42 @@ export class TokenService extends BaseService {
 
     await repository.save(token);
     return authenticationToken;
+  }
+
+  async generateAccessTokenFromClaims(refreshToken: string, entityManager?: EntityManager) {
+    const claims = this.contextService.getUser();
+    if (!claims) {
+      throw new UnauthorizedException();
+    }
+
+    const repository = this.getRepository(Token, this.tokenRepository, entityManager);
+    const token = await repository
+      .findOneOrFail({
+        where: { deviceId: claims.deviceId, revoked: false, user: { id: claims.sub } },
+        relations: { user: { role: true } },
+      })
+      .catch(() => {
+        throw new TokenInvalidException();
+      });
+
+    if (!token.user.isActive) {
+      throw new UserInactiveException();
+    }
+
+    const isRefreshTokenValid = await this.cryptoService.verifyAuthToken(refreshToken, token.token);
+    if (!isRefreshTokenValid) {
+      throw new TokenInvalidException();
+    }
+
+    const deviceId = this.contextService.getDeviceId();
+    const payload: Payload = {
+      sub: token.user.id,
+      deviceId,
+      provider: claims.provider,
+      roles: token.user.role.map(({ name }) => name),
+    };
+
+    const accessToken = await this.jwtTokenService.signAccessToken(payload);
+    return { token, accessToken };
   }
 }
