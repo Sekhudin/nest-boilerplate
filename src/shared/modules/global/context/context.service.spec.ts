@@ -11,7 +11,6 @@ describe("ContextService", () => {
 
   const claimsMock: Claims = {
     sub: "user-id-1",
-    email: "john@example.com",
     roles: ["USER"],
     provider: "google",
     deviceId: "dev-456",

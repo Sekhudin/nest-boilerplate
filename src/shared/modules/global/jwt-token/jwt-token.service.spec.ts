@@ -30,7 +30,6 @@ describe("JwtTokenService", () => {
 
   const validPayload: Payload = {
     sub: "user-123",
-    email: "test@example.com",
     roles: ["user"],
     provider: "local",
     deviceId: "device-abc",
@@ -66,7 +65,7 @@ describe("JwtTokenService", () => {
   it("should throw SystemInternalErrorException if payload is invalid", async () => {
     const invalidPayload = {
       ...validPayload,
-      email: "not-an-email",
+      provider: null,
     };
 
     try {

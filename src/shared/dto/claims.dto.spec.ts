@@ -14,7 +14,6 @@ describe("Claims", () => {
 
   const validPayload = {
     sub: "user-id-123",
-    email: "john@example.com",
     roles: ["USER"],
     provider: "LOCAL",
     deviceId: "device-xyz",
@@ -52,23 +51,11 @@ describe("Claims", () => {
     }
   });
 
-  it("should throw TokenInvalidException if email is invalid", () => {
-    try {
-      validate({
-        ...validClaims,
-        email: "invalid-email",
-      });
-    } catch (err: any) {
-      expect(err).toBeInstanceOf(TokenInvalidException);
-      expect(err.message).toMatch(ErrorCode.AUTH_TOKEN_INVALID);
-    }
-  });
-
   it("should throw TokenInvalidException if roles is not array", () => {
     try {
       validate({
         ...validClaims,
-        roles: "ADMIN", // should be array
+        roles: "ADMIN",
       });
     } catch (err: any) {
       expect(err).toBeInstanceOf(TokenInvalidException);

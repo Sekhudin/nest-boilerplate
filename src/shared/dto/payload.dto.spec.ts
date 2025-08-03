@@ -7,7 +7,6 @@ describe("Payload", () => {
 
   const validPayload: Payload = {
     sub: "user-id-123",
-    email: "john@example.com",
     roles: ["USER", "ADMIN"],
     provider: "LOCAL",
     deviceId: "device-xyz",
@@ -16,18 +15,6 @@ describe("Payload", () => {
   it("should pass with valid payload", () => {
     const result = validate(validPayload);
     expect(result).toEqual(validPayload);
-  });
-
-  it("should throw SystemInternalErrorException if email is invalid", () => {
-    try {
-      validate({
-        ...validPayload,
-        email: "invalid-email",
-      });
-    } catch (err: any) {
-      expect(err).toBeInstanceOf(SystemInternalErrorException);
-      expect(err.message).toMatch(ErrorCode.SYSTEM_INTERNAL_ERROR);
-    }
   });
 
   it("should throw SystemInternalErrorException if roles is not array", () => {

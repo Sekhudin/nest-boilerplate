@@ -13,7 +13,6 @@ describe("HttpInterceptor", () => {
 
   const mockUser: Claims = {
     sub: "user-id-1",
-    email: "john@example.com",
     roles: ["USER"],
     provider: "google",
     deviceId: "dev-456",
