@@ -3,7 +3,7 @@ import { mock, mockFn } from "jest-mock-extended";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AsyncStorageService } from "src/shared/modules/global/context/async-storage.service";
 import { CookieService } from "src/shared/modules/global/context/cookie.service";
-import { cookieConfig } from "src/config/cookie.config";
+import { getFreshCookieConfigMock } from "test/mocks/config/cookie.config.mock";
 import { getFreshAsyncStorageServiceMock } from "test/mocks/services/async-storage.service.mock";
 import { getFreshCookieServiceMock } from "test/mocks/services/cookie.service.mock";
 import { ContextMiddleware } from "./context.middleware";
@@ -11,6 +11,13 @@ import { ContextMiddleware } from "./context.middleware";
 jest.mock("src/utils/ua", () => ({
   UserAgent: {
     parse: jest.fn().mockReturnValue({ device: "mock-device" }),
+  },
+}));
+
+let cookieConfigMock: ReturnType<typeof getFreshCookieConfigMock>;
+jest.mock("src/config/cookie.config", () => ({
+  get cookieConfig() {
+    return cookieConfigMock;
   },
 }));
 
@@ -23,6 +30,7 @@ describe("ContextMiddleware", () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    cookieConfigMock = getFreshCookieConfigMock();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -40,7 +48,7 @@ describe("ContextMiddleware", () => {
     const res = mock<Response>();
 
     req.cookies = {
-      [cookieConfig.COOKIE_NAME.DEVICE_ID]: "dev-123",
+      [cookieConfigMock.COOKIE_NAME.DEVICE_ID]: "dev-123",
     };
 
     cookieServiceMock.hasDeviceId.mockReturnValue(true);

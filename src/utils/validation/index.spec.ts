@@ -3,7 +3,7 @@ import { ErrorCode } from "src/shared/enums/error-code.enum";
 import { UnauthorizedException } from "src/shared/exceptions/auth/unauthorized.exception";
 import { SystemInternalErrorException } from "src/shared/exceptions/system/system-internal-error.exception";
 import { ValidationException } from "src/shared/exceptions/validation/validation.exception";
-import { validationConfig } from "src/config/validation.config";
+import { getFreshValidationConfigMock } from "test/mocks/config/validation.config.mock";
 import { Schema, schema, z } from "./index";
 
 describe("validation schema helper", () => {
@@ -11,11 +11,11 @@ describe("validation schema helper", () => {
     email: z.email(),
     age: z.number().min(18),
   });
-
-  const wrappedSchema = schema(testSchema);
-  const GeneratedClass = Schema(wrappedSchema);
+  const validationConfigMock = getFreshValidationConfigMock();
 
   describe("schema", () => {
+    const wrappedSchema = schema(testSchema);
+
     it("should validate successfully and return parsed data", () => {
       const validData = { email: "test@example.com", age: 20 };
       const result = wrappedSchema["~standard"].validate(validData);
@@ -80,8 +80,11 @@ describe("validation schema helper", () => {
   });
 
   describe("Schema", () => {
+    const wrappedSchema = schema(testSchema);
+    const GeneratedClass = Schema(wrappedSchema);
+
     it("should set schema metadata on the generated class", () => {
-      const metadata = Reflect.getMetadata(validationConfig.SCHEMA_META_KEY, GeneratedClass);
+      const metadata = Reflect.getMetadata(validationConfigMock.SCHEMA_META_KEY, GeneratedClass);
 
       expect(metadata).toBeDefined();
       expect(typeof metadata["~standard"].validate).toBe("function");

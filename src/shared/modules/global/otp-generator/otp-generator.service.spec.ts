@@ -1,7 +1,7 @@
 import { addMinutes, subMinutes } from "date-fns";
 import { authenticator, hotp, totp } from "otplib";
 import { Test } from "@nestjs/testing";
-import { otpConfig } from "src/config/otp.config";
+import { getFreshOtpConfigMock } from "test/mocks/config/otp.config.mock";
 import { OtpGeneratorService } from "./otp-generator.service";
 
 jest.mock("otplib", () => {
@@ -27,10 +27,18 @@ jest.mock("otplib", () => {
   };
 });
 
+let otpConfigMock: ReturnType<typeof getFreshOtpConfigMock>;
+jest.mock("src/config/otp.config", () => ({
+  get otpConfig() {
+    return otpConfigMock;
+  },
+}));
+
 describe("OtpGeneratorService", () => {
   let service: OtpGeneratorService;
 
   beforeEach(async () => {
+    otpConfigMock = getFreshOtpConfigMock();
     const moduleRef = await Test.createTestingModule({
       providers: [OtpGeneratorService],
     }).compile();
@@ -47,7 +55,7 @@ describe("OtpGeneratorService", () => {
       const { code, expiresAt, expiresInMinutes } = service.generateOtp();
 
       expect(code).toBe("999999");
-      expect(totp.generate).toHaveBeenCalledWith(otpConfig.SECRETS.TOTP);
+      expect(totp.generate).toHaveBeenCalledWith(otpConfigMock.SECRETS.TOTP);
       expect(expiresAt).toBeInstanceOf(Date);
       expect(expiresInMinutes).toBeTruthy();
 
@@ -73,7 +81,7 @@ describe("OtpGeneratorService", () => {
     it("should generate TOTP", () => {
       const result = service.generateTotp();
       expect(result).toBe("999999");
-      expect(totp.generate).toHaveBeenCalledWith(otpConfig.SECRETS.TOTP);
+      expect(totp.generate).toHaveBeenCalledWith(otpConfigMock.SECRETS.TOTP);
     });
 
     it("should verify TOTP", () => {
@@ -81,7 +89,7 @@ describe("OtpGeneratorService", () => {
       expect(result).toBe(true);
       expect(totp.verify).toHaveBeenCalledWith({
         token: "999999",
-        secret: otpConfig.SECRETS.TOTP,
+        secret: otpConfigMock.SECRETS.TOTP,
       });
     });
   });
@@ -90,7 +98,7 @@ describe("OtpGeneratorService", () => {
     it("should generate HOTP", () => {
       const result = service.generateHotp(5);
       expect(result).toBe("654321");
-      expect(hotp.generate).toHaveBeenCalledWith(otpConfig.SECRETS.HOTP, 5);
+      expect(hotp.generate).toHaveBeenCalledWith(otpConfigMock.SECRETS.HOTP, 5);
     });
 
     it("should verify HOTP", () => {
@@ -98,7 +106,7 @@ describe("OtpGeneratorService", () => {
       expect(result).toBe(true);
       expect(hotp.verify).toHaveBeenCalledWith({
         token: "654321",
-        secret: otpConfig.SECRETS.HOTP,
+        secret: otpConfigMock.SECRETS.HOTP,
         counter: 5,
       });
     });
@@ -108,7 +116,7 @@ describe("OtpGeneratorService", () => {
     it("should generate Authenticator token", () => {
       const result = service.generateAuthenticator();
       expect(result).toBe("123456");
-      expect(authenticator.generate).toHaveBeenCalledWith(otpConfig.SECRETS.AUTHENTICATOR);
+      expect(authenticator.generate).toHaveBeenCalledWith(otpConfigMock.SECRETS.AUTHENTICATOR);
     });
 
     it("should verify Authenticator token", () => {
@@ -116,7 +124,7 @@ describe("OtpGeneratorService", () => {
       expect(result).toBe(true);
       expect(authenticator.verify).toHaveBeenCalledWith({
         token: "123456",
-        secret: otpConfig.SECRETS.AUTHENTICATOR,
+        secret: otpConfigMock.SECRETS.AUTHENTICATOR,
       });
     });
   });

@@ -53,7 +53,7 @@ describe("environment schema utilities", () => {
   });
 
   it("should validate encrypt algorithm", () => {
-    expect(schema.encryptalgo().parse("aes-256-gcm")).toBe("aes-256-gcm");
+    expect(schema.encryptalgo().parse("aes-256-cbc")).toBe("aes-256-cbc");
   });
 
   it("should validate expirein values", () => {

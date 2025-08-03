@@ -90,7 +90,7 @@ describe("CryptoService", () => {
     });
 
     it("should throw error for invalid encrypted input", () => {
-      expect(() => service.decrypt("invalidformat")).toThrowError("Invalid encrypted format");
+      expect(() => service.decrypt("invalidformat")).toThrow("Invalid encrypted format");
     });
   });
 });

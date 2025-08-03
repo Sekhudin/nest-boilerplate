@@ -14,12 +14,12 @@ class DatabaseConfig extends BaseConfig {
     OTP: "otps",
     USER_AUTH: "user_auths",
     AUTH_PROVIDER: "auth_providers",
-    AUTH_HISTORY: "auth_history",
+    AUTH_HISTORY: "auth_histories",
   } as const;
 
   readonly JOIN_TABLES = {
     USER_ROLE: "user_roles",
-  };
+  } as const;
 
   get typeOrmModuleOptions(): TypeOrmModuleOptions {
     return {

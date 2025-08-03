@@ -33,7 +33,7 @@ const TIMEZONES = [
 
 const ALGORITHMS = ["HS256", "RS256", "ES256"] as const;
 
-const ENCRYPT_ALGORITHMS = ["aes-256-cbc", "aes-256-gcm"] as const;
+const ENCRYPT_ALGORITHMS = ["aes-256-cbc"] as const;
 
 const EXPIRES_IN = ["10m", "15m", "30m", "1h", "1d", "7d", "30d"] as const;
 
