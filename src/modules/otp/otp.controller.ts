@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
-import { ApiCreatedResponse, ApiExtraModels } from "@nestjs/swagger";
+import { ApiBadRequestResponse, ApiCreatedResponse } from "@nestjs/swagger";
 import { MetaService } from "src/shared/modules/global/meta/meta.service";
+import { StandardHttpError } from "src/shared/dto/standard-http-error.dto";
 import { VerifyEmailLinkDto } from "./dto/requests/verify-email-link.dto";
 import { VerifyEmailOtpDto } from "./dto/requests/verify-email-otp.dto";
 import { OtpResponse } from "./dto/responses/otp.response";
@@ -8,7 +9,7 @@ import { VerifyEmailLinkUseCase } from "./use-cases/verify-email-link.use-case";
 import { VerifyEmailOtpUseCase } from "./use-cases/verify-email-otp.use-case";
 
 @Controller("otp")
-@ApiExtraModels(OtpResponse)
+@ApiBadRequestResponse({ type: StandardHttpError })
 export class OtpController {
   constructor(
     private readonly verifyEmailOtpUseCase: VerifyEmailOtpUseCase,
