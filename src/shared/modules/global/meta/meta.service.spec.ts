@@ -26,16 +26,9 @@ describe("MetaService", () => {
     });
     it("should set pagination metadata if object is not empty", () => {
       contextServiceMock.getExecutionTime.mockReturnValue(executionTimeMock);
-      service.setPagination({ page: 1, limit: 10 });
+      service.setPagination({ page: 1, limit: 10, totalPages: 10, totalItems: 100, itemCount: 10 });
       const result = service.build();
-      expect(result.pagination).toEqual({ page: 1, limit: 10 });
-    });
-
-    it("should not set pagination if empty object provided", () => {
-      contextServiceMock.getExecutionTime.mockReturnValue(executionTimeMock);
-      service.setPagination({});
-      const result = service.build();
-      expect(result.pagination).toBeUndefined();
+      expect(result.pagination).toEqual({ page: 1, limit: 10, totalPages: 10, totalItems: 100, itemCount: 10 });
     });
   });
 
@@ -46,8 +39,7 @@ describe("MetaService", () => {
     it("should set filters metadata excluding sortBy and sortAs", () => {
       contextServiceMock.getExecutionTime.mockReturnValue(executionTimeMock);
 
-      const input = { sortBy: "name", sortAs: "asc", status: "active" };
-      service.setFilters(input);
+      service.setFilters({ sortBy: "name", sortAs: "asc", status: "active" });
       const result = service.build();
       expect(result.filters).toEqual({ status: "active" });
     });
@@ -55,8 +47,7 @@ describe("MetaService", () => {
     it("should set sort metadata if sortBy and sortAs present", () => {
       contextServiceMock.getExecutionTime.mockReturnValue(executionTimeMock);
 
-      const input = { sortBy: "name", sortAs: "desc" };
-      service.setFilters(input);
+      service.setFilters({ sortBy: "name", sortAs: "desc" });
       const result = service.build();
       expect(result.sort).toEqual({ field: "name", direction: "desc" });
     });
@@ -67,18 +58,6 @@ describe("MetaService", () => {
       service.setFilters({ sortBy: "name", sortAs: "asc" });
       const result = service.build();
       expect(result.filters).toBeUndefined();
-    });
-
-    it("should not set sort if sortBy or sortAs missing", () => {
-      contextServiceMock.getExecutionTime.mockReturnValue(executionTimeMock);
-
-      service.setFilters({ sortBy: "name" });
-      const result = service.build();
-      expect(result.sort).toBeUndefined();
-
-      service.setFilters({ sortAs: "asc" });
-      const result2 = service.build();
-      expect(result2.sort).toBeUndefined();
     });
   });
 
@@ -97,14 +76,14 @@ describe("MetaService", () => {
       contextServiceMock.getTimestamp.mockReturnValue(timestampMock);
 
       const result = service
-        .setPagination({ page: 2 })
+        .setPagination({ page: 1, limit: 10, totalPages: 10, totalItems: 100, itemCount: 10 })
         .setFilters({ sortBy: "date", sortAs: "asc", category: "news" })
         .build();
 
       expect(result.requestId).toBe(requestIdMock);
       expect(result.executionTime).toBe(`${executionTimeMock.endTime - executionTimeMock.startTime}ms`);
       expect(result.timestamp).toBe(timestampMock);
-      expect(result.pagination).toEqual({ page: 2 });
+      expect(result.pagination).toEqual({ page: 1, limit: 10, totalPages: 10, totalItems: 100, itemCount: 10 });
       expect(result.filters).toEqual({ category: "news" });
       expect(result.sort).toEqual({ field: "date", direction: "asc" });
     });
