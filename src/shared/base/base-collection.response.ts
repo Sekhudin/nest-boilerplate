@@ -1,8 +1,10 @@
+import { MetadataDto } from "src/shared/dto/metadata.dto";
+
 export abstract class BaseCollectionResponse<T> {
   data: T[];
-  meta?: Metadata;
+  meta: MetadataDto;
 
-  static from(data: unknown[], meta?: Metadata): BaseCollectionResponse<unknown> {
+  static from(data: unknown[], meta: MetadataDto): BaseCollectionResponse<unknown> {
     throw new Error("static method from() not implemented yet");
   }
 }
