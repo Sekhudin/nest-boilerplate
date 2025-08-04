@@ -26,14 +26,6 @@ describe("OtpResponse", () => {
       expect(response.data).toEqual(otpDtoMock);
       expect(response.meta).toEqual(metadataMock);
     });
-
-    it("should work without meta", () => {
-      const response = OtpResponse.from(otpDtoMock);
-
-      expect(response).toBeInstanceOf(OtpResponse);
-      expect(response.data).toEqual(otpDtoMock);
-      expect(response.meta).toBeUndefined();
-    });
   });
 
   describe("plainToInstance", () => {

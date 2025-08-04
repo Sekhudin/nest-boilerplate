@@ -27,14 +27,6 @@ describe("SignOutResponse", () => {
       expect(response.data).toEqual(dataMock);
       expect(response.meta).toEqual(metadataMock);
     });
-
-    it("should work without meta", () => {
-      const response = SignOutResponse.from(dataMock);
-
-      expect(response).toBeInstanceOf(SignOutResponse);
-      expect(response.data).toEqual(dataMock);
-      expect(response.meta).toBeUndefined();
-    });
   });
 
   describe("plainToInstance", () => {

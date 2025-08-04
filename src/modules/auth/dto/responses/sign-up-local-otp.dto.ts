@@ -1,19 +1,23 @@
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
 import { Otp } from "src/modules/otp/entities/otp.entity";
-import { User } from "src/modules/user/entities/user.entity";
+import { UserDto } from "src/modules/user/dto/responses/user.dto";
 
 export class SignUpLocalOtpDto implements Otp {
   @Expose()
+  @ApiProperty()
   token: string;
 
   @Expose()
+  @ApiProperty()
   purpose: "EMAIL_VERIFICATION" | "PASSWORD_RESET" | "SIGNIN";
 
   @Expose()
+  @ApiProperty()
   expiresAt: Date;
 
   @Exclude()
-  user: User;
+  user: UserDto;
 
   @Exclude()
   hashOtp: string;

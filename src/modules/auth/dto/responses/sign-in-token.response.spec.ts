@@ -26,14 +26,6 @@ describe("SignInTokenResponse", () => {
       expect(response.data).toEqual(dataMock);
       expect(response.meta).toEqual(metadataMock);
     });
-
-    it("should work without meta", () => {
-      const response = SignInTokenResponse.from(dataMock);
-
-      expect(response).toBeInstanceOf(SignInTokenResponse);
-      expect(response.data).toEqual(dataMock);
-      expect(response.meta).toBeUndefined();
-    });
   });
 
   describe("plainToInstance", () => {

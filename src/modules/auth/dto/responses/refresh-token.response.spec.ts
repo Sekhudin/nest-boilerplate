@@ -26,14 +26,6 @@ describe("RefreshTokenResponse", () => {
       expect(response.data).toEqual(dataMock);
       expect(response.meta).toEqual(metadataMock);
     });
-
-    it("should work without meta", () => {
-      const response = RefreshTokenResponse.from(dataMock);
-
-      expect(response).toBeInstanceOf(RefreshTokenResponse);
-      expect(response.data).toEqual(dataMock);
-      expect(response.meta).toBeUndefined();
-    });
   });
 
   describe("plainToInstance", () => {

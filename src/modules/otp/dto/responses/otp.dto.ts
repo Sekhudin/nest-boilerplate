@@ -1,14 +1,16 @@
 import { Exclude, Expose, Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
 import { Otp } from "src/modules/otp/entities/otp.entity";
 import { UserDto } from "src/modules/user/dto/responses/user.dto";
 
 export class OtpDto implements Otp {
   @Expose()
-  isUsed: boolean;
-
-  @Expose()
   @Type(() => UserDto)
+  @ApiProperty()
   user: UserDto;
+
+  @Exclude()
+  isUsed: boolean;
 
   @Exclude()
   token: string;

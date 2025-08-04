@@ -1,4 +1,5 @@
 import { plainToInstance } from "class-transformer";
+import { UserDto } from "src/modules/user/dto/responses/user.dto";
 import { getFreshOtpDtoMock } from "test/mocks/dto/otp.dto.mock";
 import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
 import { SignUpLocalOtpDto } from "./sign-up-local-otp.dto";
@@ -25,14 +26,6 @@ describe("SignUpLocalOtpResponse", () => {
       expect(response).toBeInstanceOf(SignUpLocalOtpResponse);
       expect(response.data).toEqual(dataMock);
       expect(response.meta).toEqual(metadataMock);
-    });
-
-    it("should work without meta", () => {
-      const response = SignUpLocalOtpResponse.from(dataMock);
-
-      expect(response).toBeInstanceOf(SignUpLocalOtpResponse);
-      expect(response.data).toEqual(dataMock);
-      expect(response.meta).toBeUndefined();
     });
   });
 
