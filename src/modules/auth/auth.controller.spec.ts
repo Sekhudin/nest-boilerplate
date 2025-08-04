@@ -4,6 +4,7 @@ import { CookieService } from "src/shared/modules/global/context/cookie.service"
 import { MetaService } from "src/shared/modules/global/meta/meta.service";
 import { getFreshMailerConfigMock } from "test/mocks/config/mailer.config.mock";
 import { getFreshOtpMock } from "test/mocks/entities/otp.entity.mock copy";
+import { getFreshTokenMock } from "test/mocks/entities/token.entity.mock";
 import { getFreshCookieServiceMock } from "test/mocks/services/cookie.service.mock";
 import { getFreshMetaServiceMock } from "test/mocks/services/meta.service.mock";
 import { getFreshMetadataMock } from "test/mocks/utils/metadata.mock";
@@ -12,9 +13,11 @@ import { SignInLocalDto } from "./dto/requests/sign-in-local.dto";
 import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
 import { RefreshTokenResponse } from "./dto/responses/refresh-token.response";
 import { SignInTokenResponse } from "./dto/responses/sign-in-token.response";
+import { SignOutResponse } from "./dto/responses/sign-out.response";
 import { SignUpLocalOtpResponse } from "./dto/responses/sign-up-local-otp.response";
 import { RefreshTokenUseCase } from "./use-cases/refresh-token.use-case";
 import { SignInLocalUseCase } from "./use-cases/sign-in-local.use-case";
+import { SignOutUseCase } from "./use-cases/sign-out.use-case";
 import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 let mailerConfigMock: ReturnType<typeof getFreshMailerConfigMock>;
@@ -30,6 +33,7 @@ describe("AuthController", () => {
   const signUpLocalUseCaseMock = mock<SignUpLocalUseCase>();
   const signInLocalUseCaseMock = mock<SignInLocalUseCase>();
   const refreshTokenUseCaseMock = mock<RefreshTokenUseCase>();
+  const signOutUseCaseMock = mock<SignOutUseCase>();
   const metaServiceMock = getFreshMetaServiceMock();
 
   beforeEach(async () => {
@@ -41,6 +45,7 @@ describe("AuthController", () => {
         { provide: SignUpLocalUseCase, useValue: signUpLocalUseCaseMock },
         { provide: SignInLocalUseCase, useValue: signInLocalUseCaseMock },
         { provide: RefreshTokenUseCase, useValue: refreshTokenUseCaseMock },
+        { provide: SignOutUseCase, useValue: signOutUseCaseMock },
         { provide: MetaService, useValue: metaServiceMock },
       ],
     }).compile();
@@ -135,6 +140,35 @@ describe("AuthController", () => {
       expect(cookieServiceMock.getRefreshToken).toHaveBeenCalled();
       expect(refreshTokenUseCaseMock.execute).toHaveBeenCalledWith(refreshTokenMock);
       expect(refreshTokenResponseMock).toHaveBeenCalledWith({ accessToken: accessTokenMock }, metadataMock);
+      expect(result).toEqual(resultMock);
+    });
+  });
+
+  describe("signout", () => {
+    const refreshTokenMock = "refresh-token";
+    const tokemMock = getFreshTokenMock();
+    const resultMock = mock<SignOutResponse>();
+    const metadataMock = getFreshMetadataMock();
+    const signOutResponseMock = jest.spyOn(SignOutResponse, "from");
+
+    beforeEach(() => {
+      cookieServiceMock.getRefreshToken.mockReset();
+      signOutUseCaseMock.execute.mockReset();
+      metaServiceMock.build.mockReset();
+      signOutResponseMock.mockReset();
+    });
+
+    it("should call signOutUseCase.execute and return result", async () => {
+      cookieServiceMock.getRefreshToken.mockReturnValue(refreshTokenMock);
+      signOutUseCaseMock.execute.mockResolvedValue(tokemMock);
+      metaServiceMock.build.mockReturnValue(metadataMock);
+      signOutResponseMock.mockReturnValue(resultMock);
+
+      const result = await controller.signOut();
+
+      expect(cookieServiceMock.getRefreshToken).toHaveBeenCalled();
+      expect(signOutUseCaseMock.execute).toHaveBeenCalledWith(refreshTokenMock);
+      expect(signOutResponseMock).toHaveBeenCalledWith(tokemMock, metadataMock);
       expect(result).toEqual(resultMock);
     });
   });

@@ -6,9 +6,11 @@ import { SignInLocalDto } from "./dto/requests/sign-in-local.dto";
 import { SignUpLocalDto } from "./dto/requests/sign-up-local.dto";
 import { RefreshTokenResponse } from "./dto/responses/refresh-token.response";
 import { SignInTokenResponse } from "./dto/responses/sign-in-token.response";
+import { SignOutResponse } from "./dto/responses/sign-out.response";
 import { SignUpLocalOtpResponse } from "./dto/responses/sign-up-local-otp.response";
 import { RefreshTokenUseCase } from "./use-cases/refresh-token.use-case";
 import { SignInLocalUseCase } from "./use-cases/sign-in-local.use-case";
+import { SignOutUseCase } from "./use-cases/sign-out.use-case";
 import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 @Controller("auth")
@@ -18,6 +20,7 @@ export class AuthController {
     private readonly signUpLocalUseCase: SignUpLocalUseCase,
     private readonly signInLocalUseCase: SignInLocalUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly signOutUseCase: SignOutUseCase,
     private readonly metaservice: MetaService,
   ) {}
 
@@ -40,5 +43,13 @@ export class AuthController {
     const refreshToken = this.cookieService.getRefreshToken();
     const accessToken = await this.refreshTokenUseCase.execute(refreshToken);
     return RefreshTokenResponse.from({ accessToken }, this.metaservice.build());
+  }
+
+  @Post("signout")
+  @RefreshAuth()
+  async signOut() {
+    const refreshToken = this.cookieService.getRefreshToken();
+    const data = await this.signOutUseCase.execute(refreshToken);
+    return SignOutResponse.from(data, this.metaservice.build());
   }
 }

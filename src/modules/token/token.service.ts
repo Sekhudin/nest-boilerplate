@@ -9,7 +9,7 @@ import { TokenInvalidException } from "src/shared/exceptions/auth/token-invalid.
 import { UnauthorizedException } from "src/shared/exceptions/auth/unauthorized.exception";
 import { UserInactiveException } from "src/shared/exceptions/user/user-inactive.exception";
 import { Token } from "./entities/token.entity";
-import { UpsertAuthenticationTokenDto } from "./dto/upsert-authentication-token.dto";
+import { UpsertAuthenticationTokenDto } from "./dto/requests/upsert-authentication-token.dto";
 import { TokenRepository } from "./token.repository";
 
 @Injectable()
@@ -88,5 +88,34 @@ export class TokenService extends BaseService {
 
     const accessToken = await this.jwtTokenService.signAccessToken(payload);
     return { token, accessToken };
+  }
+
+  async signOutAndRemoveToken(refreshToken: string, entityManager?: EntityManager) {
+    const claims = this.contextService.getUser();
+    if (!claims) {
+      throw new UnauthorizedException();
+    }
+
+    const repository = this.getRepository(Token, this.tokenRepository, entityManager);
+    const token = await repository
+      .findOneOrFail({
+        where: { deviceId: claims.deviceId, revoked: false, user: { id: claims.sub } },
+        relations: { user: true },
+      })
+      .catch(() => {
+        throw new TokenInvalidException();
+      });
+
+    if (!token.user.isActive) {
+      throw new UserInactiveException();
+    }
+
+    const isRefreshTokenValid = await this.cryptoService.verifyAuthToken(refreshToken, token.token);
+    if (!isRefreshTokenValid) {
+      throw new TokenInvalidException();
+    }
+
+    await repository.remove(token);
+    return token;
   }
 }

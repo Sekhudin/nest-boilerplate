@@ -16,7 +16,7 @@ import { getFreshCryptoServiceMock } from "test/mocks/services/crypto.service.mo
 import { getFreshJwtTokenServiceMock } from "test/mocks/services/jwt-token-service.service.mock";
 import { getFreshEntityManagerMock } from "test/mocks/utils/entity-manager.mock";
 import { getFreshUserAgentMock } from "test/mocks/utils/user-agent.mock";
-import { UpsertAuthenticationTokenDto } from "./dto/upsert-authentication-token.dto";
+import { UpsertAuthenticationTokenDto } from "./dto/requests/upsert-authentication-token.dto";
 import { TokenRepository } from "./token.repository";
 import { TokenService } from "./token.service";
 
@@ -285,6 +285,118 @@ describe("TokenService", () => {
         roles: tokenMock.user.role.map(({ name }) => name),
       });
       expect(result).toStrictEqual({ token: tokenMock, accessToken: accessTokenMock });
+    });
+  });
+
+  describe("signOutAndRemoveToken", () => {
+    const claimsMock = mock<Claims>();
+    const tokenMock = getFreshTokenMock();
+    const userMock = getFreshUserMock();
+    const refreshTokenMock = "refresh-token";
+
+    beforeEach(() => {
+      tokenMock.user = userMock;
+
+      contextServiceMock.getUser.mockReset();
+      tokenRepositoryMock.findOneOrFail.mockReset();
+      cryptoServiceMock.verifyAuthToken.mockReset();
+      tokenRepositoryMock.remove.mockReset();
+    });
+
+    it("should remove token and return removed token object", async () => {
+      contextServiceMock.getUser.mockReturnValue(claimsMock);
+      tokenRepositoryMock.findOneOrFail.mockResolvedValue(tokenMock);
+      cryptoServiceMock.verifyAuthToken.mockResolvedValue(true);
+      tokenRepositoryMock.remove.mockResolvedValue(tokenMock);
+
+      const result = await service.signOutAndRemoveToken(refreshTokenMock);
+
+      expect(contextServiceMock.getUser).toHaveBeenCalled();
+      expect(tokenRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { deviceId: claimsMock.deviceId, revoked: false, user: { id: claimsMock.sub } },
+        relations: { user: true },
+      });
+      expect(cryptoServiceMock.verifyAuthToken).toHaveBeenCalledWith(refreshTokenMock, tokenMock.token);
+      expect(tokenRepositoryMock.remove).toHaveBeenCalledWith(tokenMock);
+      expect(result).toStrictEqual(tokenMock);
+    });
+
+    it("should throw UnauthorizedException if claims is null", async () => {
+      contextServiceMock.getUser.mockReturnValue(null);
+
+      await expect(service.signOutAndRemoveToken(refreshTokenMock)).rejects.toThrow(UnauthorizedException);
+      expect(contextServiceMock.getUser).toHaveBeenCalled();
+      expect(tokenRepositoryMock.findOneOrFail).not.toHaveBeenCalledWith({
+        where: { deviceId: claimsMock.deviceId, revoked: false, user: { id: claimsMock.sub } },
+        relations: { user: true },
+      });
+      expect(cryptoServiceMock.verifyAuthToken).not.toHaveBeenCalledWith(refreshTokenMock, tokenMock.token);
+      expect(tokenRepositoryMock.remove).not.toHaveBeenCalledWith(tokenMock);
+    });
+
+    it("should throw TokenInvalidException if token invalid", async () => {
+      contextServiceMock.getUser.mockReturnValue(claimsMock);
+      tokenRepositoryMock.findOneOrFail.mockRejectedValue(new TokenInvalidException());
+
+      await expect(service.signOutAndRemoveToken(refreshTokenMock)).rejects.toThrow(TokenInvalidException);
+      expect(contextServiceMock.getUser).toHaveBeenCalled();
+      expect(tokenRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { deviceId: claimsMock.deviceId, revoked: false, user: { id: claimsMock.sub } },
+        relations: { user: true },
+      });
+      expect(cryptoServiceMock.verifyAuthToken).not.toHaveBeenCalledWith(refreshTokenMock, tokenMock.token);
+      expect(tokenRepositoryMock.remove).not.toHaveBeenCalledWith(tokenMock);
+    });
+
+    it("should throw UserInactiveException id user inactive", async () => {
+      tokenMock.user = { ...userMock, isActive: false };
+      contextServiceMock.getUser.mockReturnValue(claimsMock);
+      tokenRepositoryMock.findOneOrFail.mockResolvedValue(tokenMock);
+
+      await expect(service.signOutAndRemoveToken(refreshTokenMock)).rejects.toThrow(UserInactiveException);
+      expect(contextServiceMock.getUser).toHaveBeenCalled();
+      expect(tokenRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { deviceId: claimsMock.deviceId, revoked: false, user: { id: claimsMock.sub } },
+        relations: { user: true },
+      });
+      expect(cryptoServiceMock.verifyAuthToken).not.toHaveBeenCalledWith(refreshTokenMock, tokenMock.token);
+      expect(tokenRepositoryMock.remove).not.toHaveBeenCalledWith(tokenMock);
+    });
+
+    it("should throw TokenInvalidException if refreshToken it not match", async () => {
+      contextServiceMock.getUser.mockReturnValue(claimsMock);
+      tokenRepositoryMock.findOneOrFail.mockResolvedValue(tokenMock);
+      cryptoServiceMock.verifyAuthToken.mockResolvedValue(false);
+
+      await expect(service.signOutAndRemoveToken(refreshTokenMock)).rejects.toThrow(TokenInvalidException);
+      expect(contextServiceMock.getUser).toHaveBeenCalled();
+      expect(tokenRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { deviceId: claimsMock.deviceId, revoked: false, user: { id: claimsMock.sub } },
+        relations: { user: true },
+      });
+      expect(cryptoServiceMock.verifyAuthToken).toHaveBeenCalledWith(refreshTokenMock, tokenMock.token);
+      expect(tokenRepositoryMock.remove).not.toHaveBeenCalledWith(tokenMock);
+    });
+
+    it("should use entityManager if provided", async () => {
+      const entityManagerMock = getFreshEntityManagerMock();
+
+      entityManagerMock.getRepository.mockReturnValue(tokenRepositoryMock);
+      contextServiceMock.getUser.mockReturnValue(claimsMock);
+      tokenRepositoryMock.findOneOrFail.mockResolvedValue(tokenMock);
+      cryptoServiceMock.verifyAuthToken.mockResolvedValue(true);
+      tokenRepositoryMock.remove.mockResolvedValue(tokenMock);
+
+      const result = await service.signOutAndRemoveToken(refreshTokenMock, entityManagerMock);
+
+      expect(contextServiceMock.getUser).toHaveBeenCalled();
+      expect(tokenRepositoryMock.findOneOrFail).toHaveBeenCalledWith({
+        where: { deviceId: claimsMock.deviceId, revoked: false, user: { id: claimsMock.sub } },
+        relations: { user: true },
+      });
+      expect(cryptoServiceMock.verifyAuthToken).toHaveBeenCalledWith(refreshTokenMock, tokenMock.token);
+      expect(tokenRepositoryMock.remove).toHaveBeenCalledWith(tokenMock);
+      expect(result).toStrictEqual(tokenMock);
     });
   });
 });

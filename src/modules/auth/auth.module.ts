@@ -9,11 +9,12 @@ import { UserModule } from "src/modules/user/user.module";
 import { AuthController } from "./auth.controller";
 import { RefreshTokenUseCase } from "./use-cases/refresh-token.use-case";
 import { SignInLocalUseCase } from "./use-cases/sign-in-local.use-case";
+import { SignOutUseCase } from "./use-cases/sign-out.use-case";
 import { SignUpLocalUseCase } from "./use-cases/sign-up-local.use-case";
 
 @Module({
   imports: [OtpModule, RoleModule, UserModule, UserAuthModule, AuthProviderModule, AuthHistoryModule, TokenModule],
   controllers: [AuthController],
-  providers: [SignUpLocalUseCase, SignInLocalUseCase, RefreshTokenUseCase],
+  providers: [SignUpLocalUseCase, SignInLocalUseCase, RefreshTokenUseCase, SignOutUseCase],
 })
 export class AuthModule {}
